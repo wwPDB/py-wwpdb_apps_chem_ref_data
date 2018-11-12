@@ -34,8 +34,10 @@ from mmcif_utils.chemcomp.PdbxChemCompIo import PdbxChemCompIo
 from wwpdb.utils.session.WebRequest import InputRequest
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataMiscUtils import ChemRefDataMiscUtils
+from wwpdb.utils.testing.Features import Features
 
 
+@unittest.skipUnless(Features().haveCCD(), "Need full CCD for tests")
 class ChemRefDataMiscUtilsTests(unittest.TestCase):
 
     def setUp(self):

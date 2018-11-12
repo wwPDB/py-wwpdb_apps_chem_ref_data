@@ -29,8 +29,9 @@ logger = logging.getLogger()
 
 
 from wwpdb.apps.chem_ref_data.search.ChemCompSearchIndexUtils import ChemCompSearchIndexUtils
+from wwpdb.utils.testing.Features import Features
 
-
+@unittest.skipUnless(Features().haveCCD(), "Need full CCD for tests")
 class ChemCompSearchIndexUtilsTests(unittest.TestCase):
 
     def setUp(self):
