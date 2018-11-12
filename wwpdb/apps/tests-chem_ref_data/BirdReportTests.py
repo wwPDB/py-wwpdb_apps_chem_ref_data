@@ -70,8 +70,8 @@ class BirdReportTests(unittest.TestCase):
             prd=BirdReport(reqObj=self.__reqObj,verbose=self.__verbose,log=self.__lfh)
             prd.setFilePath(filePath,prdFileFormat=fileFormat,prdId=prdId)
             pD=prd.doReport()
-            print pD
-            print "-------------------"
+            print(pD)
+            print("-------------------")
 
             prdD=BirdReportDepict(verbose=self.__verbose,log=self.__lfh)
             oL=prdD.doRender(pD)

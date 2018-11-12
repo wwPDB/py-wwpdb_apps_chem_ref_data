@@ -25,7 +25,10 @@ import os.path
 import time
 import scandir
 import traceback
-from itertools import izip_longest
+try:
+    from itertools import zip_longest
+except ImportError:
+    from itertools import izip_longest as zip_longest
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.db.MyDbSqlGen import MyDbAdminSqlGen
@@ -242,7 +245,7 @@ class ChemRefDataDbUtils(MyConnectionBase):
 
     def __makeSubLists(self, n, iterable):
         args = [iter(iterable)] * n
-        return ([e for e in t if e is not None] for t in izip_longest(*args))
+        return ([e for e in t if e is not None] for t in zip_longest(*args))
 
 
     def makeComponentPathListMulti(self, dataList, procName, optionsD, workingDir):

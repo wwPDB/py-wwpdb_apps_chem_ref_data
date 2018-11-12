@@ -17,7 +17,13 @@ __license__   = "Creative Commons Attribution 3.0 Unported"
 __version__   = "V0.07"
 
 
-import sys, cPickle, time, os.path
+import sys
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
+import time
+import os.path
 
 
 class UtilDataStore(object):
@@ -41,7 +47,7 @@ class UtilDataStore(object):
         self.__sessionPath=self.__sObj.getPath()
         self.__D={}
         #
-        #self.__pickleProtocol = cPickle.HIGHEST_PROTOCOL
+        #self.__pickleProtocol = pickle.HIGHEST_PROTOCOL
         self.__pickleProtocol=0
         try:
             self.__filePath = os.path.join(self.__sessionPath,self.__filePrefix+"-util-session.pic")
@@ -62,7 +68,7 @@ class UtilDataStore(object):
     def serialize(self):
         try:
             fb=open(self.__filePath,'wb')
-            cPickle.dump(self.__D,fb,self.__pickleProtocol)
+            pickle.dump(self.__D,fb,self.__pickleProtocol)
             fb.close()
         except:
             pass
@@ -70,7 +76,7 @@ class UtilDataStore(object):
     def deserialize(self):
         try:
             fb=open(self.__filePath,'rb')
-            self.__D=cPickle.load(fb)
+            self.__D=pickle.load(fb)
             fb.close()
             return True
         except:
