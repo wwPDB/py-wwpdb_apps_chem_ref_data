@@ -47,7 +47,7 @@ import types
 import traceback
 import ntpath
 
-from wwpdb.utils.rcsb.WebRequest import InputRequest, ResponseContent
+from wwpdb.utils.session.WebRequest import InputRequest, ResponseContent
 from wwpdb.apps.chem_ref_data.io.UtilDataStore import UtilDataStore
 #
 from wwpdb.apps.chem_ref_data.report.BirdReport import BirdReport
@@ -67,8 +67,8 @@ from wwpdb.apps.chem_ref_data.utils.ChemRefDataMiscUtils import ChemRefDataMiscU
 from pdbx_v2.style.PrdCategoryStyle import PrdCategoryStyle
 from pdbx_v2.style.ChemCompCategoryStyle import ChemCompCategoryStyle
 
-from wwpdb.api.facade.ConfigInfo import ConfigInfo
-from wwpdb.utils.rcsb.RcsbDpUtility import RcsbDpUtility
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 #
 import logging
 logger = logging.getLogger(__name__)

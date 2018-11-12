@@ -21,7 +21,7 @@ import jellyfish
 from operator import itemgetter
 
 from cc_dict_util.persist.PdbxChemCompDictIndex import PdbxChemCompDictIndex
-from wwpdb.api.facade.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
 import logging
 logger = logging.getLogger(__name__)

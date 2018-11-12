@@ -19,7 +19,7 @@ __version__   = "V0.01"
 import sys, unittest, traceback
 import time, os, os.path
 
-from wwpdb.api.facade.ConfigInfo                              import ConfigInfo,getSiteId
+from wwpdb.utils.config.ConfigInfo                              import ConfigInfo,getSiteId
 from wwpdb.apps.chem_ref_data.report.BirdReport               import BirdReport
 from wwpdb.apps.chem_ref_data.report.BirdReportDepict         import BirdReportDepict
 from wwpdb.apps.chem_ref_data.webapp.WebRequest               import InputRequest

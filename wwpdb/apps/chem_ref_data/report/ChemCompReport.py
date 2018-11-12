@@ -25,7 +25,7 @@ import shutil
 import logging
 logger = logging.getLogger(__name__)
 
-from wwpdb.api.facade.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from pdbx_v2.chemcomp.PdbxChemCompIo import PdbxChemCompIo
 from wwpdb.apps.chem_ref_data.utils.ChemRefPathInfo import ChemRefPathInfo
 from wwpdb.apps.chem_ref_data.report.ReportUtils import ReportUtils

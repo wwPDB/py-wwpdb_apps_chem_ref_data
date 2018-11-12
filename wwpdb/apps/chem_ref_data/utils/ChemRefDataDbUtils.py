@@ -27,12 +27,12 @@ import scandir
 import traceback
 from itertools import izip_longest
 
-from wwpdb.api.facade.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.db.MyDbSqlGen import MyDbAdminSqlGen
 from wwpdb.utils.db.SchemaDefLoader import SchemaDefLoader
 from wwpdb.utils.db.MyDbUtil import MyDbQuery
 
-from wwpdb.utils.rcsb.MultiProcUtil import MultiProcUtil
+from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
 
 from wwpdb.utils.db.BirdSchemaDef import BirdSchemaDef
 from wwpdb.utils.db.ChemCompSchemaDef import ChemCompSchemaDef
@@ -43,8 +43,8 @@ from pdbx_v2.bird.PdbxPrdUtils import PdbxPrdUtils
 
 from pdbx_v2.chemcomp.PdbxChemCompIo import PdbxChemCompIo
 
-# from pdbx_v2.adapter.IoAdapterPy       import IoAdapterPy
-from pdbx_v2.adapter.IoAdapterCore import IoAdapterCore
+# from mmcif.io.IoAdapterPy       import IoAdapterPy
+from mmcif.io.IoAdapterCore import IoAdapterCore
 
 from wwpdb.utils.db.MyConnectionBase import MyConnectionBase
 

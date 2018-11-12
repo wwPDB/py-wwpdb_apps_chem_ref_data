@@ -27,8 +27,8 @@ from optparse import OptionParser
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataDbUtils import ChemRefDataDbUtils
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataCvsUtils import ChemRefDataCvsUtils
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataMiscUtils import ChemRefDataMiscUtils
-from wwpdb.api.facade.ConfigInfo import ConfigInfo, getSiteId
-from wwpdb.utils.rcsb.WebRequest import InputRequest
+from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
+from wwpdb.utils.session.WebRequest import InputRequest
 
 
 class ChemRefDataDbExec(object):

@@ -29,9 +29,9 @@ from itertools import izip_longest
 import string
 import fnmatch
 
-from wwpdb.api.facade.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
-from wwpdb.utils.rcsb.MultiProcUtil import MultiProcUtil
+from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
 
 from pdbx_v2.bird.PdbxPrdIo import PdbxPrdIo
 from pdbx_v2.bird.PdbxFamilyIo import PdbxFamilyIo
@@ -39,9 +39,9 @@ from pdbx_v2.bird.PdbxPrdUtils import PdbxPrdUtils
 
 from pdbx_v2.chemcomp.PdbxChemCompIo import PdbxChemCompIo
 
-# from pdbx_v2.adapter.IoAdapterPy       import IoAdapterPy
-from pdbx_v2.adapter.IoAdapterCore import IoAdapterCore
-from wwpdb.utils.rcsb.RcsbDpUtility import RcsbDpUtility
+# from mmcif.io.IoAdapterPy       import IoAdapterPy
+from mmcif.io.IoAdapterCore import IoAdapterCore
+from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
 from cc_dict_util.persist.PdbxChemCompDictUtil import PdbxChemCompDictUtil
 from cc_dict_util.persist.PdbxChemCompDictIndex import PdbxChemCompDictIndex

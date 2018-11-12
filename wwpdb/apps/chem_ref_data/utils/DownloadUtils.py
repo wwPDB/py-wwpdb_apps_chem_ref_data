@@ -22,7 +22,7 @@ import os.path
 import shutil
 import traceback
 
-from wwpdb.api.facade.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.apps.chem_ref_data.utils.ChemRefPathInfo import ChemRefPathInfo
 
 
