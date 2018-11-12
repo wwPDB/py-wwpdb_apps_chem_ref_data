@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 from wwpdb.utils.db.MyConnectionBase import MyConnectionBase
 from wwpdb.apps.chem_ref_data.search.ChemCompSearchIndexUtils import ChemCompSearchIndexUtils
-from oe_util.build.OeDescriptorUtils import OeDescriptorUtils
+from wwpdb.utils.oe_util.build.OeDescriptorUtils import OeDescriptorUtils
 
 
 class ChemRefSearchBase(MyConnectionBase):

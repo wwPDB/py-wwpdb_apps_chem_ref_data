@@ -33,18 +33,18 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
 from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
 
-from pdbx_v2.bird.PdbxPrdIo import PdbxPrdIo
-from pdbx_v2.bird.PdbxFamilyIo import PdbxFamilyIo
-from pdbx_v2.bird.PdbxPrdUtils import PdbxPrdUtils
+from mmcif_utils.bird.PdbxPrdIo import PdbxPrdIo
+from mmcif_utils.bird.PdbxFamilyIo import PdbxFamilyIo
+from mmcif_utils.bird.PdbxPrdUtils import PdbxPrdUtils
 
-from pdbx_v2.chemcomp.PdbxChemCompIo import PdbxChemCompIo
+from mmcif_utils.chemcomp.PdbxChemCompIo import PdbxChemCompIo
 
 # from mmcif.io.IoAdapterPy       import IoAdapterPy
 from mmcif.io.IoAdapterCore import IoAdapterCore
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 
-from cc_dict_util.persist.PdbxChemCompDictUtil import PdbxChemCompDictUtil
-from cc_dict_util.persist.PdbxChemCompDictIndex import PdbxChemCompDictIndex
+from wwpdb.utils.cc_dict_util.persist.PdbxChemCompDictUtil import PdbxChemCompDictUtil
+from wwpdb.utils.cc_dict_util.persist.PdbxChemCompDictIndex import PdbxChemCompDictIndex
 
 
 class ChemRefDataMiscUtils(object):

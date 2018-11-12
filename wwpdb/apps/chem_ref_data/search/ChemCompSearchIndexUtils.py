@@ -20,7 +20,7 @@ import traceback
 import jellyfish
 from operator import itemgetter
 
-from cc_dict_util.persist.PdbxChemCompDictIndex import PdbxChemCompDictIndex
+from wwpdb.utils.cc_dict_util.persist.PdbxChemCompDictIndex import PdbxChemCompDictIndex
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 
 import logging

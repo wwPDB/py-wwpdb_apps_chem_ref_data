@@ -22,8 +22,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-from oe_util.oedepict.OeDepict import OeDepict
-from oe_util.build.OeChemCompIoUtils import OeChemCompIoUtils
+from wwpdb.utils.oe_util.oedepict.OeDepict import OeDepict
+from wwpdb.utils.oe_util.build.OeChemCompIoUtils import OeChemCompIoUtils
 
 
 class ReportUtils(object):

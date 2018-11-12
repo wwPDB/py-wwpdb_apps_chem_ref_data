@@ -37,11 +37,11 @@ from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
 from wwpdb.utils.db.BirdSchemaDef import BirdSchemaDef
 from wwpdb.utils.db.ChemCompSchemaDef import ChemCompSchemaDef
 
-from pdbx_v2.bird.PdbxPrdIo import PdbxPrdIo
-from pdbx_v2.bird.PdbxFamilyIo import PdbxFamilyIo
-from pdbx_v2.bird.PdbxPrdUtils import PdbxPrdUtils
+from mmcif_utils.bird.PdbxPrdIo import PdbxPrdIo
+from mmcif_utils.bird.PdbxFamilyIo import PdbxFamilyIo
+from mmcif_utils.bird.PdbxPrdUtils import PdbxPrdUtils
 
-from pdbx_v2.chemcomp.PdbxChemCompIo import PdbxChemCompIo
+from mmcif_utils.chemcomp.PdbxChemCompIo import PdbxChemCompIo
 
 # from mmcif.io.IoAdapterPy       import IoAdapterPy
 from mmcif.io.IoAdapterCore import IoAdapterCore

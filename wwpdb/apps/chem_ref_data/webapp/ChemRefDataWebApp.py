@@ -64,8 +64,8 @@ from wwpdb.apps.chem_ref_data.utils.ChemRefPathInfo import ChemRefPathInfo
 from wwpdb.apps.chem_ref_data.utils.DownloadUtils import DownloadUtils
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataMiscUtils import ChemRefDataMiscUtils
 
-from pdbx_v2.style.PrdCategoryStyle import PrdCategoryStyle
-from pdbx_v2.style.ChemCompCategoryStyle import ChemCompCategoryStyle
+from mmcif_utils.style.PrdCategoryStyle import PrdCategoryStyle
+from mmcif_utils.style.ChemCompCategoryStyle import ChemCompCategoryStyle
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility

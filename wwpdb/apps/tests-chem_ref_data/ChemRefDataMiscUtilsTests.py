@@ -29,7 +29,7 @@ import os.path
 import shutil
 
 
-from pdbx_v2.chemcomp.PdbxChemCompIo import PdbxChemCompIo
+from mmcif_utils.chemcomp.PdbxChemCompIo import PdbxChemCompIo
 
 from wwpdb.utils.session.WebRequest import InputRequest
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
