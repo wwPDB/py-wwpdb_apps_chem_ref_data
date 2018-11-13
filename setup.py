@@ -47,7 +47,7 @@ setup(
                       'wwpdb.utils.session >= 0.3', 'wwpdb.io >= 0.2',
                       'mmcif.utils', 'wwpdb.utils.oe_util', 'jellyfish',
                       'wwpdb.utils.cc_dict_util', 'wwpdb.utils.dp',
-                      'rcsb.utils.multiproc'],
+                      'rcsb.utils.multiproc', 'wwpdb.utils.ws_utils'],
     packages=find_packages(exclude=['wwpdb.apps.tests-chem_ref_data', 'mock-data']),
     # Enables Manifest to be used
     #include_package_data = True,
