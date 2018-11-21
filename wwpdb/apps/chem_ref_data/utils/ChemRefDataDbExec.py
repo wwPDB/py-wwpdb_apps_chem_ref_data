@@ -42,7 +42,7 @@ class ChemRefDataDbExec(object):
         """  Simulate the web application environment for managing session storage of  temporaty data files.
         """
         self.__siteId = getSiteId(defaultSiteId=defSiteId)
-        print self.__siteId
+        print(self.__siteId)
         #
         self.__cI = ConfigInfo(self.__siteId)
         self.__topPath = self.__cI.get('SITE_WEB_APPS_TOP_PATH')
