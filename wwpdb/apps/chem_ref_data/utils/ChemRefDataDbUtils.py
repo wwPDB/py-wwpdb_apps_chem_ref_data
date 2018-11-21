@@ -272,7 +272,7 @@ class ChemRefDataDbUtils(MyConnectionBase):
         try:
             dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
             dataList = [a for a in dataS]
-            mpu = MultiProcUtil(verbose=True, log=self.__lfh)
+            mpu = MultiProcUtil(verbose=True)
             mpu.set(workerObj=self, workerMethod="makeComponentPathListMulti")
             ok, failList, retLists, diagList = mpu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
             pathList = retLists[0]
@@ -285,7 +285,7 @@ class ChemRefDataDbUtils(MyConnectionBase):
                                   warnings='default', verbose=self.__verbose, log=self.__lfh)
 
             #
-            mpu = MultiProcUtil(verbose=True, log=self.__lfh)
+            mpu = MultiProcUtil(verbose=True)
             mpu.set(workerObj=sml, workerMethod="makeLoadFilesMulti")
             mpu.setWorkingDir(self.__sessionPath)
             ok, failList, retLists, diagList = mpu.runMulti(dataList=pathList, numProc=numProc, numResults=2)

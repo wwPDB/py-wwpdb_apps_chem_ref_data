@@ -142,7 +142,7 @@ class ChemRefDataCvsUtils(object):
         dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
         dataList = [(cvsProjectName, a, True) for a in dataS]
         #
-        mpu = MultiProcUtil(verbose=self.__debug, log=self.__lfh)
+        mpu = MultiProcUtil(verbose=self.__debug)
         mpu.set(workerObj=self.__vc, workerMethod="updateList")
         ok, failList, resultList, diagList = mpu.runMulti(dataList=dataList, numProc=numProc)
         endTime = time.time()
