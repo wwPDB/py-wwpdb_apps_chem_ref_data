@@ -28,7 +28,6 @@ if fullimport:
     import wwpdb.apps.chem_ref_data.webapp.ChemRefDataWebApp
 else:
     from wwpdb.utils.session.WebRequest import InputRequest, ResponseContent
-    from wwpdb.apps.chem_ref_data.io.UtilDataStore import UtilDataStore
     from wwpdb.apps.chem_ref_data.report.ChemRefReportDepictBootstrap import ChemRefReportDepictBootstrap
     from wwpdb.apps.chem_ref_data.search.ChemRefSearchDepictBootstrap import ChemRefSearchDepictBootstrap
     from wwpdb.apps.chem_ref_data.utils.ChemRefDataCvsUtils import ChemRefDataCvsUtils

@@ -48,7 +48,7 @@ import traceback
 import ntpath
 
 from wwpdb.utils.session.WebRequest import InputRequest, ResponseContent
-from wwpdb.apps.chem_ref_data.io.UtilDataStore import UtilDataStore
+from wwpdb.utils.session.UtilDataStore import UtilDataStore
 #
 from wwpdb.apps.chem_ref_data.report.BirdReport import BirdReport
 from wwpdb.apps.chem_ref_data.report.ChemCompReport import ChemCompReport
