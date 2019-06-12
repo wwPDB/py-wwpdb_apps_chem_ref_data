@@ -25,6 +25,7 @@ import time
 import copy
 import scandir
 import traceback
+import filecmp
 try:
     from itertools import zip_longest
 except ImportError:
@@ -37,6 +38,7 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
 
 from mmcif_utils.bird.PdbxPrdIo import PdbxPrdIo
+from mmcif_utils.bird.PdbxPrdCcIo import PdbxPrdCcIo
 from mmcif_utils.bird.PdbxFamilyIo import PdbxFamilyIo
 from mmcif_utils.bird.PdbxPrdUtils import PdbxPrdUtils
 
@@ -45,6 +47,7 @@ from mmcif_utils.chemcomp.PdbxChemCompIo import PdbxChemCompIo
 # from mmcif.io.IoAdapterPy       import IoAdapterPy
 from mmcif.io.IoAdapterCore import IoAdapterCore
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
+from wwpdb.io.file.DataFile import DataFile
 
 from wwpdb.utils.cc_dict_util.persist.PdbxChemCompDictUtil import PdbxChemCompDictUtil
 from wwpdb.utils.cc_dict_util.persist.PdbxChemCompDictIndex import PdbxChemCompDictIndex
@@ -93,6 +96,15 @@ class ChemRefDataMiscUtils(object):
         self.__pathCCParentIndex = os.path.join(self.__ccDictPath, "chemcomp-parent-index.pic")
 
         self.__pathPrdChemCompCVS = self.__cI.get('SITE_PRDCC_CVS_PATH')
+        self.__pathPrdDictRef = os.path.join(self.__sbTopPath, 'prd-dict')
+        self.__pathPrdDictFile = os.path.join(self.__pathPrdDictRef, "Prd-all-v3.cif")
+        self.__pathPrdDictSerial = os.path.join(self.__pathPrdDictRef, "Prd-all-v3.sdb")
+        self.__pathPrdCcFile = os.path.join(self.__pathPrdDictRef, "Prdcc-all-v3.cif")
+        self.__pathPrdCcSerial = os.path.join(self.__pathPrdDictRef, "Prdcc-all-v3.sdb")
+        self.__pathPrdSummary = os.path.join(self.__pathPrdDictRef, "prd_summary.cif")
+        self.__pathPrdSummarySerial = os.path.join(self.__pathPrdDictRef, "prd_summary.sdb")
+        self.__pathPrdFamilyMapping = os.path.join(self.__pathPrdDictRef, "PrdFamilyIDMapping.lst")
+        #
 
     def getBirdPathList(self):
         """  Get pathlist for BIRD PRD and PRD Family data.
@@ -101,11 +113,14 @@ class ChemRefDataMiscUtils(object):
         self.__lfh.write("\n+ChemRefDataLoad(getBirdPathList) Starting %s %s at %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name,
                                                                                          time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
         try:
-            sbTopPath = self.__cI.get('SITE_REFDATA_TOP_CVS_SB_PATH')
+            sbTopPath = self.__sbTopPath
             projNamePrd = self.__cI.get('SITE_REFDATA_PROJ_NAME_PRD')
             projNamePrdFamily = self.__cI.get('SITE_REFDATA_PROJ_NAME_PRD_FAMILY')
+            projNamePrdCC = self.__cI.get('SITE_REFDATA_PROJ_NAME_PRDCC')
+            #
             birdCachePath = os.path.join(sbTopPath, projNamePrd)
             birdFamilyCachePath = os.path.join(sbTopPath, projNamePrdFamily)
+            birdCcCachePath = os.path.join(sbTopPath, projNamePrdCC)
             #
             #
             prd = PdbxPrdIo(verbose=self.__verbose, log=self.__lfh)
@@ -116,15 +131,19 @@ class ChemRefDataMiscUtils(object):
             prdFam.setCachePath(birdFamilyCachePath)
             familyPathList = prdFam.makeDefinitionPathList()
             #
-            return pathList, familyPathList
+            prdCc = PdbxPrdCcIo(verbose=self.__verbose, log=self.__lfh)
+            prdCc.setCachePath(birdCcCachePath)
+            prdCcPathList = prdCc.makeDefinitionPathList()
+            #
+            return pathList, familyPathList, prdCcPathList
         except:
             traceback.print_exc(file=self.__lfh)
 
         endTime = time.time()
-        self.__lfh.write("\n+ChemRefDataLoad(getBirdPathList) Completed %s %s at %s (%.2f seconds)\n" % (self.__class__.__name__,
-                                                                                                         sys._getframe().f_code.co_name,
-                                                                                                         time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
-        return [], []
+        self.__lfh.write("\n+ChemRefDataLoad(getBirdPathList) Completed %s %s at %s\n" % (self.__class__.__name__,
+                                                                                          sys._getframe().f_code.co_name,
+                                                                                          time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        return [], [], []
 
     def __makeTempPath(self, inpPath):
         try:
@@ -151,6 +170,17 @@ class ChemRefDataMiscUtils(object):
     def concatPathList(self, pathList, outPath, mode=0o664):
         """
         """
+        (ok, update) = self.concatPathListExt(pathList, outPath, mode)
+        return ok
+
+    def concatPathListExt(self, pathList, outPath, mode=0o664, avoidUpdate = False):
+        """
+        Concatenates files in pathList. If avoidUpdate is set, compare temporary file
+        vs. destination.
+
+        Returns (status, updated) - status if concatenation good. If True, updated will be 
+        set of file moved into place.
+        """
         try:
             tPath = self.__makeTempPath(outPath)
             with open(tPath, "wb") as outfile:
@@ -160,10 +190,18 @@ class ChemRefDataMiscUtils(object):
                         # to handle missing trailing newlines =
                         outfile.write("\n")
             os.chmod(tPath, 0o664)
+
+            if avoidUpdate and os.path.exists(outPath):
+                if filecmp.cmp(tPath, outPath, shallow=False):
+                    os.unlink(tPath)
+                    return(True, False)
+
             shutil.move(tPath, outPath)
-            return True
+            return (True, True)
         except:
-            return False
+            traceback.print_exc(file=sys.stderr)
+            return (False, False)
+
 
     def updateChemCompSupportFiles(self, idMaxLen=3, numProc=4):
         """  Create full idlist, pathlist, concatenated chemical component dictionary file,
@@ -414,3 +452,219 @@ class ChemRefDataMiscUtils(object):
                                                                        time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
                                                                        endTime - startTime))
         return []
+
+    def updatePrdSupportFiles(self, idMaxLen=14, numProc=4):
+        """  Create full idlist, pathlist, concatenated PRD dictionary file,
+        serialized dictionary, and dictionary index.
+        """
+        ok1 = ok2 = ok3 = ok4 = ok5 = ok6 = False
+        pathList, familyPathList, ccPathList = self.getBirdPathList()
+
+#        self.writeList(idList, self.__pathCCIdList)
+#        self.writeList(pathList, self.__pathCCPathList)
+        (ok1, updated) = self.concatPathListExt(pathList, self.__pathPrdDictFile, avoidUpdate = True)
+        # If prd file updated, then need serial
+        if ok1 and updated:
+            ok2 = self.__serializePrdDictOp('prd')
+        else:
+            ok2 = True
+
+        (ok3, updated) = self.concatPathListExt(ccPathList, self.__pathPrdCcFile, avoidUpdate = True)
+        if ok3 and updated:
+            ok4 = self.__serializePrdDictOp('prdcc')
+        else:
+            ok4 = True
+
+        # PRD summary files
+        ok5 = self.__generatePrdSummaryOp()
+
+        # Get family mappings
+        ok6 = self.__generatePrdFamilyMapOp(familyPathList)
+
+            
+#        #
+#        ok2 = 
+#        ok3 = self.__indexDictOp()
+#        return ok1 and ok2 and ok3
+        return ok1 and ok2 and ok3 and ok4 and ok5 and ok6
+
+
+    def __serializePrdDictOp(self, which, minSize=10):
+        """  Serialize chemical component dictionary from concatenated dictionary text.
+        """
+        self.__lfh.write("\nStarting %s %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name, which))
+        startTime = time.time()
+
+        fList = {'prd' : [ self.__pathPrdDictFile, self.__pathPrdDictSerial, "prd-dict-serialize.log"],
+                 'prdcc' : [ self.__pathPrdCcFile, self.__pathPrdCcSerial, "prdcc-dict-serialize.log"],
+                 }
+        try:
+            ref = fList[which]
+            outPathTmp = self.__makeTempPath(ref[1])
+            inpPath = ref[0]
+            logPath = os.path.join(self.__pathPrdDictRef, ref[2])
+            dp = RcsbDpUtility(tmpPath=self.__sessionPath, siteId=self.__siteId, verbose=self.__verbose)
+            #
+            dp.setDebugMode(flag=self.__debug)
+            dp.imp(inpPath)
+            dp.op("chem-comp-dict-serialize")
+            dp.expLog(logPath)
+            dp.exp(outPathTmp)
+            fSize = dp.expSize()
+            if fSize > minSize:
+                os.chmod(outPathTmp, 0o664)
+                shutil.move(outPathTmp, ref[1])
+                os.chmod(ref[1], 0o664)
+                ok = True
+            else:
+                ok = False
+            if not self.__debug:
+                dp.cleanup()
+            endTime0 = time.time()
+            if self.__verbose:
+                self.__lfh.write("\nSerialized dictionary file size %d  in %.2f seconds\n" % (fSize, endTime0 - startTime))
+            return ok
+        except:
+            traceback.print_exc(file=self.__lfh)
+        return False
+
+    def __generatePrdSummaryOp(self, minSize=10):
+        """Generate summary cif file and serialize it"""
+        self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
+        startTime = time.time()
+
+        ccSDBin = self.__pathCCDictSerial
+        prdSDBin = self.__pathPrdDictSerial        
+        outPathTmp = self.__makeTempPath(self.__pathPrdSummary)
+        outPathSerialTmp = self.__makeTempPath(self.__pathPrdSummarySerial)
+
+        ok1 = ok2 = False
+        try:
+            logPath = os.path.join(self.__pathPrdDictRef, "prd-summary.log")
+            dp = RcsbDpUtility(tmpPath=self.__sessionPath, siteId=self.__siteId, verbose=self.__verbose)
+            dp.setDebugMode(flag=self.__debug)
+            dp.imp(prdSDBin)
+            dp.addInput(name="ccsdb_path", value = ccSDBin)
+            dp.op("prd-summary-serialize")
+            dp.expLog(logPath)
+            dp.expList([outPathTmp, outPathSerialTmp])
+            # If changed....
+            updated = False
+            f1 = DataFile(outPathTmp)
+            if f1.srcFileExists():
+                ok1 = True
+                fSize = f1.srcFileSize()
+                if fSize > minSize:
+                    outPath = self.__pathPrdSummary
+                    if os.path.exists(outPath):
+                        if not filecmp.cmp(outPathTmp, outPath, shallow=False):
+                            updated = True
+                            os.unlink(outPath)
+                    else:
+                        updated = True
+
+                    if updated:
+                        os.chmod(outPathTmp, 0o664)
+                        shutil.move(outPathTmp, outPath)
+                        os.chmod(outPath, 0o664)
+                    else:
+                        f1.remove()
+            else:
+                ok1 = False
+
+            f1 = DataFile(outPathSerialTmp)
+            if updated:
+                if f1.srcFileExists():
+                    ok2 = True
+
+                    updated = False
+                    fSize = f1.srcFileSize()
+                    if fSize > minSize:
+                        outPath = self.__pathPrdSummarySerial
+                        updated = False
+                        if os.path.exists(outPath):
+                            if not filecmp.cmp(outPathSerialTmp, outPath, shallow=False):
+                                os.unlink(outPath)
+                                updated = True
+                        else:
+                            updated = True
+
+                    if updated:
+                        os.chmod(outPathSerialTmp, 0o664)
+                        shutil.move(outPathSerialTmp, outPath)
+                        os.chmod(outPath, 0o664)
+                    else:
+                        f1.remove()
+            else:
+                f1.remove()
+                ok2 = False
+
+            if not self.__debug:
+                dp.cleanup()
+            endTime0 = time.time()
+
+            #self.__lfh.write("\nDictionary summary update ok1 %s ok2 %s\n" % (ok1, ok2))
+            if self.__verbose:
+                self.__lfh.write("\nDictionary summary file size %d  in %.2f seconds\n" % (fSize, endTime0 - startTime))
+            return ok1 and ok2
+
+        except:
+            traceback.print_exc(file=self.__lfh)
+
+        return False
+
+    def __generatePrdFamilyMapOp(self, familyPathList, minSize=10):
+        """Generate family mapping file"""
+        self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
+        startTime = time.time()
+
+        # We do not retain concatenation when done...
+        tempFamilyFile = os.path.join(self.__pathPrdDictRef, "prd-family-temp.cif")
+        outPathTmp = self.__makeTempPath(self.__pathPrdFamilyMapping)
+
+        ok = self.concatPathList(familyPathList, tempFamilyFile)
+
+
+        if ok:
+            try:
+                logPath = os.path.join(self.__pathPrdDictRef, "prd-family.log")
+                dp = RcsbDpUtility(tmpPath=self.__sessionPath, siteId=self.__siteId, verbose=self.__verbose)
+                dp.setDebugMode(flag=self.__debug)
+                dp.imp(tempFamilyFile)
+                dp.op("prd-family-mapping")
+                dp.expLog(logPath)
+                dp.exp(outPathTmp)
+                fSize = dp.expSize()
+                if fSize > minSize:
+                    outPath = self.__pathPrdFamilyMapping
+                    updated = False
+                    if os.path.exists(outPath):
+                        if not filecmp.cmp(outPathTmp, outPath, shallow=False):
+                            os.unlink(outPath)
+                            updated = True
+                    else:
+                        updated = True
+
+                    if updated:
+                        os.chmod(outPathTmp, 0o664)
+                        shutil.move(outPathTmp, outPath)
+                        os.chmod(outPath, 0o664)
+                    else:
+                        try:
+                            os.unlink(outPathTmp)
+                        except:
+                            pass
+                    # Remove tempFamilyFile
+                    try:
+                        os.unlink(tempFamilyFile)
+                    except:
+                        pass
+
+                if not self.__debug:
+                    dp.cleanup()
+                return True
+
+            except:
+                traceback.print_exc(file=self.__lfh)
+
+        return False

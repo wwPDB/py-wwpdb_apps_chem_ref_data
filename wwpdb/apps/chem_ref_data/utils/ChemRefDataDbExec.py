@@ -123,6 +123,7 @@ class ChemRefDataDbExec(object):
             mu = ChemRefDataMiscUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
             mu.updateChemCompSupportFiles()
             mu.updateChemCompPySupportFiles()
+            mu.updatePrdSupportFiles()
         except:
             traceback.print_exc(file=self.__lfh)
 
