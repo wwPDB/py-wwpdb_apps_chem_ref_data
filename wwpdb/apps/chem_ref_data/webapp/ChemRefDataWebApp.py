@@ -42,6 +42,7 @@ __version__ = "V0.07"
 
 import os
 import sys
+import shutil
 import time
 import types
 import traceback
@@ -220,6 +221,7 @@ class ChemRefDataWebAppWorker(object):
                            '/service/chemref/adminops': '_chemRefAdminOps',
                            '/service/chemref/inline_idops': '_chemRefInlineIdOps',
                            '/service/chemref/inline_fileops': '_chemRefInlineFileOps',
+                           '/service/chemref/editor': '_chemRefEditorOps',
                            }
 
     def doOp(self):
@@ -1122,6 +1124,66 @@ class ChemRefDataWebAppWorker(object):
         logger.info("+ChemRefDataWebApp.__uploadFile() UploadFileName  %s" % self.__reqObj.getValue("UploadFileName"))
         return True
 
+    def _chemRefEditorOps(self):
+        """  Launch chemical component editor based on id code.
+        """
+        self.__getSession()
+        self.__reqObj.setReturnFormat(return_format="json")
+        rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
+        #
+        idCode = self.__reqObj.getValue('idcode')
+        logger.info("+ChemRefDataWebAppWorker._chemRefEditorOps() idCode %r\n" % idCode)
+        #
+        if not idCode:
+            rC.setError(errMsg='Please input CC ID')
+            return rC
+        #
+        if len(idCode) > 3:
+            rC.setError(errMsg='Invalid CC ID')
+            return rC
+        #
+        filePath = self.__crPI.getFilePath(idCode=idCode)
+        if not filePath:
+            rC.setError(errMsg='Invalid CC ID')
+        else:
+            localFilePath = os.path.join(self.__sessionPath, idCode.upper() + ".cif")
+            shutil.copyfile(filePath, localFilePath)
+            rC.setStatus(statusMsg="Load completed")
+            #
+            myD = {}
+            myD['sessionid'] = self.__sessionId
+            myD['instanceid'] = idCode.upper()
+            myD['processing_site'] = self.__cI.get('SITE_NAME').upper()
+            myD['urlcifpath'] = os.path.join(self.__rltvSessionPath, idCode.upper() + ".cif")
+            htmlText = self.__processTemplate("templates/cc_edit_tmplt.html", myD)
+            #
+            htmlFilePath = os.path.join(self.__sessionPath, idCode.upper() + ".html")
+            ofh = open(htmlFilePath, "w")
+            ofh.write(htmlText + "\n")
+            ofh.close()
+            #
+            rC.setLocation(os.path.join(self.__rltvSessionPath, idCode.upper() + ".html"))
+        #
+        return rC
+
+    def __processTemplate(self, fn, parameterDict={}):
+        """ Read the input HTML template data file and perform the key/value substitutions in the
+            input parameter dictionary.
+            
+            :Params:
+                ``parameterDict``: dictionary where
+                key = name of subsitution placeholder in the template and
+                value = data to be used to substitute information for the placeholder
+                
+            :Returns:
+                string representing entirety of content with subsitution placeholders now replaced with data
+        """
+        tPath = self.__reqObj.getValue("TemplatePath")
+        fPath = os.path.join(tPath, fn)
+        ifh = open(fPath, "r")
+        sIn=ifh.read()
+        ifh.close()
+        return (  sIn % parameterDict )
 
 if __name__ == '__main__':
     sTool = ChemRefDataWebApp()
