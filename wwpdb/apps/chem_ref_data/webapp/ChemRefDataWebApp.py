@@ -48,13 +48,13 @@ import types
 import traceback
 import ntpath
 
+from wwpdb.io.file.mmCIFUtil import mmCIFUtil
 from wwpdb.utils.session.WebRequest import InputRequest, ResponseContent
 from wwpdb.utils.session.UtilDataStore import UtilDataStore
 #
 from wwpdb.apps.chem_ref_data.report.BirdReport import BirdReport
 from wwpdb.apps.chem_ref_data.report.ChemCompReport import ChemCompReport
 from wwpdb.apps.chem_ref_data.report.ChemRefReportDepictBootstrap import ChemRefReportDepictBootstrap
-
 #
 from wwpdb.apps.chem_ref_data.search.ChemRefSearch import ChemRefSearch
 from wwpdb.apps.chem_ref_data.search.ChemRefSearchDepictBootstrap import ChemRefSearchDepictBootstrap
@@ -1131,30 +1131,42 @@ class ChemRefDataWebAppWorker(object):
         self.__reqObj.setReturnFormat(return_format="json")
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
         #
-        idCode = self.__reqObj.getValue('idcode')
+        idCode = self.__reqObj.getValue("idcode")
         logger.info("+ChemRefDataWebAppWorker._chemRefEditorOps() idCode %r\n" % idCode)
         #
         if not idCode:
-            rC.setError(errMsg='Please input CC ID')
+            rC.setError(errMsg="Please input CC ID")
             return rC
         #
         if len(idCode) > 3:
-            rC.setError(errMsg='Invalid CC ID')
+            rC.setError(errMsg="Invalid CC ID")
             return rC
         #
         filePath = self.__crPI.getFilePath(idCode=idCode)
         if not filePath:
-            rC.setError(errMsg='Invalid CC ID')
+            rC.setError(errMsg="Invalid CC ID")
         else:
             localFilePath = os.path.join(self.__sessionPath, idCode.upper() + ".cif")
             shutil.copyfile(filePath, localFilePath)
             rC.setStatus(statusMsg="Load completed")
             #
+            relStatus = ""
+            try:
+                cifObj = mmCIFUtil(filePath=localFilePath)
+                relStatus = cifObj.GetSingleValue("chem_comp", "pdbx_release_status").strip().upper()
+            except:
+                traceback.print_exc(file=self.__lfh)
+            #
             myD = {}
-            myD['sessionid'] = self.__sessionId
-            myD['instanceid'] = idCode.upper()
-            myD['processing_site'] = self.__cI.get('SITE_NAME').upper()
-            myD['urlcifpath'] = os.path.join(self.__rltvSessionPath, idCode.upper() + ".cif")
+            myD["sessionid"] = self.__sessionId
+            myD["instanceid"] = idCode.upper()
+            myD["processing_site"] = self.__cI.get("SITE_NAME").upper()
+            myD["urlcifpath"] = os.path.join(self.__rltvSessionPath, idCode.upper() + ".cif")
+            if relStatus == "REL":
+                myD["ccmodel"] = "compCompModelRel"
+            else:
+                myD["ccmodel"] = "compCompModel"
+            #
             htmlText = self.__processTemplate("templates/cc_edit_tmplt.html", myD)
             #
             htmlFilePath = os.path.join(self.__sessionPath, idCode.upper() + ".html")
