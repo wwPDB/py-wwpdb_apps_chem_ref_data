@@ -45,7 +45,7 @@ setup(
     #
     install_requires=['wwpdb.utils.config', 'wwpdb.utils.db ~= 0.10',
                       'wwpdb.utils.session ~= 0.4', 'wwpdb.io >= 0.2',
-                      'mmcif.utils', 'wwpdb.utils.oe_util', 'jellyfish',
+                      'mmcif.utils ~= 0.18.dev2', 'wwpdb.utils.oe_util', 'jellyfish',
                       'wwpdb.utils.cc_dict_util', 'wwpdb.utils.dp ~= 0.19.dev1',
                       'rcsb.utils.multiproc', 'wwpdb.utils.ws_utils'],
     packages=find_packages(exclude=['wwpdb.apps.tests-chem_ref_data', 'mock-data']),
