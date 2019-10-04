@@ -62,10 +62,13 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         if self.__st.getStyleId() in ["CHEM_COMP_V1"]:
             self.__reportCategories = [
                 ('chem_comp', 'chem_comp', 'column-wise'),
+                ('pdbx_chem_comp_synonyms', 'synonyms', 'row-wise'),
                 ('chem_comp_atom', 'chem_comp_atom', 'row-wise'),
                 ('chem_comp_bond', 'chem_comp_bond', 'row-wise'),
                 ('pdbx_chem_comp_descriptor', 'descriptor', 'row-wise'),
                 ('pdbx_chem_comp_identifier', 'identifier', 'row-wise'),
+                ('pdbx_chem_comp_related', 'related', 'row-wise'),
+                ('pdbx_chem_comp_atom_related', 'atom_related', 'row-wise'),
                 ('pdbx_chem_comp_audit', 'audit', 'row-wise')
             ]
         elif self.__st.getStyleId() in ["BIRD_V1"]:
