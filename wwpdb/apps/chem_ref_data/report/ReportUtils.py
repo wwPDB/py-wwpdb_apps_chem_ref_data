@@ -98,5 +98,5 @@ class ReportUtils(object):
         except:
             logger.exception("Failing for pathList %r" % pathList)
 
-        return zip(idList, oemList, idList)
+        return list(zip(idList, oemList, idList))
 

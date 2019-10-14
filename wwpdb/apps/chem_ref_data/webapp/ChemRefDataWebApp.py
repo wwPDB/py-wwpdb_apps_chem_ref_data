@@ -102,7 +102,7 @@ class ChemRefDataWebApp(object):
         self.__topSessionPath = self.__cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH')
         #
 
-        if isinstance(parameterDict, types.DictType):
+        if isinstance(parameterDict, dict):
             self.__myParameterDict = parameterDict
         else:
             self.__myParameterDict = {}
@@ -694,7 +694,7 @@ class ChemRefDataWebAppWorker(object):
             logger.debug("\n+ChemRefDataWebAppWorker._chemRefFullSearchAutoCompleteOp() -  term %s for type %s length %d \n"
                          % (term, searchType, len(vList)))
         except Exception as e:
-            logger.exception("Failing with %r" % e.message)
+            logger.exception("Failing with %r" % str(e))
 
         rC.setData(vList)
         return rC
@@ -728,7 +728,7 @@ class ChemRefDataWebAppWorker(object):
             crs.setSearch(queryType, searchType, searchTarget, searchName, inputType, compareType)
             rD = crs.doSearch()
         except Exception as e:
-            logger.exception("Failing with %r" % e.message)
+            logger.exception("Failing with %r" % str(e))
         #
         renderBsTable = True
         ##
@@ -1043,8 +1043,13 @@ class ChemRefDataWebAppWorker(object):
         """
         # Gracefully exit if no file is provide in the request object -
         fs = self.__reqObj.getRawValue(fileTag)
-        if ((fs is None) or (isinstance(fs, types.StringType))):
-            return False
+        if sys.version_info[0] < 3:
+            if ((fs is None) or (isinstance(fs, types.StringType))):
+                return False
+        else:
+            if (fs is None) or isinstance(fs, (str, bytes)):
+                return False
+
         return True
 
     def __uploadFile(self, fileTag='file', fileTypeTag='filetype'):
@@ -1075,7 +1080,7 @@ class ChemRefDataWebAppWorker(object):
             # Store upload file in session directory -
 
             fPathAbs = os.path.join(self.__sessionPath, fName)
-            ofh = open(fPathAbs, 'w')
+            ofh = open(fPathAbs, 'wb')
             ofh.write(fs.file.read())
             ofh.close()
             self.__reqObj.setValue("UploadFileName", fName)
