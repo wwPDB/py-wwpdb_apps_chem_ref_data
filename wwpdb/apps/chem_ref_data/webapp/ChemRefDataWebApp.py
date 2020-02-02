@@ -890,7 +890,8 @@ class ChemRefDataWebAppWorker(object):
             mu = ChemRefDataMiscUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
             ok1 = mu.updateChemCompSupportFiles()
             ok2 = mu.updateChemCompPySupportFiles()
-            ok = ok1 and ok2
+            ok3 = mu.updatePrdSupportFiles()
+            ok = ok1 and ok2 and ok3
         except:
             traceback.print_exc(file=self.__lfh)
             ok = False
