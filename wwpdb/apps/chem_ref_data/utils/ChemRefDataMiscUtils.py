@@ -105,6 +105,12 @@ class ChemRefDataMiscUtils(object):
         self.__pathPrdSummarySerial = os.path.join(self.__pathPrdDictRef, "prd_summary.sdb")
         self.__pathPrdFamilyMapping = os.path.join(self.__pathPrdDictRef, "PrdFamilyIDMapping.lst")
         #
+        self.__makeTopPaths()
+
+    def __makeTopPaths(self):
+        for top_path in (self.__ccDictPath, self.__pathPrdDictRef):
+            if not os.path.exists(top_path):
+                os.makedirs(top_path)
 
     def getBirdPathList(self):
         """  Get pathlist for BIRD PRD and PRD Family data.
