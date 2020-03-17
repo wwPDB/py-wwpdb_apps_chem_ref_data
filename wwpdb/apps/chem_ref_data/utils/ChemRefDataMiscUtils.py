@@ -105,6 +105,12 @@ class ChemRefDataMiscUtils(object):
         self.__pathPrdSummarySerial = os.path.join(self.__pathPrdDictRef, "prd_summary.sdb")
         self.__pathPrdFamilyMapping = os.path.join(self.__pathPrdDictRef, "PrdFamilyIDMapping.lst")
         #
+        self.__makeTopPaths()
+
+    def __makeTopPaths(self):
+        for top_path in (self.__ccDictPath, self.__pathPrdDictRef, self.__pathPrdChemCompCVS, self.__projName):
+            if not os.path.exists(top_path):
+                os.makedirs(top_path)
 
     def getBirdPathList(self):
         """  Get pathlist for BIRD PRD and PRD Family data.
@@ -457,6 +463,7 @@ class ChemRefDataMiscUtils(object):
         """  Create full idlist, pathlist, concatenated PRD dictionary file,
         serialized dictionary, and dictionary index.
         """
+        startTime = time.time()
         ok1 = ok2 = ok3 = ok4 = ok5 = ok6 = False
         pathList, familyPathList, ccPathList = self.getBirdPathList()
 
@@ -481,7 +488,11 @@ class ChemRefDataMiscUtils(object):
         # Get family mappings
         ok6 = self.__generatePrdFamilyMapOp(familyPathList)
 
-            
+        endTime = time.time()
+        self.__lfh.write("\nCompleted %s %s at %s (%.2f seconds)\n" % (self.__class__.__name__,
+                                                                       sys._getframe().f_code.co_name,
+                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
+                                                                       endTime - startTime))
 #        #
 #        ok2 = 
 #        ok3 = self.__indexDictOp()

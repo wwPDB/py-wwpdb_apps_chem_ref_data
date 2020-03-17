@@ -125,6 +125,7 @@ class ChemRefDataDbExec(object):
             mu.updateChemCompPySupportFiles()
             mu.updatePrdSupportFiles()
         except:
+            self.__lfh.write("\nFailed %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
             traceback.print_exc(file=self.__lfh)
 
 
