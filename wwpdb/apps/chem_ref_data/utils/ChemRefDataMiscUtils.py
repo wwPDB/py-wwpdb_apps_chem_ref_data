@@ -463,6 +463,7 @@ class ChemRefDataMiscUtils(object):
         """  Create full idlist, pathlist, concatenated PRD dictionary file,
         serialized dictionary, and dictionary index.
         """
+        startTime = time.time()
         ok1 = ok2 = ok3 = ok4 = ok5 = ok6 = False
         pathList, familyPathList, ccPathList = self.getBirdPathList()
 
@@ -487,7 +488,11 @@ class ChemRefDataMiscUtils(object):
         # Get family mappings
         ok6 = self.__generatePrdFamilyMapOp(familyPathList)
 
-            
+        endTime = time.time()
+        self.__lfh.write("\nCompleted %s %s at %s (%.2f seconds)\n" % (self.__class__.__name__,
+                                                                       sys._getframe().f_code.co_name,
+                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
+                                                                       endTime - startTime))
 #        #
 #        ok2 = 
 #        ok3 = self.__indexDictOp()
