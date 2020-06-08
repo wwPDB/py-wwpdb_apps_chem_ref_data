@@ -80,6 +80,8 @@ class ChemRefDataCvsUtils(object):
         vc.setRepositoryPath(host=cvsRepositoryHost, path=cvsRepositoryPath)
         vc.setAuthInfo(user=cvsUser, password=cvsPassword)
         vc.setSandBoxTopPath(self.__sbTopPath)
+        cvs_path = vc.getSandBoxTopPath()
+        self.__lfh.write('+_setupCvs - cvs sandbox path: {}'.format(cvs_path))
         vcAd = CvsAdmin(tmpPath=self.__sessionPath, verbose=self.__verbose, log=self.__lfh)
         vcAd.setRepositoryPath(host=cvsRepositoryHost, path=cvsRepositoryPath)
         vcAd.setAuthInfo(user=cvsUser, password=cvsPassword)
@@ -142,17 +144,20 @@ class ChemRefDataCvsUtils(object):
         dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
         dataList = [(cvsProjectName, a, True) for a in dataS]
         #
-        mpu = MultiProcUtil(verbose=self.__debug)
-        mpu.set(workerObj=self.__vc, workerMethod="updateList")
-        ok, failList, resultList, diagList = mpu.runMulti(dataList=dataList, numProc=numProc)
-        endTime = time.time()
-        if self.__verbose:
-            self.__lfh.write("\n+ChemRefDataCvsUtils(syncChemComp) CVS %s update status is: %r in %.2f seconds\n" %
-                             (cvsProjectName, ok, endTime - startTime))
+        sandbox_path = self.__vc.getSandBoxTopPath()            
+        if sandbox_path:
+            mpu = MultiProcUtil(verbose=self.__debug)
+            mpu.set(workerObj=self.__vc, workerMethod="updateList")
+            ok, failList, resultList, diagList = mpu.runMulti(dataList=dataList, numProc=numProc)
+            endTime = time.time()
+            if self.__verbose:
+                self.__lfh.write("\n+ChemRefDataCvsUtils(syncChemComp) CVS %s update status is: %r in %.2f seconds\n" %
+                                (cvsProjectName, ok, endTime - startTime))
 
-            if len(failList) > 0:
-                self.__lfh.write("\n+ChemRefDataCvsUtils(syncChemComp) diagnostics %r\n" % failList)
-        return (ok, diagList)
+                if len(failList) > 0:
+                    self.__lfh.write("\n+ChemRefDataCvsUtils(syncChemComp) diagnostics %r\n" % failList)
+            return (ok, diagList)
+        return (False, ['no sandbox path'])
 
     def updateFile(self, filePath):
         """  Update the input file within the appropriate repository.  File names must obey repository
