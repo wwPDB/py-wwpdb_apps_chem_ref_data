@@ -548,6 +548,7 @@ class ChemRefDataMiscUtils(object):
         prdSDBin = self.__pathPrdDictSerial        
         outPathTmp = self.__makeTempPath(self.__pathPrdSummary)
         outPathSerialTmp = self.__makeTempPath(self.__pathPrdSummarySerial)
+        fSize = 0
 
         ok1 = ok2 = False
         try:
