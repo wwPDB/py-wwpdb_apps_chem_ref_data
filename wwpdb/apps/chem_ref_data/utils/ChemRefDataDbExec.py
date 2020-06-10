@@ -180,6 +180,12 @@ def main():
 
     crx = ChemRefDataDbExec(defSiteId='WWWDPB_INTERNAL_RU', sessionId=None, verbose=options.verbose, log=sys.stderr)
 
+    if options.checkout:
+        if options.db == 'CC':
+            crx.doCheckoutChemComp()
+        if options.db == 'PRD':
+            crx.doCheckoutPRD()
+
     if options.sync:
         if options.db == 'CC':
             crx.doSyncChemComp(options.numProc)
@@ -191,12 +197,6 @@ def main():
             crx.doLoadChemCompMulti(options.numProc)
         elif options.db == 'PRD':
             crx.doLoadBird()
-
-    if options.checkout:
-        if options.db == 'CC':
-            crx.doCheckoutChemComp()
-        if options.db == 'PRD':
-            crx.doCheckoutPRD()
 
     if options.update:
         crx.doUpdateSupportFiles()
