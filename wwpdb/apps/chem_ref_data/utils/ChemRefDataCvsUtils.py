@@ -86,6 +86,9 @@ class ChemRefDataCvsUtils(object):
 
         return vc, vcAd
 
+    def getSandBoxTopPath(self):
+        return self.__vc.getSandBoxTopPath()
+
     def syncBird(self):
         """  Update the CVS repositories related to BIRD PRD, family and chemical component definitions.
         """

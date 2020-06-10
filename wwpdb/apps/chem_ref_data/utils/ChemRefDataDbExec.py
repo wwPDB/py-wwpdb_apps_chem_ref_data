@@ -101,6 +101,10 @@ class ChemRefDataDbExec(object):
         """
         try:
             cvsu = ChemRefDataCvsUtils(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
+            sandbox_path = cvsu.getSandBoxTopPath()
+            if sandbox_path:
+                if not os.path.exists(sandbox_path):
+                    os.makedirs(sandbox_path)
             cvsu.syncChemComp(numProc)
         except:
             traceback.print_exc(file=self.__lfh)
@@ -110,6 +114,10 @@ class ChemRefDataDbExec(object):
         """
         try:
             cvsu = ChemRefDataCvsUtils(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
+            sandbox_path = cvsu.getSandBoxTopPath()
+            if sandbox_path:
+                if not os.path.exists(sandbox_path):
+                    os.makedirs(sandbox_path)
             cvsu.syncBird()
         except:
             traceback.print_exc(file=self.__lfh)
