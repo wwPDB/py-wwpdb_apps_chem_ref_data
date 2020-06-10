@@ -96,6 +96,19 @@ class ChemRefDataDbExec(object):
         except:
             traceback.print_exc(file=self.__lfh)
 
+    def doCheckoutChemComp(self):
+        """
+        """
+        try:
+            cvsu = ChemRefDataCvsUtils(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
+            sandbox_path = cvsu.getSandBoxTopPath()
+            if sandbox_path:
+                if not os.path.exists(sandbox_path):
+                    os.makedirs(sandbox_path)
+            cvsu.checkoutChemCompSerial()
+        except:
+            traceback.print_exc(file=self.__lfh)
+
     def doSyncChemComp(self, numProc):
         """
         """
@@ -143,6 +156,7 @@ def main():
 
     parser.add_option("--load", dest="load", action='store_true', default=False, help="Load database from repository sandbox")
     parser.add_option("--sync", dest="sync", action='store_true', default=False, help="Synchronize repository sandbox")
+    parser.add_option("--checkout", dest="checkout", action='store_true', default=False, help="Checkout repository into sandbox")
     parser.add_option("--update", dest="update", action='store_true', default=False, help="Update support files from repository sandbox")
 
     parser.add_option("--db", dest="db", default='PRD', help="Database to load (CC,PRD)")
@@ -166,6 +180,10 @@ def main():
             crx.doLoadChemCompMulti(options.numProc)
         elif options.db == 'PRD':
             crx.doLoadBird()
+
+    if options.checkout:
+        if options.db == 'CC':
+            crx.doCheckoutChemComp()
 
     if options.update:
         crx.doUpdateSupportFiles()

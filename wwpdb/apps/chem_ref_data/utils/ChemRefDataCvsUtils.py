@@ -117,6 +117,23 @@ class ChemRefDataCvsUtils(object):
         ok = ok1 and ok2 and ok3
         return (ok, textList)
 
+    def checkoutChemCompSerial(self):
+        """
+        checkout the CVS repository
+        """
+        textList = []
+        cvsProjectName = self.__pI.assignCvsProjectName(repType="CC")
+        ok, text = self.__vc.checkOut(projectPath=cvsProjectName)
+        if self.__verbose:
+            self.__lfh.write("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r\n" % (cvsProjectName, ok))
+            #self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
+        textList.append(text[:100])
+        #
+        # self.__vc.cleanup()
+        #
+        return (ok, textList)
+
+
     def syncChemCompSerial(self):
         """  Update the CVS repositories related to the chemical component dicitonary.
         """
