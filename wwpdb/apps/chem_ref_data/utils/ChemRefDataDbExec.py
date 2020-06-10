@@ -128,7 +128,8 @@ class ChemRefDataDbExec(object):
             sandbox_path = cvsu.getSandBoxTopPath()
             if sandbox_path:
                 if not os.path.exists(sandbox_path):
-                    os.makedirs(sandbox_path)
+                    self.__lfh.write('sandbox path {} does not exist - run checkout first'.format(sandbox_path))
+                    return False
             cvsu.syncChemComp(numProc)
         except:
             traceback.print_exc(file=self.__lfh)
@@ -141,7 +142,8 @@ class ChemRefDataDbExec(object):
             sandbox_path = cvsu.getSandBoxTopPath()
             if sandbox_path:
                 if not os.path.exists(sandbox_path):
-                    os.makedirs(sandbox_path)
+                    self.__lfh.write('sandbox path {} does not exist - run checkout first'.format(sandbox_path))
+                    return False
             cvsu.syncBird()
         except:
             traceback.print_exc(file=self.__lfh)
