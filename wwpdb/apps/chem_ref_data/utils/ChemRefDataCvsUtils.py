@@ -119,10 +119,38 @@ class ChemRefDataCvsUtils(object):
 
     def checkoutChemCompSerial(self):
         """
-        checkout the CVS repository
+        checkout the CVS repository for the CCD
         """
         textList = []
         cvsProjectName = self.__pI.assignCvsProjectName(repType="CC")
+        ok, text = self.__vc.checkOut(projectPath=cvsProjectName)
+        if self.__verbose:
+            self.__lfh.write("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r\n" % (cvsProjectName, ok))
+            #self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
+        textList.append(text[:100])
+        #
+        # self.__vc.cleanup()
+        #
+        return (ok, textList)
+
+    def checkoutPRDSerial(self):
+        """
+        checkout the CVS repository for the PRD
+        """
+        textList = []
+        cvsProjectName = self.__pI.assignCvsProjectName(repType="PRD")
+        ok, text = self.__vc.checkOut(projectPath=cvsProjectName)
+        if self.__verbose:
+            self.__lfh.write("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r\n" % (cvsProjectName, ok))
+            #self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
+        textList.append(text[:100])
+        cvsProjectName = self.__pI.assignCvsProjectName(repType="PRD_FAMILY")
+        ok, text = self.__vc.checkOut(projectPath=cvsProjectName)
+        if self.__verbose:
+            self.__lfh.write("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r\n" % (cvsProjectName, ok))
+            #self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
+        textList.append(text[:100])
+        cvsProjectName = self.__pI.assignCvsProjectName(repType="PRDCC")
         ok, text = self.__vc.checkOut(projectPath=cvsProjectName)
         if self.__verbose:
             self.__lfh.write("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r\n" % (cvsProjectName, ok))

@@ -109,6 +109,17 @@ class ChemRefDataDbExec(object):
         except:
             traceback.print_exc(file=self.__lfh)
 
+    def doCheckoutPRD(self):
+        try:
+            cvsu = ChemRefDataCvsUtils(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
+            sandbox_path = cvsu.getSandBoxTopPath()
+            if sandbox_path:
+                if not os.path.exists(sandbox_path):
+                    os.makedirs(sandbox_path)
+            cvsu.checkoutPRDSerial()
+        except:
+            traceback.print_exc(file=self.__lfh) 
+
     def doSyncChemComp(self, numProc):
         """
         """
@@ -184,6 +195,8 @@ def main():
     if options.checkout:
         if options.db == 'CC':
             crx.doCheckoutChemComp()
+        if options.db == 'PRD':
+            crx.doCheckoutPRD()
 
     if options.update:
         crx.doUpdateSupportFiles()
