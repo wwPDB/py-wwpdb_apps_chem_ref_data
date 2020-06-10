@@ -96,12 +96,44 @@ class ChemRefDataDbExec(object):
         except:
             traceback.print_exc(file=self.__lfh)
 
+    def doCheckoutChemComp(self):
+        """
+        """
+        try:
+            cvsu = ChemRefDataCvsUtils(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
+            sandbox_path = cvsu.getSandBoxTopPath()
+            if sandbox_path:
+                if not os.path.exists(sandbox_path):
+                    os.makedirs(sandbox_path)
+            cvsu.checkoutChemCompSerial()
+        except:
+            traceback.print_exc(file=self.__lfh)
+
+    def doCheckoutPRD(self):
+        try:
+            cvsu = ChemRefDataCvsUtils(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
+            sandbox_path = cvsu.getSandBoxTopPath()
+            if sandbox_path:
+                if not os.path.exists(sandbox_path):
+                    os.makedirs(sandbox_path)
+            cvsu.checkoutPRDSerial()
+        except:
+            traceback.print_exc(file=self.__lfh) 
+
     def doSyncChemComp(self, numProc):
         """
         """
         try:
             cvsu = ChemRefDataCvsUtils(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
-            cvsu.syncChemComp(numProc)
+            sandbox_path = cvsu.getSandBoxTopPath()
+            if sandbox_path:
+                if not os.path.exists(sandbox_path):
+                    self.__lfh.write('sandbox path {} does not exist - run checkout first'.format(sandbox_path))
+                    return False
+                cvsu.syncChemComp(numProc)
+            else:
+                self.__lfh.write('sandbox path is None - exiting')
+                return False
         except:
             traceback.print_exc(file=self.__lfh)
 
@@ -110,7 +142,15 @@ class ChemRefDataDbExec(object):
         """
         try:
             cvsu = ChemRefDataCvsUtils(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
-            cvsu.syncBird()
+            sandbox_path = cvsu.getSandBoxTopPath()
+            if sandbox_path:
+                if not os.path.exists(sandbox_path):
+                    self.__lfh.write('sandbox path {} does not exist - run checkout first'.format(sandbox_path))
+                    return False
+                cvsu.syncBird()
+            else:
+                self.__lfh.write('sandbox path is None - exiting')
+                return False
         except:
             traceback.print_exc(file=self.__lfh)
 
@@ -135,6 +175,7 @@ def main():
 
     parser.add_option("--load", dest="load", action='store_true', default=False, help="Load database from repository sandbox")
     parser.add_option("--sync", dest="sync", action='store_true', default=False, help="Synchronize repository sandbox")
+    parser.add_option("--checkout", dest="checkout", action='store_true', default=False, help="Checkout repository into sandbox")
     parser.add_option("--update", dest="update", action='store_true', default=False, help="Update support files from repository sandbox")
 
     parser.add_option("--db", dest="db", default='PRD', help="Database to load (CC,PRD)")
@@ -146,6 +187,12 @@ def main():
     (options, args) = parser.parse_args()
 
     crx = ChemRefDataDbExec(defSiteId='WWWDPB_INTERNAL_RU', sessionId=None, verbose=options.verbose, log=sys.stderr)
+
+    if options.checkout:
+        if options.db == 'CC':
+            crx.doCheckoutChemComp()
+        if options.db == 'PRD':
+            crx.doCheckoutPRD()
 
     if options.sync:
         if options.db == 'CC':
