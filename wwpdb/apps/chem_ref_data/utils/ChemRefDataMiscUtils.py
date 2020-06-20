@@ -108,7 +108,7 @@ class ChemRefDataMiscUtils(object):
         self.__makeTopPaths()
 
     def __makeTopPaths(self):
-        for top_path in (self.__ccDictPath, self.__pathPrdDictRef, self.__pathPrdChemCompCVS, self.__projName):
+        for top_path in (self.__ccDictPath, self.__pathPrdDictRef, self.__pathPrdChemCompCVS):
             if not os.path.exists(top_path):
                 os.makedirs(top_path)
 
