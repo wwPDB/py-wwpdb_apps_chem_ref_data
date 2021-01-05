@@ -74,21 +74,21 @@ class ChemRefSearchBase(MyConnectionBase):
         try:
             return self._queryTypeDict[queryType]['class']
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
         return None
 
     def _getQueryAutoComplete(self, queryType):
         try:
             return self._queryTypeDict[queryType]['autocomplete']
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
         return False
 
     def _getQueryServiceType(self, queryType):
         try:
             return self._queryTypeDict[queryType]['service']
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
         return None
 
     ##
@@ -115,7 +115,7 @@ class ChemRefSearchBase(MyConnectionBase):
             self._displayTypeDict[name] = displayTupList
             return True
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
         return False
 
     def _getDisplayList(self, name):
@@ -124,7 +124,7 @@ class ChemRefSearchBase(MyConnectionBase):
         try:
             return self._displayTypeDict[name]
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
         return []
 
     def _getDisplayTableList(self, name):
@@ -133,7 +133,7 @@ class ChemRefSearchBase(MyConnectionBase):
             tL = [tup[0] for tup in self._displayTypeDict[name]]
             uL = list(set(tL))
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
 
         return uL
 
@@ -146,7 +146,7 @@ class ChemRefSearchBase(MyConnectionBase):
             wdList = [tup[5] for tup in self._displayTypeDict[name]]
             return tList, cList, dList, sList, wdList
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
 
         return [], [], [], [], []
 
@@ -166,7 +166,7 @@ class ChemRefSearchBase(MyConnectionBase):
             self._keyDict[tableName] = attributeList
             return True
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
 
         return False
         #
@@ -184,7 +184,7 @@ class ChemRefSearchBase(MyConnectionBase):
         try:
             return self._keyDict[tableName]
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
 
         return []
 
@@ -208,7 +208,7 @@ class ChemRefSearchBase(MyConnectionBase):
             self._searchTypeDict[searchType] = tD
             return True
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
         return False
 
     def _setSearchDefDict(self, searchType, sD):
@@ -223,7 +223,7 @@ class ChemRefSearchBase(MyConnectionBase):
             self._searchTypeDict[searchType] = tD
             return True
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
         return False
 
     def _getSearchDefByType(self, searchType):
@@ -231,7 +231,7 @@ class ChemRefSearchBase(MyConnectionBase):
             d = self._searchTypeDict[searchType]
             return d['resourceId'], d['queryColList'], d['logicalOp'], d['extraConditions'], d['orderByList'], d['displayType'], d['displayTitle']
         except Exception as e:
-            logger.exception("failing searchType %r with %r" % (searchType, e.message))
+            logger.exception("failing searchType %r with %r" % (searchType, str(e)))
 
         return None, None, None, None, None, None, None
 
@@ -239,7 +239,7 @@ class ChemRefSearchBase(MyConnectionBase):
         try:
             return self._searchTypeDict[searchType]['queryColList']
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
 
         return []
 
@@ -247,7 +247,7 @@ class ChemRefSearchBase(MyConnectionBase):
         try:
             return self._searchTypeDict[searchType]['leftJoinTableList']
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
 
         return []
 
@@ -255,7 +255,7 @@ class ChemRefSearchBase(MyConnectionBase):
         try:
             return self._searchTypeDict[searchType]['displayType']
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
 
         return None
 
@@ -263,7 +263,7 @@ class ChemRefSearchBase(MyConnectionBase):
         try:
             return self._searchTypeDict[searchType]['displayTitle']
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
 
         return None
 
@@ -271,7 +271,7 @@ class ChemRefSearchBase(MyConnectionBase):
         try:
             return self._searchTypeDict[searchType]['logicalOp']
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
 
         return None
 
@@ -279,7 +279,7 @@ class ChemRefSearchBase(MyConnectionBase):
         try:
             return self._searchTypeDict[searchType]['resourceId']
         except Exception as e:
-            logger.exception("failing %s" % e.message)
+            logger.exception("failing %s" % str(e))
 
         return None
 
@@ -357,7 +357,7 @@ class ChemRefSearchBase(MyConnectionBase):
             else:
                 qS = sOp.join(qL)
         except Exception as e:
-            logger.exception("failing searchTarget %r compareType %r with %s" % (searchTarget, compareType, e.message))
+            logger.exception("failing searchTarget %r compareType %r with %s" % (searchTarget, compareType, str(e)))
 
         return qS
 
@@ -523,7 +523,7 @@ class ChemRefSearchBase(MyConnectionBase):
                 searchTargetOut = oedu.standardizeSmiles(searchTargetInp, type="ISOMERIC")
                 logger.info("ISOMERIC SMILES '{0}".format(searchTargetOut))
             except Exception as e:
-                logger.exception("Error '{0}' occured. Arguments {1}.".format(e.message, e.args))
+                logger.exception("Error '{0}' occured. Arguments {1}.".format(str(e), e.args))
         #
         return searchTargetOut
 
@@ -648,7 +648,7 @@ class ChemRefSearchBase(MyConnectionBase):
                     iL = searchTarget.split()
                     sTarget = iL[-1]
             except Exception as e:
-                logger.exception("Failing to parse input %r with %r" % (searchTarget, e.message))
+                logger.exception("Failing to parse input %r with %r" % (searchTarget, str(e)))
 
             searchTypeList = searchType.split(',')
             compareTypeList = compareType.split(',')
@@ -678,5 +678,5 @@ class ChemRefSearchBase(MyConnectionBase):
             if inputType in ['MULTI_VALUE_WS'] and len(iL) > 1:
                 uList = [' '.join(iL[:-1]) + ' ' + uL for uL in uList]
         except Exception as e:
-            logger.debug("Failing to parse input %r with %r" % (searchTarget, e.message))
+            logger.debug("Failing to parse input %r with %r" % (searchTarget, str(e)))
         return rList, uList

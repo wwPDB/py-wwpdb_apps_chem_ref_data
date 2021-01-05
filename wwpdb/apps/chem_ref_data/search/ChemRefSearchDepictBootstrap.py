@@ -79,7 +79,7 @@ class ChemRefSearchDepictBootstrap(ChemRefDataDepictBootstrap):
         try:
             oL.extend(self.doAltRenderResults(d, title=panelTitle))
         except Exception as e:
-            logger.exception("Failing %s" % e.message)
+            logger.exception("Failing %s" % str(e))
 
         return oL
 
@@ -235,7 +235,7 @@ class ChemRefSearchDepictBootstrap(ChemRefDataDepictBootstrap):
         try:
             tableDataD = self.doBsTableRenderResults(d, title=panelTitle)
         except Exception as e:
-            logger.exception("Failing %s" % e.message)
+            logger.exception("Failing %s" % str(e))
 
         return tableDataD
 

@@ -78,7 +78,7 @@ class ChemCompSearchIndexUtils(object):
                 if len(mL) > 1:
                     rD[ccId] = mL
             except Exception as e:
-                logger.exception("Index search failing for key %r  %r" % (key, e.message))
+                logger.exception("Index search failing for key %r  %r" % (key, str(e)))
         return rD
 
     def searchIndex(self, target, key):
@@ -105,7 +105,7 @@ class ChemCompSearchIndexUtils(object):
             endTime = time.time()
             logger.debug("SearchIndex %r %r  match list for length %d in (%.4f seconds)\n" % (target, key, len(idList), endTime - startTime))
         except Exception as e:
-            logger.exception("Index search failing for key %r target %r %r" % (key, target, e.message))
+            logger.exception("Index search failing for key %r target %r %r" % (key, target, str(e)))
         #
         return idList
 
@@ -134,7 +134,7 @@ class ChemCompSearchIndexUtils(object):
             endTime = time.time()
             logger.debug("SearchIndexSubstring %r %r  match list for length %d in (%.4f seconds)\n" % (target, key, len(idList), endTime - startTime))
         except Exception as e:
-            logger.exception("Index substring search failing for key %r target %r %r" % (key, target, e.message))
+            logger.exception("Index substring search failing for key %r target %r %r" % (key, target, str(e)))
         #
         return idList
 
@@ -163,7 +163,7 @@ class ChemCompSearchIndexUtils(object):
             endTime = time.time()
             logger.debug("SearchIndex %r %r  match list for length %d in (%.4f seconds)\n" % (target, key, len(idList), endTime - startTime))
         except Exception as e:
-            logger.exception("Index search failing for key %r target %r %r" % (key, target, e.message))
+            logger.exception("Index search failing for key %r target %r %r" % (key, target, str(e)))
         #
         return idList
 
@@ -390,7 +390,7 @@ class ChemCompSearchIndexUtils(object):
             endTime = time.time()
             logger.debug("Edit distance result %r %r  match list for length %d in (%.4f seconds)\n" % (target, key, len(idList), endTime - startTime))
         except Exception as e:
-            logger.exception("Edit distance search failing for key %r target %r %r" % (key, target, e.message))
+            logger.exception("Edit distance search failing for key %r target %r %r" % (key, target, str(e)))
         #
         return cidList
 
@@ -422,7 +422,7 @@ class ChemCompSearchIndexUtils(object):
             endTime = time.time()
             logger.debug("Edit distance result %r %r  match list for length %d in (%.4f seconds)\n" % (target, key, len(idList), endTime - startTime))
         except Exception as e:
-            logger.exception("Edit distance search failing for key %r target %r %r" % (key, target, e.message))
+            logger.exception("Edit distance search failing for key %r target %r %r" % (key, target, str(e)))
         #
         return cidList
 
@@ -451,7 +451,7 @@ class ChemCompSearchIndexUtils(object):
             endTime = time.time()
             logger.debug("Edit distance result %r %r  match list for length %d in (%.4f seconds)\n" % (target, key, len(idList), endTime - startTime))
         except Exception as e:
-            logger.exception("Edit distance search failing for key %r target %r %r" % (key, target, e.message))
+            logger.exception("Edit distance search failing for key %r target %r %r" % (key, target, str(e)))
         #
         return cidList
 
@@ -467,7 +467,7 @@ class ChemCompSearchIndexUtils(object):
             # logging.debug("s1 %r s2 %r maxLen %r ed %f edN %f " % (s1, s2, maxLen, ed, edN))
             return edN
         except Exception as e:
-            logger.exception("Edit distance norm s1 %r s2 %r %r" % (s1, s2, e.message))
+            logger.exception("Edit distance norm s1 %r s2 %r %r" % (s1, s2, str(e)))
         return 0
 
     def __editDistanceNorm(self, s1, s2):
@@ -482,7 +482,7 @@ class ChemCompSearchIndexUtils(object):
             # logging.debug("s1 %r s2 %r maxLen %r ed %f edN %f " % (s1, s2, maxLen, ed, edN))
             return edN
         except Exception as e:
-            logger.exception("Edit distance norm s1 %r s2 %r %r" % (s1, s2, e.message))
+            logger.exception("Edit distance norm s1 %r s2 %r %r" % (s1, s2, str(e)))
         return 0
 
     def __editDistance(self, s1, s2):

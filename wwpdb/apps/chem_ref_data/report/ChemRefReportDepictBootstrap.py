@@ -450,7 +450,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                     le = '<a target="_blank" href="http://ligand-expo.rcsb.org/pyapps/ldHandler.py?formid=cc-index-search&operation=ccid&target=%s">(LE)</a>' % cVal
                     rst = '%s &nbsp; %s' % (rpt, le)
         except Exception as e:
-            self.__lfh.write("ChemRefReportDepict (markuplinks) failing cName %r cVal %r %r\n" % (cName, cVal, e.message))
+            self.__lfh.write("ChemRefReportDepict (markuplinks) failing cName %r cVal %r %r\n" % (cName, cVal, str(e)))
             traceback.print_exc(file=self.__lfh)
         return rst
 

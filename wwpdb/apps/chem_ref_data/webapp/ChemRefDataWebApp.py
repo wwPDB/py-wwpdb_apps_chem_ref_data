@@ -670,7 +670,7 @@ class ChemRefDataWebAppWorker(object):
             else:
                 return tL[0], None, None, None
         except Exception as e:
-            logger.exception("Failing with input %r and %r" % (searchTypeInput, e.message))
+            logger.exception("Failing with input %r and %r" % (searchTypeInput, str(e)))
 
         return None, None, None, None
 
