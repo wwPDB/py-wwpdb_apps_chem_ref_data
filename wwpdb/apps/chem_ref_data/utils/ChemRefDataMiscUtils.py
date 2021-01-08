@@ -194,7 +194,7 @@ class ChemRefDataMiscUtils(object):
                     with open(f, "rb") as infile:
                         outfile.write(infile.read())
                         # to handle missing trailing newlines =
-                        outfile.write("\n")
+                        outfile.write(b"\n")
             os.chmod(tPath, 0o664)
 
             if avoidUpdate and os.path.exists(outPath):
@@ -273,7 +273,7 @@ class ChemRefDataMiscUtils(object):
 
         # expand pattern
         pattern = pattern or '*'
-        patternList = string.splitfields(pattern, ';')
+        patternList = pattern.split(';')
 
         for name in names:
             fullname = os.path.normpath(os.path.join(topPath, name))
