@@ -91,7 +91,10 @@ class ChemRefDataMiscUtils(object):
         self.__pathCCDictSerial = os.path.join(self.__ccDictPath, "Components-all-v3.sdb")
         self.__pathCCDictIdx = os.path.join(self.__ccDictPath, "Components-all-v3-r4.idx")
         #
-        self.__pathCCDb = os.path.join(self.__ccDictPath, "chemcomp.db")
+        if sys.version_info[0] > 2:
+            self.__pathCCDb = os.path.join(self.__ccDictPath, "chemcomp_v3.db")
+        else:
+            self.__pathCCDb = os.path.join(self.__ccDictPath, "chemcomp.db")
         self.__pathCCIndex = os.path.join(self.__ccDictPath, "chemcomp-index.pic")
         self.__pathCCParentIndex = os.path.join(self.__ccDictPath, "chemcomp-parent-index.pic")
 
