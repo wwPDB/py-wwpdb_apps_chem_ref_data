@@ -192,12 +192,14 @@ class ChemRefDataDbExec(object):
         self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
         try:
             mu = ChemRefDataMiscUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
-            mu.updateChemCompSupportFiles()
-            mu.updateChemCompPySupportFiles()
-            mu.updatePrdSupportFiles()
+            ok1 = mu.updateChemCompSupportFiles()
+            ok2 = mu.updateChemCompPySupportFiles()
+            ok3 = mu.updatePrdSupportFiles()
+            return ok1 and ok2 and ok3
         except:
             self.__lfh.write("\nFailed %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
             traceback.print_exc(file=self.__lfh)
+            return False
 
 
 def main():
@@ -240,7 +242,7 @@ def main():
             ok = crx.doLoadBird()
 
     if options.update:
-        crx.doUpdateSupportFiles()
+        ok = crx.doUpdateSupportFiles()
 
     if not ok:
         sys.exit(1)
