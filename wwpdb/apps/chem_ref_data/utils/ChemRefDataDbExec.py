@@ -83,18 +83,28 @@ class ChemRefDataDbExec(object):
         """
         try:
             dbu = ChemRefDataDbUtils(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
-            dbu.loadChemCompMulti(numProc)
+            ok = dbu.loadChemCompMulti(numProc)
+            if ok:
+                return True
+            else:
+                self.__lfh.write('load CCD failed')
         except:
             traceback.print_exc(file=self.__lfh)
+        return False
 
     def doLoadBird(self, rptPath=None):
         """
         """
         try:
             dbu = ChemRefDataDbUtils(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
-            dbu.loadBird()
+            ok = dbu.loadBird()
+            if ok:
+                return True
+            else:
+                self.__lfh.write('load PRD failed')
         except:
             traceback.print_exc(file=self.__lfh)
+        return False
 
     def doCheckoutChemComp(self):
         """
@@ -105,9 +115,14 @@ class ChemRefDataDbExec(object):
             if sandbox_path:
                 if not os.path.exists(sandbox_path):
                     os.makedirs(sandbox_path)
-            cvsu.checkoutChemCompSerial()
+            ok, textList = cvsu.checkoutChemCompSerial()
+            if ok:
+                return True
+            else:
+                self.__lfh.write('checkout CCD CVS failed')
         except:
             traceback.print_exc(file=self.__lfh)
+        return False
 
     def doCheckoutPRD(self):
         try:
@@ -116,9 +131,14 @@ class ChemRefDataDbExec(object):
             if sandbox_path:
                 if not os.path.exists(sandbox_path):
                     os.makedirs(sandbox_path)
-            cvsu.checkoutPRDSerial()
+            ok, textList = cvsu.checkoutPRDSerial()
+            if ok:
+                return True
+            else:
+                self.__lfh.write('checkout PRD CVS failed')
         except:
-            traceback.print_exc(file=self.__lfh) 
+            traceback.print_exc(file=self.__lfh)
+        return False
 
     def doSyncChemComp(self, numProc):
         """
@@ -130,12 +150,18 @@ class ChemRefDataDbExec(object):
                 if not os.path.exists(sandbox_path):
                     self.__lfh.write('sandbox path {} does not exist - run checkout first'.format(sandbox_path))
                     return False
-                cvsu.syncChemComp(numProc)
+                ok, diag_list = cvsu.syncChemComp(numProc)
+                if ok:
+                    return True
+                else:
+                    self.__lfh.write('CVS update failed for CCD')
+                    return False
             else:
                 self.__lfh.write('sandbox path is None - exiting')
                 return False
         except:
             traceback.print_exc(file=self.__lfh)
+        return False
 
     def doSyncBird(self):
         """
@@ -147,7 +173,12 @@ class ChemRefDataDbExec(object):
                 if not os.path.exists(sandbox_path):
                     self.__lfh.write('sandbox path {} does not exist - run checkout first'.format(sandbox_path))
                     return False
-                cvsu.syncBird()
+                ok, textList = cvsu.syncBird()
+                if ok:
+                    return True
+                else:
+                    self.__lfh.write('CVS update failed for PRD')
+                    return False
             else:
                 self.__lfh.write('sandbox path is None - exiting')
                 return False
@@ -186,28 +217,33 @@ def main():
 
     (options, args) = parser.parse_args()
 
+    ok = True
+
     crx = ChemRefDataDbExec(defSiteId='WWWDPB_INTERNAL_RU', sessionId=None, verbose=options.verbose, log=sys.stderr)
 
     if options.checkout:
         if options.db == 'CC':
-            crx.doCheckoutChemComp()
+            ok = crx.doCheckoutChemComp()
         if options.db == 'PRD':
-            crx.doCheckoutPRD()
+            ok = crx.doCheckoutPRD()
 
     if options.sync:
         if options.db == 'CC':
-            crx.doSyncChemComp(options.numProc)
+            ok = crx.doSyncChemComp(options.numProc)
         elif options.db == 'PRD':
-            crx.doSyncBird()
+            ok = crx.doSyncBird()
 
     if options.load:
         if options.db == 'CC':
-            crx.doLoadChemCompMulti(options.numProc)
+            ok = crx.doLoadChemCompMulti(options.numProc)
         elif options.db == 'PRD':
-            crx.doLoadBird()
+            ok = crx.doLoadBird()
 
     if options.update:
         crx.doUpdateSupportFiles()
+
+    if not ok:
+        sys.exit(1)
 
 if __name__ == '__main__':
     main()
