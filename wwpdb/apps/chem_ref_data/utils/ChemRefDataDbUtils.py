@@ -84,7 +84,7 @@ class ChemRefDataDbUtils(MyConnectionBase):
         #
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         self.__cI = ConfigInfo(self.__siteId)
-        self.__cICommon = ConfigInfoApp(self.__siteId)
+        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
         self.__sbTopPath = self.__cICommon.get_site_refdata_top_cvs_sb_path()
         self.__projName = self.__cI.get('SITE_REFDATA_PROJ_NAME_CC')
 
