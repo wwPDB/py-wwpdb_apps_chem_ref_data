@@ -26,7 +26,7 @@ class ChemRefPathInfo(object):
     """
 #
 
-    def __init__(self, reqObj=None, configObj=None, testMode=False, verbose=False, log=sys.stderr):
+    def __init__(self, reqObj=None, configObj=None, configCommonObj=None, testMode=False, verbose=False, log=sys.stderr):
         """ Input request object and configuration (ConfigInfo()) object are used to
             supply information required to compute path details for chemical reference
             data files.
@@ -34,6 +34,7 @@ class ChemRefPathInfo(object):
         self.__verbose = verbose
         self.__lfh = log
         self.__cI = configObj
+        self.__cIcommon = configCommonObj
         self.__reqObj = reqObj
         self.__testMode = testMode
         #
@@ -66,24 +67,43 @@ class ChemRefPathInfo(object):
             return None
         #
         idU = idCode.upper()
-        sbTopPath = self.__cI.get('SITE_REFDATA_TOP_CVS_SB_PATH')
         hashKey = idU[-1]
         fileName = idU + ".cif"
         #
-        projectName = self.assignCvsProjectName(idType)
         if idType == "CC":
             hashKey = idU[0]
-            filePath = os.path.join(sbTopPath, projectName, hashKey, idU, fileName)
+            filePath = os.path.join(self.__cIcommon.get_site_cc_cvs_path(), hashKey, idU, fileName)
         elif idType == "PRDCC":
-            filePath = os.path.join(sbTopPath, projectName, hashKey, fileName)
+            filePath = os.path.join(self.__cIcommon.get_site_prdcc_cvs_path(), hashKey, fileName)
         elif idType == "PRD":
-            filePath = os.path.join(sbTopPath, projectName, hashKey, fileName)
+            filePath = os.path.join(self.__cIcommon.get_site_prd_cvs_path(), hashKey, fileName)
         elif idType == "PRD_FAMILY":
-            filePath = os.path.join(sbTopPath, projectName, hashKey, fileName)
+            filePath = os.path.join(self.__cIcommon.get_site_family_cvs_path(), hashKey, fileName)
         else:
             filePath = None
 
         return filePath
+
+    def getProjectPath(self, idCode):
+        """
+        Return the project path for an input reference data id code
+        (CC,PRD,FAMILY or PRDCC).
+        """
+        #
+        idType = self.getIdType(idCode)
+        if idType is None:
+            return None
+        #
+        if idType == "CC":
+            return self.__cIcommon.get_site_cc_cvs_path()
+        elif idType == "PRDCC":
+            return self.__cIcommon.get_site_prdcc_cvs_path()
+        elif idType == "PRD":
+            return self.__cIcommon.get_site_prd_cvs_path()
+        elif idType == "PRD_FAMILY":
+            return self.__cIcommon.get_site_family_cvs_path()
+        else:
+            return None
 
     def getCvsProjectInfo(self, idCode):
         """  Assign the CVS project name and relative path based on the input ID code.
