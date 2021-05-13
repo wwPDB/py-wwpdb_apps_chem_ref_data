@@ -202,14 +202,6 @@ class ChemRefDataWebAppWorker(object):
         #
         # Reference data configuration items include:
         #
-        # 'SITE_REFDATA_TOP_CVS_SB_PATH'          : os.path.join(_configSiteDeployPath, 'reference', 'components'),
-        # 'SITE_REFDATA_CVS_HOST'                 : 'rcsb-cvs-1.rutgers.edu',
-        # 'SITE_REFDATA_CVS_PATH'                 : '/cvs-ligands',
-        # 'SITE_REFDATA_PROJ_NAME_PRD'            : 'prd-v3',
-        # 'SITE_REFDATA_PROJ_NAME_PRD_FAMILY'     : 'family-v3',
-        # 'SITE_REFDATA_PROJ_NAME_PRDCC'          : 'prdcc-v3',
-        # 'SITE_REFDATA_PROJ_NAME_CC'             : 'ligand-dict-v3',
-        #
         #
         self.__appPathD = {'/service/environment/dump': '_dumpOp',
                            # -------------------
