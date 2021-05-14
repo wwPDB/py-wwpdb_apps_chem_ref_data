@@ -59,7 +59,8 @@ class ChemRefDataCvsUtils(object):
         self.__cI = ConfigInfo(self.__siteId)
         self.__cICommon = ConfigInfoAppCommon(self.__siteId)
         self.__sbTopPath = self.__cICommon.get_site_refdata_top_cvs_sb_path()
-        self.__pI = ChemRefPathInfo(configObj=self.__cI, verbose=self.__verbose, log=self.__lfh)
+        self.__pI = ChemRefPathInfo(configObj=self.__cI, configCommonObj=self.__cICommon,
+                                    verbose=self.__verbose, log=self.__lfh)
         #
         self.__vc, self.__vcAd = self.__setupCvs()
         #

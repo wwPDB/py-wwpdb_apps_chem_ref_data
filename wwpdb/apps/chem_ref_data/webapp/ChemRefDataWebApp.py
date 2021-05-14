@@ -69,6 +69,7 @@ from mmcif_utils.style.PrdCategoryStyle import PrdCategoryStyle
 from mmcif_utils.style.ChemCompCategoryStyle import ChemCompCategoryStyle
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 #
 import logging
@@ -194,7 +195,9 @@ class ChemRefDataWebAppWorker(object):
         #
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         self.__cI = ConfigInfo(self.__siteId)
-        self.__crPI = ChemRefPathInfo(configObj=self.__cI, verbose=self.__verbose, log=self.__lfh)
+        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
+        self.__crPI = ChemRefPathInfo(configObj=self.__cI, configCommonObj=self.__cICommon,
+                                      verbose=self.__verbose, log=self.__lfh)
 
         #
         self.__uds = UtilDataStore(reqObj=self.__reqObj, prefix=None, verbose=self.__verbose, log=self.__lfh)
