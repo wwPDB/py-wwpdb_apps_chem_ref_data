@@ -28,7 +28,7 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from wwpdb.io.cvs.CvsAdmin import CvsAdmin, CvsSandBoxAdmin
 from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
-from wwpdb.apps.chem_ref_data.utils.ChemRefPathInfo import ChemRefPathInfo
+from wwpdb.io.locator.ChemRefPathInfo import ChemRefPathInfo
 
 
 class ChemRefDataCvsUtils(object):

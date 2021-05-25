@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from mmcif_utils.chemcomp.PdbxChemCompIo import PdbxChemCompIo
-from wwpdb.apps.chem_ref_data.utils.ChemRefPathInfo import ChemRefPathInfo
+from wwpdb.io.locator.ChemRefPathInfo import ChemRefPathInfo
 from wwpdb.apps.chem_ref_data.report.ReportUtils import ReportUtils
 
 
