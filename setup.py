@@ -43,8 +43,8 @@ setup(
         'Programming Language :: Python :: 3.7',
     ],
     #
-    install_requires=['wwpdb.utils.config', 'wwpdb.utils.db ~= 0.10',
-                      'wwpdb.utils.session ~= 0.4', 'wwpdb.io >= 0.2',
+    install_requires=['wwpdb.utils.config ~= 0.24', 'wwpdb.utils.db ~= 0.10',
+                      'wwpdb.utils.session ~= 0.4', 'wwpdb.io >= 0.17.dev1',
                       'mmcif.utils ~= 0.18', 'wwpdb.utils.oe_util', 
                       "jellyfish ~= 0.6.1; python_version < '3'",
                       "jellyfish; python_version >= '3'",
