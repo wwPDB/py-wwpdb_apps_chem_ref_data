@@ -24,7 +24,7 @@ def editDistance(s1, s2):
     """
     try:
         maxLen = max(len(s1), len(s2))
-        return = float(maxLen - editDistance(s1,s2))/float(maxLen)
+        return float(maxLen - editDistance(s1,s2))/float(maxLen)
     except:
         pass
     return 0
