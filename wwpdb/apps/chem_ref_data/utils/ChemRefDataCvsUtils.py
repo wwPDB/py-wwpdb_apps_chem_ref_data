@@ -25,9 +25,10 @@ import shutil
 import time
 import traceback
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from wwpdb.io.cvs.CvsAdmin import CvsAdmin, CvsSandBoxAdmin
 from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
-from wwpdb.apps.chem_ref_data.utils.ChemRefPathInfo import ChemRefPathInfo
+from wwpdb.io.locator.ChemRefPathInfo import ChemRefPathInfo
 
 
 class ChemRefDataCvsUtils(object):
@@ -46,18 +47,20 @@ class ChemRefDataCvsUtils(object):
         # Information injected from the request object -
         #
         self.__reqObj = reqObj
-        #self.__topPath             = self.__reqObj.getValue("TopPath")
-        #self.__topSessioPath       = self.__reqObj.getValue("TopSessionPath")
+        # self.__topPath             = self.__reqObj.getValue("TopPath")
+        # self.__topSessioPath       = self.__reqObj.getValue("TopSessionPath")
         #
         self.__sObj = self.__reqObj.getSessionObj()
         self.__sessionPath = self.__sObj.getPath()
-        #self.__sessionRelativePath = self.__sObj.getRelativePath()
-        #self.__sessionId           = self.__sObj.getId()
+        # self.__sessionRelativePath = self.__sObj.getRelativePath()
+        # self.__sessionId           = self.__sObj.getId()
         #
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         self.__cI = ConfigInfo(self.__siteId)
-        self.__sbTopPath = self.__cI.get('SITE_REFDATA_TOP_CVS_SB_PATH')
-        self.__pI = ChemRefPathInfo(configObj=self.__cI, verbose=self.__verbose, log=self.__lfh)
+        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
+        self.__sbTopPath = self.__cICommon.get_site_refdata_top_cvs_sb_path()
+        self.__pI = ChemRefPathInfo(configObj=self.__cI, configCommonObj=self.__cICommon,
+                                    verbose=self.__verbose, log=self.__lfh)
         #
         self.__vc, self.__vcAd = self.__setupCvs()
         #
@@ -70,8 +73,8 @@ class ChemRefDataCvsUtils(object):
         #
         # Assign authentication details from the request environment -
         #
-        cvsUser = self.__reqObj.getValue("SITE_REFDATA_CVS_USER")
-        cvsPassword = self.__reqObj.getValue("SITE_REFDATA_CVS_PASSWORD")
+        # cvsUser = self.__reqObj.getValue("SITE_REFDATA_CVS_USER")
+        # cvsPassword = self.__reqObj.getValue("SITE_REFDATA_CVS_PASSWORD")
         #
         cvsUser = self.__cI.get("SITE_REFDATA_CVS_USER")
         cvsPassword = self.__cI.get("SITE_REFDATA_CVS_PASSWORD")
@@ -343,7 +346,7 @@ class ChemRefDataCvsUtils(object):
         #
         projName, relPath = self.__pI.getCvsProjectInfo(idCode)
         if projName is None or relPath is None:
-            return ok, textList
+            return ok, pathList
 
         if self.__verbose:
             self.__lfh.write("+ChemRefDataCvsUtils(checkoutRevisions) id %s project %s  path %s\n" % (idCode, projName, relPath))
@@ -363,9 +366,9 @@ class ChemRefDataCvsUtils(object):
                     pathList.append(outPath)
                     self.__lfh.write("CVS checkout status %r output %s is:\n%s\n" % (ok, outPath, text))
         except:
-            textList.append("Revision checkout exception")
+            pathList.append("Revision checkout exception")
             if self.__verbose:
-                self.__lfh.write("+ChemRefDataCvsUtils(checkoutRevisions) exception %s %s status %r output is:\n%s\n" % (projName, relPath, ok, textList))
+                self.__lfh.write("+ChemRefDataCvsUtils(checkoutRevisions) exception %s %s status %r output is:\n%s\n" % (projName, relPath, ok, pathList))
                 traceback.print_exc(file=self.__lfh)
 
         if self.__verbose:
@@ -426,11 +429,12 @@ class ChemRefDataCvsUtils(object):
             return False
 
         projName, relPath = self.__pI.getCvsProjectInfo(self.__pI.assignIdCodeFromFileName(filePath))
+        projPath = self.__pI.getProjectPath(self.__pI.assignIdCodeFromFileName(filePath))
         if projName is None:
             return False
 
         # check existing for file within the repository sandbox -
-        if os.access(os.path.join(self.__sbTopPath, projName, relPath), os.R_OK):
+        if os.access(os.path.join(projPath, relPath), os.R_OK):
             return True
 
         return False

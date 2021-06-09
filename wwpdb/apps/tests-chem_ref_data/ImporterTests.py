@@ -32,7 +32,7 @@ else:
     from wwpdb.apps.chem_ref_data.search.ChemRefSearchDepictBootstrap import ChemRefSearchDepictBootstrap
     from wwpdb.apps.chem_ref_data.utils.ChemRefDataCvsUtils import ChemRefDataCvsUtils
     from wwpdb.apps.chem_ref_data.utils.ChemRefDataDbUtils import ChemRefDataDbUtils
-    from wwpdb.apps.chem_ref_data.utils.ChemRefPathInfo import ChemRefPathInfo
+    from wwpdb.io.locator.ChemRefPathInfo import ChemRefPathInfo
     from wwpdb.apps.chem_ref_data.utils.DownloadUtils import DownloadUtils
     from wwpdb.apps.chem_ref_data.utils.ChemRefDataMiscUtils import ChemRefDataMiscUtils
     from mmcif_utils.style.PrdCategoryStyle import PrdCategoryStyle

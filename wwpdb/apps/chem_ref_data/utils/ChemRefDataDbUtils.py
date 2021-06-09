@@ -31,6 +31,7 @@ except ImportError:
     from itertools import izip_longest as zip_longest
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from wwpdb.utils.db.MyDbSqlGen import MyDbAdminSqlGen
 from wwpdb.utils.db.SchemaDefLoader import SchemaDefLoader
 from wwpdb.utils.db.MyDbUtil import MyDbQuery
@@ -83,7 +84,8 @@ class ChemRefDataDbUtils(MyConnectionBase):
         #
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         self.__cI = ConfigInfo(self.__siteId)
-        self.__sbTopPath = self.__cI.get('SITE_REFDATA_TOP_CVS_SB_PATH')
+        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
+        self.__sbTopPath = self.__cICommon.get_site_refdata_top_cvs_sb_path()
         self.__projName = self.__cI.get('SITE_REFDATA_PROJ_NAME_CC')
 
     def loadBird(self):
@@ -94,11 +96,8 @@ class ChemRefDataDbUtils(MyConnectionBase):
         self.__lfh.write("\n+ChemRefDataLoad(loadBird) Starting %s %s at %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name,
                                                                                   time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
         try:
-            sbTopPath = self.__cI.get('SITE_REFDATA_TOP_CVS_SB_PATH')
-            projNamePrd = self.__cI.get('SITE_REFDATA_PROJ_NAME_PRD')
-            projNamePrdFamily = self.__cI.get('SITE_REFDATA_PROJ_NAME_PRD_FAMILY')
-            birdCachePath = os.path.join(sbTopPath, projNamePrd)
-            birdFamilyCachePath = os.path.join(sbTopPath, projNamePrdFamily)
+            birdCachePath = self.__cICommon.get_site_prd_cvs_path()
+            birdFamilyCachePath = self.__cICommon.get_site_family_cvs_path()
             #
             #
             prd = PdbxPrdIo(verbose=self.__verbose, log=self.__lfh)
@@ -161,9 +160,7 @@ class ChemRefDataDbUtils(MyConnectionBase):
         self.__lfh.write("\n+ChemRefDataDbUtils(loadChemComp) Starting %s %s at %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name,
                                                                                          time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
         try:
-            sbTopPath = self.__cI.get('SITE_REFDATA_TOP_CVS_SB_PATH')
-            projNameChemComp = self.__cI.get('SITE_REFDATA_PROJ_NAME_CC')
-            chemCompCachePath = os.path.join(sbTopPath, projNameChemComp)
+            chemCompCachePath = self.__cICommon.get_site_cc_cvs_path()
             #
             cc = PdbxChemCompIo(verbose=self.__verbose, log=self.__lfh)
             cc.setCachePath(chemCompCachePath)

@@ -34,6 +34,7 @@ import string
 import fnmatch
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 
 from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
 
@@ -81,32 +82,33 @@ class ChemRefDataMiscUtils(object):
         #
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         self.__cI = ConfigInfo(self.__siteId)
-        self.__sbTopPath = self.__cI.get('SITE_REFDATA_TOP_CVS_SB_PATH')
+        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
+        self.__sbTopPath = self.__cICommon.get_site_refdata_top_cvs_sb_path()
         self.__projName = self.__cI.get('SITE_REFDATA_PROJ_NAME_CC')
-        self.__ccDictPath = self.__cI.get('SITE_CC_DICT_PATH')
+        self.__ccDictPath = self.__cICommon.get_site_cc_dict_path()
         #
-        self.__pathCCDict = os.path.join(self.__ccDictPath, "Components-all-v3.cif")
-        self.__pathCCPathList = os.path.join(self.__ccDictPath, "PATHLIST-v3")
-        self.__pathCCIdList = os.path.join(self.__ccDictPath, "IDLIST-v3")
-        self.__pathCCDictSerial = os.path.join(self.__ccDictPath, "Components-all-v3.sdb")
-        self.__pathCCDictIdx = os.path.join(self.__ccDictPath, "Components-all-v3-r4.idx")
+        self.__pathCCDict = self.__cICommon.get_cc_dict()
+        self.__pathCCPathList = self.__cICommon.get_cc_path_list()
+        self.__pathCCIdList = self.__cICommon.get_cc_id_list()
+        self.__pathCCDictSerial = self.__cICommon.get_cc_dict_serial()
+        self.__pathCCDictIdx = self.__cICommon.get_cc_dict_idx()
         #
         if sys.version_info[0] > 2:
-            self.__pathCCDb = os.path.join(self.__ccDictPath, "chemcomp_v3.db")
+            self.__pathCCDb = self.__cICommon.get_cc_db()
         else:
             self.__pathCCDb = os.path.join(self.__ccDictPath, "chemcomp.db")
-        self.__pathCCIndex = os.path.join(self.__ccDictPath, "chemcomp-index.pic")
-        self.__pathCCParentIndex = os.path.join(self.__ccDictPath, "chemcomp-parent-index.pic")
+        self.__pathCCIndex = self.__cICommon.get_cc_index()
+        self.__pathCCParentIndex = self.__cICommon.get_cc_parent_index()
 
-        self.__pathPrdChemCompCVS = self.__cI.get('SITE_PRDCC_CVS_PATH')
-        self.__pathPrdDictRef = os.path.join(self.__sbTopPath, 'prd-dict')
-        self.__pathPrdDictFile = os.path.join(self.__pathPrdDictRef, "Prd-all-v3.cif")
-        self.__pathPrdDictSerial = os.path.join(self.__pathPrdDictRef, "Prd-all-v3.sdb")
-        self.__pathPrdCcFile = os.path.join(self.__pathPrdDictRef, "Prdcc-all-v3.cif")
-        self.__pathPrdCcSerial = os.path.join(self.__pathPrdDictRef, "Prdcc-all-v3.sdb")
-        self.__pathPrdSummary = os.path.join(self.__pathPrdDictRef, "prd_summary.cif")
-        self.__pathPrdSummarySerial = os.path.join(self.__pathPrdDictRef, "prd_summary.sdb")
-        self.__pathPrdFamilyMapping = os.path.join(self.__pathPrdDictRef, "PrdFamilyIDMapping.lst")
+        self.__pathPrdChemCompCVS = self.__cICommon.get_site_prdcc_cvs_path()
+        self.__pathPrdDictRef = self.__cICommon.get_site_prd_dict_path()
+        self.__pathPrdDictFile = self.__cICommon.get_prd_dict_file()
+        self.__pathPrdDictSerial = self.__cICommon.get_prd_dict_serial()
+        self.__pathPrdCcFile = self.__cICommon.get_prd_cc_file()
+        self.__pathPrdCcSerial = self.__cICommon.get_prd_cc_serial()
+        self.__pathPrdSummary = self.__cICommon.get_prd_summary_cif()
+        self.__pathPrdSummarySerial = self.__cICommon.get_prd_summary_sdb()
+        self.__pathPrdFamilyMapping = self.__cICommon.get_prd_family_mapping()
         #
         self.__makeTopPaths()
 
@@ -122,14 +124,10 @@ class ChemRefDataMiscUtils(object):
         self.__lfh.write("\n+ChemRefDataLoad(getBirdPathList) Starting %s %s at %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name,
                                                                                          time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
         try:
-            sbTopPath = self.__sbTopPath
-            projNamePrd = self.__cI.get('SITE_REFDATA_PROJ_NAME_PRD')
-            projNamePrdFamily = self.__cI.get('SITE_REFDATA_PROJ_NAME_PRD_FAMILY')
-            projNamePrdCC = self.__cI.get('SITE_REFDATA_PROJ_NAME_PRDCC')
             #
-            birdCachePath = os.path.join(sbTopPath, projNamePrd)
-            birdFamilyCachePath = os.path.join(sbTopPath, projNamePrdFamily)
-            birdCcCachePath = os.path.join(sbTopPath, projNamePrdCC)
+            birdCachePath = self.__cICommon.get_site_prd_cvs_path()
+            birdFamilyCachePath = self.__cICommon.get_site_family_cvs_path()
+            birdCcCachePath = self.__cICommon.get_site_prdcc_cvs_path()
             #
             #
             prd = PdbxPrdIo(verbose=self.__verbose, log=self.__lfh)
@@ -393,9 +391,7 @@ class ChemRefDataMiscUtils(object):
         self.__lfh.write("\n+ChemRefDataDbUtils(getChemCompPathList) Starting %s %s at %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name,
                                                                                                 time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
         try:
-            sbTopPath = self.__cI.get('SITE_REFDATA_TOP_CVS_SB_PATH')
-            projNameChemComp = self.__cI.get('SITE_REFDATA_PROJ_NAME_CC')
-            chemCompCachePath = os.path.join(sbTopPath, projNameChemComp)
+            chemCompCachePath = self.__cICommon.get_site_cc_cvs_path()
             #
             #
             cc = PdbxChemCompIo(verbose=self.__verbose, log=self.__lfh)
