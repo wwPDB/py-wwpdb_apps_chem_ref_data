@@ -201,6 +201,20 @@ class ChemRefDataDbExec(object):
             traceback.print_exc(file=self.__lfh)
             return False
 
+    def run_setup_process(self, numProc=8):
+        self.doCheckoutChemComp()
+        self.doCheckoutPRD()
+        self.doLoadChemCompMulti(numProc=numProc)
+        self.doLoadBird()
+        self.doUpdateSupportFiles()
+
+    def run_update_process(self, numProc=8):
+        self.doSyncChemComp(numProc=numProc)
+        self.doSyncBird()
+        self.doLoadChemCompMulti(numProc=numProc)
+        self.doLoadBird()
+        self.doUpdateSupportFiles()
+
 
 def main():
     usage = "usage: %prog [options]"
@@ -212,6 +226,8 @@ def main():
     parser.add_option("--update", dest="update", action='store_true', default=False, help="Update support files from repository sandbox")
 
     parser.add_option("--db", dest="db", default='PRD', help="Database to load (CC,PRD)")
+    parser.add_option("--run_setup", help="Run setup for CCD and PRD")
+    parser.add_option("--run_update", help="Run update for CCD and PRD")
 
     parser.add_option("--numproc", dest="numProc", default=8, help="Number of processors to engage.")
 
@@ -243,6 +259,12 @@ def main():
 
     if options.update:
         ok = crx.doUpdateSupportFiles()
+
+    if options.run_setup:
+        crx.run_setup_process(numProc=options.numProc)
+
+    if options.run_update:
+        crx.run_update_process(numProc=options.numProc)
 
     if not ok:
         sys.exit(1)
