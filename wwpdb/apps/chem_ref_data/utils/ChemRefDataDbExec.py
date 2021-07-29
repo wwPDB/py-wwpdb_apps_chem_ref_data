@@ -226,8 +226,8 @@ def main():
     parser.add_option("--update", dest="update", action='store_true', default=False, help="Update support files from repository sandbox")
 
     parser.add_option("--db", dest="db", default='PRD', help="Database to load (CC,PRD)")
-    parser.add_option("--run_setup", help="Run setup for CCD and PRD")
-    parser.add_option("--run_update", help="Run update for CCD and PRD")
+    parser.add_option("--run_setup", action='store_true', help="Run setup for CCD and PRD")
+    parser.add_option("--run_update", action='store_true', help="Run update for CCD and PRD")
 
     parser.add_option("--numproc", dest="numProc", default=8, help="Number of processors to engage.")
 
