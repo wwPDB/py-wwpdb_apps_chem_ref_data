@@ -22,6 +22,7 @@ __version__ = "V0.001"
 import sys
 import os
 import traceback
+import logging
 from optparse import OptionParser
 
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataDbUtils import ChemRefDataDbUtils
@@ -30,6 +31,7 @@ from wwpdb.apps.chem_ref_data.utils.ChemRefDataMiscUtils import ChemRefDataMiscU
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.utils.session.WebRequest import InputRequest
 
+logger = logging.getLogger()
 
 class ChemRefDataDbExec(object):
 
@@ -232,7 +234,6 @@ def main():
     parser.add_option("--numproc", dest="numProc", default=8, help="Number of processors to engage.")
 
     parser.add_option("-v", "--verbose", default=False, action="store_true", dest="verbose")
-
     (options, args) = parser.parse_args()
 
     ok = True
