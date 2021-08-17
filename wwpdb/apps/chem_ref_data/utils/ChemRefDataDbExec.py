@@ -150,8 +150,8 @@ class ChemRefDataDbExec(object):
             sandbox_path = cvsu.getSandBoxTopPath()
             if sandbox_path:
                 if not os.path.exists(sandbox_path):
-                    self.__lfh.write('sandbox path {} does not exist - run checkout first'.format(sandbox_path))
-                    return False
+                    self.__lfh.write('sandbox path {} does not exist - running checkout'.format(sandbox_path))
+                    return self.doCheckoutChemComp()
                 ok, diag_list = cvsu.syncChemComp(numProc)
                 if ok:
                     return True
@@ -173,8 +173,8 @@ class ChemRefDataDbExec(object):
             sandbox_path = cvsu.getSandBoxTopPath()
             if sandbox_path:
                 if not os.path.exists(sandbox_path):
-                    self.__lfh.write('sandbox path {} does not exist - run checkout first'.format(sandbox_path))
-                    return False
+                    self.__lfh.write('sandbox path {} does not exist - running checkout'.format(sandbox_path))
+                    return self.doCheckoutPRD()
                 ok, textList = cvsu.syncBird()
                 if ok:
                     return True
@@ -204,11 +204,7 @@ class ChemRefDataDbExec(object):
             return False
 
     def run_setup_process(self, numProc=8):
-        self.doCheckoutChemComp()
-        self.doCheckoutPRD()
-        self.doLoadChemCompMulti(numProc=numProc)
-        self.doLoadBird()
-        self.doUpdateSupportFiles()
+        self.run_update_process(numProc=numProc)
 
     def run_update_process(self, numProc=8):
         self.doSyncChemComp(numProc=numProc)
