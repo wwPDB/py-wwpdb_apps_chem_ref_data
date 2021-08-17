@@ -628,6 +628,30 @@ class ChemRefDataWebAppWorker(object):
         self.__reqObj.setReturnFormat(return_format="json")
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
         #
+        errorMessage = ""
+        for idCode in idCodeList:
+            if len(idCode) > 3:
+                continue
+            #
+            filePath = self.__crPI.getFilePath(idCode=idCode)
+            if (not filePath) or (not os.access(filePath, os.R_OK)):
+                errorMessage += "Invalid CC ID: " + idCode + "\n"
+                continue
+            #
+            try:
+                cifObj = mmCIFUtil(filePath=filePath)
+                relStatus = cifObj.GetSingleValue("chem_comp", "pdbx_release_status").strip().upper()
+                if relStatus == "REL":
+                    errorMessage += "The ligand '" + idCode + "' has REL status and it should not be removed.\n"
+                #
+            except:
+                traceback.print_exc(file=self.__lfh)
+            #
+        #
+        if errorMessage:
+            rC.setError(errMsg=errorMessage)
+            return rC
+        #
         aTagList = []
         #
         success = True
