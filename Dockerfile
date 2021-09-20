@@ -6,6 +6,7 @@ RUN yum -y install openssl-devel bzip2-devel libffi-devel
 RUN yum -y install git cmake gcc gcc-c++ wget libarchive bison flex gcc-gfortran
 RUN yum -y install eigen3-devel zlib-devel libxml2-devel swig cairo-devel
 RUN yum -y install mariadb mariadb-devel subversion cvs tcsh
+RUN yum -y install python2 python2-devel
 
 # remove any caching
 RUN yum clean all
