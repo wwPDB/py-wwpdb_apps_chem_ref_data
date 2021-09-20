@@ -58,6 +58,16 @@ RUN cd Python-$PYTHON_VERSION \
 # force using bash shell
 SHELL ["/bin/bash", "-c"]
 
+# setup access to private repositories using SSH_PRIVATE_KEY
+ARG SSH_PRIVATE_KEY
+RUN mkdir ~/.ssh/
+RUN echo "${SSH_PRIVATE_KEY}" | tr -d '\r' > ~/.ssh/id_rsa
+RUN chmod 600 ~/.ssh/id_rsa
+RUN ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.pub
+# enable access to github.com
+RUN touch ~/.ssh/known_hosts
+RUN ssh-keyscan github.com >> ~/.ssh/known_hosts
+
 # access to content server
 ARG CS_USER
 ARG CS_PW

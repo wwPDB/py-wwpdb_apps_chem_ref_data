@@ -22,6 +22,7 @@ build_auto_master:
       --build-arg CS_USER=$CS_USER
       --build-arg CS_PW=$CS_PW
       --build-arg CS_URL=$CS_URL
+      --build-arg SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY
       ."
     - docker push ${COMMIT_TAG}
     - docker tag ${COMMIT_TAG} ${CONTAINER_RELEASE_IMAGE}
@@ -37,6 +38,7 @@ build_adhoc_master:
       --build-arg CS_USER=$CS_USER
       --build-arg CS_PW=$CS_PW
       --build-arg CS_URL=$CS_URL
+      --build-arg SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY
       ."
     - docker push ${COMMIT_TAG}
     - docker tag ${COMMIT_TAG} ${CONTAINER_RELEASE_IMAGE}
@@ -53,6 +55,7 @@ build_adhoc_non_master:
       --build-arg CS_USER=$CS_USER
       --build-arg CS_PW=$CS_PW
       --build-arg CS_URL=$CS_URL
+      --build-arg SSH_PRIVATE_KEY=$SSH_PRIVATE_KEY
       ."
     - docker push ${IMAGE_TAG}
   except:
