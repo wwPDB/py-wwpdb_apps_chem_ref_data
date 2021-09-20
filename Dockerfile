@@ -39,18 +39,14 @@ ENV BUILD_DIR=$ONEDEP_TOOLS_ROOT/build_dir
 ENV DISTRIB_DIR=$ONEDEP_TOOLS_ROOT/distrib_dir
 ENV DISTRIB_SOURCE_DIR=$ONEDEP_TOOLS_ROOT/distrib_source
 ENV PACKAGE_DIR=$ONEDEP_TOOLS_ROOT/packages
-ENV TOOLS_DIR=$ONEDEP_TOOLS_ROOT
+ENV BUILD_PY_DIR=$ONEDEP_TOOLS_ROOT/build/python
+ENV TOP_INSTALL_DIR=$ONEDEP_TOOLS_ROOT
 ENV PREFIX=$ONEDEP_TOOLS_ROOT
-
-# make directories for use
-RUN mkdir -p $BUILD_DIR/INSTALL_FLAGS \
-    && mkdir -p $DISTRIB_DIR \
-    && mkdir -p $DISTRIB_SOURCE_DIR \
-    && mkdir -p $PACKAGE_DIR
 
 RUN git clone git@github.com:wwPDB/onedep-build.git /src/onedep-build
 RUN . /src/onedep-build/utils/pkg-utils-v2.sh \
     && . /src/onedep-build/v-5200/packages/all-packages.sh \
+    && create_tool_and_package_directories \
     && pkg_build_inchi \
     && pkg_build_cmake \
     && pkg_build_eigen3 \
