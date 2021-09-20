@@ -18,12 +18,12 @@ before_script:
 build_auto_master:
   stage: build
   script:
-    - "docker build -t ${COMMIT_TAG}
+    - 'docker build -t ${COMMIT_TAG}
       --build-arg CS_USER=${CS_USER}
       --build-arg CS_PW=${CS_PW}
       --build-arg CS_URL=${CS_URL}
-      --build-arg SSH_PRIVATE_KEY=${SSH_PRIVATE_KEY}
-      ."
+      --build-arg SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}"
+      .'
     - docker push ${COMMIT_TAG}
     - docker tag ${COMMIT_TAG} ${CONTAINER_RELEASE_IMAGE}
     - docker push ${CONTAINER_RELEASE_IMAGE}
@@ -34,12 +34,12 @@ build_auto_master:
 build_adhoc_master:
   stage: build
   script:
-    - "docker build -t ${COMMIT_TAG}
+    - 'docker build -t ${COMMIT_TAG}
       --build-arg CS_USER=${CS_USER}
       --build-arg CS_PW=${CS_PW}
       --build-arg CS_URL=${CS_URL}
-      --build-arg SSH_PRIVATE_KEY=${SSH_PRIVATE_KEY}
-      ."
+      --build-arg SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}"
+      .'
     - docker push ${COMMIT_TAG}
     - docker tag ${COMMIT_TAG} ${CONTAINER_RELEASE_IMAGE}
     - docker push ${CONTAINER_RELEASE_IMAGE}
@@ -51,12 +51,12 @@ build_adhoc_master:
 build_adhoc_non_master:
   stage: build
   script:
-    - "docker build -t ${IMAGE_TAG}
+    - 'docker build -t ${IMAGE_TAG}
       --build-arg CS_USER=${CS_USER}
       --build-arg CS_PW=${CS_PW}
       --build-arg CS_URL=${CS_URL}
-      --build-arg SSH_PRIVATE_KEY=${SSH_PRIVATE_KEY}
-      ."
+      --build-arg SSH_PRIVATE_KEY="${SSH_PRIVATE_KEY}"
+      .'
     - docker push ${IMAGE_TAG}
   except:
     refs:
