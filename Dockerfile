@@ -34,10 +34,18 @@ ENV VENV=/venv
 ENV PATH=$VENV/bin:/tools/bin:$PATH
 
 # build chem comp pack in /tools
-ENV BUILD_DIR=/tools/build_dir
-ENV DISTRIB_DIR=/tools/distrib_dir
-ENV DISTRIB_SOURCE_DIR=/tools/distrib_source
-ENV PACKAGE_DIR=/tools/packages
+ENV ONEDEP_TOOLS_ROOT=/onedep_tools
+ENV BUILD_DIR=$ONEDEP_TOOLS_ROOT/build_dir
+ENV DISTRIB_DIR=$ONEDEP_TOOLS_ROOT/distrib_dir
+ENV DISTRIB_SOURCE_DIR=$ONEDEP_TOOLS_ROOT/distrib_source
+ENV PACKAGE_DIR=$ONEDEP_TOOLS_ROOT/packages
+
+# make directories for use
+RUN mkdir -p $BUILD_DIR/INSTALL_FLAGS \
+    && mkdir -p $DISTRIB_DIR \
+    && mkdir -p $DISTRIB_SOURCE_DIR \
+    && mkdir -p $PACKAGE_DIR
+
 RUN git clone git@github.com:wwPDB/onedep-build.git /src/onedep-build
 RUN . /src/onedep-build/utils/pkg-utils-v2.sh \
     && . /src/onedep-build/v-5200/packages/all-packages.sh \
@@ -69,7 +77,7 @@ RUN pip install wheel
 RUN pip install wwpdb.utils.config
 
 # copy this package
-WORKDIR /workdir
+WORKDIR /src/chem_ref_data
 COPY . .
 
 RUN pip install .
