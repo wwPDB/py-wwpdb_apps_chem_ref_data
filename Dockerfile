@@ -29,9 +29,7 @@ ARG CS_USER
 ARG CS_PW
 ARG CS_URL
 
-# setup paths
-ENV VENV=/venv
-ENV PATH=$VENV/bin:/tools/bin:$PATH
+
 
 # build chem comp pack in /tools
 ENV ONEDEP_TOOLS_ROOT=/onedep_tools
@@ -44,6 +42,10 @@ ENV TOP_INSTALL_DIR=$ONEDEP_TOOLS_ROOT
 ENV PREFIX=$ONEDEP_TOOLS_ROOT
 ENV SERVER_DIR=$ONEDEP_TOOLS_ROOT/apache
 ENV SERVER_LOCAL_DIR=$ONEDEP_TOOLS_ROOT/apache
+
+# setup paths
+ENV VENV=/venv
+ENV PATH=$VENV/bin:$ONEDEP_TOOLS_ROOT/bin:$PATH
 
 RUN git clone git@github.com:wwPDB/onedep-build.git /src/onedep-build
 RUN . /src/onedep-build/utils/pkg-utils-v2.sh \
