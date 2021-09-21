@@ -1,0 +1,12 @@
+services:
+  # OneDep chem_ref_data
+  onedep_chem_ref_data:
+    entrypoint: /bin/sh
+    image: onedep_chem_ref_data
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        CS_USER: ${CS_USER}
+        CS_PW: ${CS_PW}
+        CS_URL: ${CS_URL}
