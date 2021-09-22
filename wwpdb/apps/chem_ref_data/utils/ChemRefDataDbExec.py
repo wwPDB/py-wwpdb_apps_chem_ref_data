@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#!/opt/wwpdb/bin/python
+# !/opt/wwpdb/bin/python
 ##
 # File:    ChemRefDataDbExec.py
 # Author:  jdw
@@ -23,7 +23,7 @@ import sys
 import os
 import traceback
 import logging
-from optparse import OptionParser
+import argparse
 
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataDbUtils import ChemRefDataDbUtils
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataCvsUtils import ChemRefDataCvsUtils
@@ -32,6 +32,7 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.utils.session.WebRequest import InputRequest
 
 logger = logging.getLogger()
+
 
 class ChemRefDataDbExec(object):
 
@@ -216,55 +217,64 @@ class ChemRefDataDbExec(object):
 
 def main():
     usage = "usage: %prog [options]"
-    parser = OptionParser(usage)
+    parser = argparse.ArgumentParser(usage)
 
-    parser.add_option("--load", dest="load", action='store_true', default=False, help="Load database from repository sandbox")
-    parser.add_option("--sync", dest="sync", action='store_true', default=False, help="Synchronize repository sandbox")
-    parser.add_option("--checkout", dest="checkout", action='store_true', default=False, help="Checkout repository into sandbox")
-    parser.add_option("--update", dest="update", action='store_true', default=False, help="Update support files from repository sandbox")
+    parser.add_argument("--load", dest="load", action='store_true', default=False,
+                        help="Load database from repository sandbox")
+    parser.add_argument("--sync", dest="sync", action='store_true', default=False,
+                        help="Synchronize repository sandbox")
+    parser.add_argument("--checkout", dest="checkout", action='store_true', default=False,
+                        help="Checkout repository into sandbox")
+    parser.add_argument("--update", dest="update", action='store_true', default=False,
+                        help="Update support files from repository sandbox")
 
-    parser.add_option("--db", dest="db", default='PRD', help="Database to load (CC,PRD)")
-    parser.add_option("--run_setup", action='store_true', help="Run setup for CCD and PRD")
-    parser.add_option("--run_update", action='store_true', help="Run update for CCD and PRD")
+    parser.add_argument("--db", dest="db", default='PRD', help="Database to load (CC,PRD)")
+    parser.add_argument("--run_setup", action='store_true', help="Run setup for CCD and PRD")
+    parser.add_argument("--run_update", action='store_true', help="Run update for CCD and PRD")
 
-    parser.add_option("--numproc", dest="numProc", default=8, help="Number of processors to engage.")
+    parser.add_argument("--numproc", dest="numProc", default=8, help="Number of processors to engage.")
 
-    parser.add_option("-v", "--verbose", default=False, action="store_true", dest="verbose")
-    (options, args) = parser.parse_args()
+    parser.add_argument("-v", "--verbose", default=False, action="store_true", dest="verbose")
+    parser.add_argument("--debug", help="logging debugging", action="store_const", dest="loglevel", const=logging.DEBUG,
+                        default=logging.INFO)
+    args = parser.parse_args()
+
+    logger.setLevel(args.loglevel)
 
     ok = True
 
-    crx = ChemRefDataDbExec(defSiteId='WWWDPB_INTERNAL_RU', sessionId=None, verbose=options.verbose, log=sys.stderr)
+    crx = ChemRefDataDbExec(defSiteId='WWWDPB_INTERNAL_RU', sessionId=None, verbose=args.verbose, log=sys.stderr)
 
-    if options.checkout:
-        if options.db == 'CC':
+    if args.checkout:
+        if args.db == 'CC':
             ok = crx.doCheckoutChemComp()
-        if options.db == 'PRD':
+        if args.db == 'PRD':
             ok = crx.doCheckoutPRD()
 
-    if options.sync:
-        if options.db == 'CC':
-            ok = crx.doSyncChemComp(options.numProc)
-        elif options.db == 'PRD':
+    if args.sync:
+        if args.db == 'CC':
+            ok = crx.doSyncChemComp(args.numProc)
+        elif args.db == 'PRD':
             ok = crx.doSyncBird()
 
-    if options.load:
-        if options.db == 'CC':
-            ok = crx.doLoadChemCompMulti(options.numProc)
-        elif options.db == 'PRD':
+    if args.load:
+        if args.db == 'CC':
+            ok = crx.doLoadChemCompMulti(args.numProc)
+        elif args.db == 'PRD':
             ok = crx.doLoadBird()
 
-    if options.update:
+    if args.update:
         ok = crx.doUpdateSupportFiles()
 
-    if options.run_setup:
-        crx.run_setup_process(numProc=options.numProc)
+    if args.run_setup:
+        crx.run_setup_process(numProc=args.numProc)
 
-    if options.run_update:
-        crx.run_update_process(numProc=options.numProc)
+    if args.run_update:
+        crx.run_update_process(numProc=args.numProc)
 
     if not ok:
         sys.exit(1)
+
 
 if __name__ == '__main__':
     main()
