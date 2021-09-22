@@ -227,7 +227,7 @@ def main():
     parser.add_option("--run_setup", action='store_true', help="Run setup for CCD and PRD")
     parser.add_option("--run_update", action='store_true', help="Run update for CCD and PRD")
 
-    parser.add_option("--numproc", dest="numProc", default=8, help="Number of processors to engage.")
+    parser.add_option("--numproc", type=int, dest="numProc", default=8, help="Number of processors to engage.")
 
     parser.add_option("-v", "--verbose", default=False, action="store_true", dest="verbose")
     (options, args) = parser.parse_args()
