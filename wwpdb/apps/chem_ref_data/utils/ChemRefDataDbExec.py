@@ -196,8 +196,15 @@ class ChemRefDataDbExec(object):
         try:
             mu = ChemRefDataMiscUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
             ok1 = mu.updateChemCompSupportFiles()
+            if not ok1:
+                self.__lfh.write('Failed updateChemCompSupportFiles')
             ok2 = mu.updateChemCompPySupportFiles()
+            if not ok2:
+                self.__lfh.write('Failed updateChemCompPySupportFiles')
             ok3 = mu.updatePrdSupportFiles()
+            if not ok3:
+                self.__lfh.write('Failed updatePrdSupportFiles')
+            self.__lfh.write("\nFinished %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
             return ok1 and ok2 and ok3
         except:
             self.__lfh.write("\nFailed %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
