@@ -272,8 +272,8 @@ def main():
     if args.run_update:
         crx.run_update_process(numProc=args.numProc)
 
-    if not ok:
-        sys.exit(1)
+    # if not ok:
+    #    sys.exit(1)
 
 
 if __name__ == '__main__':
