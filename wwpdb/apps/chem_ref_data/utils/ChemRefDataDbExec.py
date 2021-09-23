@@ -195,8 +195,14 @@ class ChemRefDataDbExec(object):
         try:
             mu = ChemRefDataMiscUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
             ok1 = mu.updateChemCompSupportFiles()
+            if not ok1:
+                self.__lfh.write('updateChemCompSupportFiles failed')
             ok2 = mu.updateChemCompPySupportFiles()
+            if not ok2:
+                self.__lfh.write('updateChemCompPySupportFiles failed')
             ok3 = mu.updatePrdSupportFiles()
+            if not ok3:
+                self.__lfh.write('updatePrdSupportFiles failed')
             return ok1 and ok2 and ok3
         except:
             self.__lfh.write("\nFailed %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
@@ -263,8 +269,6 @@ def main():
     if options.run_update:
         crx.run_update_process(numProc=options.numProc)
 
-    if not ok:
-        sys.exit(1)
 
 if __name__ == '__main__':
     main()
