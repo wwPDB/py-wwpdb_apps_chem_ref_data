@@ -23,6 +23,7 @@ import sys
 import os
 import os.path
 import time
+from rcsb.utils.multiproc.MultiProcPoolUtil import MultiProcPoolUtil
 import scandir
 import traceback
 try:
@@ -269,9 +270,9 @@ class ChemRefDataDbUtils(MyConnectionBase):
         try:
             dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
             dataList = [a for a in dataS]
-            mpu = MultiProcUtil(verbose=True)
-            mpu.set(workerObj=self, workerMethod="makeComponentPathListMulti")
-            ok, failList, retLists, diagList = mpu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
+            mppu = MultiProcPoolUtil(verbose=True)
+            mppu.set(workerObj=self, workerMethod="makeComponentPathListMulti")
+            ok, failList, retLists, diagList = mppu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
             pathList = retLists[0]
             endTime0 = time.time()
             if self.__verbose:
@@ -282,10 +283,10 @@ class ChemRefDataDbUtils(MyConnectionBase):
                                   warnings='default', verbose=self.__verbose, log=self.__lfh)
 
             #
-            mpu = MultiProcUtil(verbose=True)
-            mpu.set(workerObj=sml, workerMethod="makeLoadFilesMulti")
-            mpu.setWorkingDir(self.__sessionPath)
-            ok, failList, retLists, diagList = mpu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
+            mppu = MultiProcPoolUtil(verbose=True)
+            mppu.set(workerObj=sml, workerMethod="makeLoadFilesMulti")
+            mppu.setWorkingDir(self.__sessionPath)
+            ok, failList, retLists, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
             #
             #containerNameList = retLists[0]
             tList = retLists[1]
