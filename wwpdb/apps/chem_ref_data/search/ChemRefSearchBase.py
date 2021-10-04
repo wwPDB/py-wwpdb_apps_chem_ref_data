@@ -396,7 +396,7 @@ class ChemRefSearchBase(MyConnectionBase):
                             if jPr[0] in t1JList and jPr[1] in t2JList:
                                 conditionList.append(t1 + '.' + jPr[0] + ' = ' + t2 + '.' + jPr[1])
         #
-        logger.info("Codition list %r" % conditionList)
+        logger.info("Condition list %r" % conditionList)
         #
         ljtList = self._getSearchDefLeftJoinTableList(searchType)
         logger.info("ljt list: %r\n" % ljtList)
