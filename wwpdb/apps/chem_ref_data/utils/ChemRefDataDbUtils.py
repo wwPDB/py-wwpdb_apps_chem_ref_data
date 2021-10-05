@@ -268,7 +268,8 @@ class ChemRefDataDbUtils(MyConnectionBase):
             self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
         startTime = time.time()
         try:
-            dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+            dataS = 'AB'
+            # dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
             dataList = [a for a in dataS]
             mppu = MultiProcPoolUtil(verbose=True)
             mppu.set(workerObj=self, workerMethod="makeComponentPathListMulti")
@@ -284,18 +285,24 @@ class ChemRefDataDbUtils(MyConnectionBase):
 
             #
             mppu = MultiProcPoolUtil(verbose=True)
-            mppu.set(workerObj=sml, workerMethod="fetch")
+            mppu.set(workerObj=sml, workerMethod="fetchMulti")
             mppu.setWorkingDir(self.__sessionPath)
             # ok,       failList,          retLists, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
             # pathlist, containerNameList, export(), []
-            ok, failList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
+            
+            ok, failList, tableDictList, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
+            
+            # we must first join the retList and merge the dictionaries
+            # this must be improved
+            tableDict = {}
+            for mpresult in tableDictList[1]:
+                for k,v in mpresult.items():
+                    tableDict.setdefault(k, [])
+                    tableDict[k].extend(v)
 
             # create the files single-threadily
-            retLists = sml.export()
-
-            #
-            #containerNameList = retLists[0]
-            tList = retLists[1]
+            tList = sml.export(tableDict=tableDict)
+            self.__lfh.write("Export list %s\n" % (tList))
 
             if self.__verbose:
                 for tId, fn in tList:
