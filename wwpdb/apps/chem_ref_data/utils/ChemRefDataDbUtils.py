@@ -284,9 +284,15 @@ class ChemRefDataDbUtils(MyConnectionBase):
 
             #
             mppu = MultiProcPoolUtil(verbose=True)
-            mppu.set(workerObj=sml, workerMethod="makeLoadFilesMulti")
+            mppu.set(workerObj=sml, workerMethod="fetch")
             mppu.setWorkingDir(self.__sessionPath)
-            ok, failList, retLists, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
+            # ok,       failList,          retLists, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
+            # pathlist, containerNameList, export(), []
+            ok, failList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
+
+            # create the files single-threadily
+            retLists = sml.export()
+
             #
             #containerNameList = retLists[0]
             tList = retLists[1]
