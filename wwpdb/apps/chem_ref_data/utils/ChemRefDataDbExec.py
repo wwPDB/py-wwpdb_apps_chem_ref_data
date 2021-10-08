@@ -261,7 +261,7 @@ def main():
         if options.db == 'CC':
             ok = crx.doSyncChemComp(options.numProc)
             # this often fails even though it works
-            # ok = True
+            ok = True
         elif options.db == 'PRD':
             ok = crx.doSyncBird()
 
