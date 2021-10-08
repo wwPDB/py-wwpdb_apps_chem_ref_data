@@ -210,7 +210,11 @@ class ChemRefDataDbExec(object):
             return False
 
     def run_setup_process(self, numProc=8):
-        self.run_update_process(numProc=numProc)
+        self.doCheckoutChemComp()
+        self.doCheckoutPRD()
+        self.doLoadChemCompMulti(numProc=numProc)
+        self.doLoadBird()
+        self.doUpdateSupportFiles()
 
     def run_update_process(self, numProc=8):
         self.doSyncChemComp(numProc=numProc)
