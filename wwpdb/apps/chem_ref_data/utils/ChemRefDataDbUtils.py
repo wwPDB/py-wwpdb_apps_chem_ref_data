@@ -268,8 +268,7 @@ class ChemRefDataDbUtils(MyConnectionBase):
             self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
         startTime = time.time()
         try:
-            dataS = 'AB'
-            # dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+            dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
             dataList = [a for a in dataS]
             mppu = MultiProcPoolUtil(verbose=True)
             mppu.set(workerObj=self, workerMethod="makeComponentPathListMulti")
