@@ -284,12 +284,21 @@ class ChemRefDataDbUtils(MyConnectionBase):
 
             #
             mppu = MultiProcPoolUtil(verbose=True)
-            mppu.set(workerObj=sml, workerMethod="makeLoadFilesMulti")
+            mppu.set(workerObj=sml, workerMethod="fetchMulti")
             mppu.setWorkingDir(self.__sessionPath)
-            ok, failList, retLists, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
-            #
-            #containerNameList = retLists[0]
-            tList = retLists[1]
+            ok, failList, tableDictList, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
+            
+            # we must first join the retList and merge the dictionaries
+            # this must be improved
+            tableDict = {}
+            for mpresult in tableDictList[1]:
+                for k,v in mpresult.items():
+                    tableDict.setdefault(k, [])
+                    tableDict[k].extend(v)
+
+            # create the files single-threadily
+            tList = sml.export(tableDict=tableDict)
+            self.__lfh.write("Export list %s\n" % (tList))
 
             if self.__verbose:
                 for tId, fn in tList:
