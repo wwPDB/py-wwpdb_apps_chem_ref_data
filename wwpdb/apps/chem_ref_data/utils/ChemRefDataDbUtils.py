@@ -286,9 +286,6 @@ class ChemRefDataDbUtils(MyConnectionBase):
             mppu = MultiProcPoolUtil(verbose=True)
             mppu.set(workerObj=sml, workerMethod="fetchMulti")
             mppu.setWorkingDir(self.__sessionPath)
-            # ok,       failList,          retLists, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
-            # pathlist, containerNameList, export(), []
-            
             ok, failList, tableDictList, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
             
             # we must first join the retList and merge the dictionaries
