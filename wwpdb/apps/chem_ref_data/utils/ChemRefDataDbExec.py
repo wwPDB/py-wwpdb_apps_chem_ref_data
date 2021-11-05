@@ -24,6 +24,7 @@ import os
 import traceback
 import logging
 from optparse import OptionParser
+from enum import Enum
 
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataDbUtils import ChemRefDataDbUtils
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataCvsUtils import ChemRefDataCvsUtils
@@ -32,6 +33,11 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.utils.session.WebRequest import InputRequest
 
 logger = logging.getLogger()
+
+class ChemRefDb(Enum):
+    CC = 'CC'
+    PRD = 'PRD'
+
 
 class ChemRefDataDbExec(object):
 
