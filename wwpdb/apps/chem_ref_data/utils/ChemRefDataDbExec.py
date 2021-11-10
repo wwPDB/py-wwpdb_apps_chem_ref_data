@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-#!/opt/wwpdb/bin/python
+# !/opt/wwpdb/bin/python
 ##
 # File:    ChemRefDataDbExec.py
 # Author:  jdw
@@ -24,6 +24,7 @@ import os
 import traceback
 import logging
 from optparse import OptionParser
+from enum import Enum
 
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataDbUtils import ChemRefDataDbUtils
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataCvsUtils import ChemRefDataCvsUtils
@@ -32,6 +33,15 @@ from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.utils.session.WebRequest import InputRequest
 
 logger = logging.getLogger()
+
+
+class ChemRefDb(Enum):
+    CC = 'CC'
+    PRD = 'PRD'
+
+    def __str__(self):
+        return self.value
+
 
 class ChemRefDataDbExec(object):
 
@@ -233,10 +243,13 @@ def main():
     usage = "usage: %prog [options]"
     parser = OptionParser(usage)
 
-    parser.add_option("--load", dest="load", action='store_true', default=False, help="Load database from repository sandbox")
+    parser.add_option("--load", dest="load", action='store_true', default=False,
+                      help="Load database from repository sandbox")
     parser.add_option("--sync", dest="sync", action='store_true', default=False, help="Synchronize repository sandbox")
-    parser.add_option("--checkout", dest="checkout", action='store_true', default=False, help="Checkout repository into sandbox")
-    parser.add_option("--update", dest="update", action='store_true', default=False, help="Update support files from repository sandbox")
+    parser.add_option("--checkout", dest="checkout", action='store_true', default=False,
+                      help="Checkout repository into sandbox")
+    parser.add_option("--update", dest="update", action='store_true', default=False,
+                      help="Update support files from repository sandbox")
 
     parser.add_option("--db", dest="db", default='PRD', help="Database to load (CC,PRD)")
     parser.add_option("--run_setup", action='store_true', help="Run setup for CCD and PRD")
