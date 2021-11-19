@@ -49,7 +49,8 @@ setup(
                       "jellyfish ~= 0.6.1; python_version < '3'",
                       "jellyfish; python_version >= '3'",
                       'wwpdb.utils.cc_dict_util', 'wwpdb.utils.dp ~= 0.19',
-                      'rcsb.utils.multiproc', 'wwpdb.utils.ws_utils'],
+                      'rcsb.utils.multiproc', 'wwpdb.utils.ws_utils',
+                      "distro"],
     packages=find_packages(exclude=['wwpdb.apps.tests-chem_ref_data', 'mock-data']),
     # Enables Manifest to be used
     #include_package_data = True,

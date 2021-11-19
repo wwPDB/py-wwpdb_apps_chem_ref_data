@@ -23,7 +23,6 @@ import sys
 import os
 import os.path
 import time
-from rcsb.utils.multiproc.MultiProcPoolUtil import MultiProcPoolUtil
 import scandir
 import traceback
 try:
@@ -37,6 +36,7 @@ from wwpdb.utils.db.MyDbSqlGen import MyDbAdminSqlGen
 from wwpdb.utils.db.SchemaDefLoader import SchemaDefLoader
 from wwpdb.utils.db.MyDbUtil import MyDbQuery
 
+from rcsb.utils.multiproc.MultiProcPoolUtil import MultiProcPoolUtil
 from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
 
 from wwpdb.utils.db.BirdSchemaDef import BirdSchemaDef
@@ -52,6 +52,8 @@ from mmcif_utils.chemcomp.PdbxChemCompIo import PdbxChemCompIo
 from mmcif.io.IoAdapterCore import IoAdapterCore
 
 from wwpdb.utils.db.MyConnectionBase import MyConnectionBase
+
+from wwpdb.apps.chem_ref_data.utils.OSVersion import OSVersion
 
 
 class ChemRefDataDbUtils(MyConnectionBase):
@@ -270,9 +272,14 @@ class ChemRefDataDbUtils(MyConnectionBase):
         try:
             dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
             dataList = [a for a in dataS]
-            mppu = MultiProcPoolUtil(verbose=True)
-            mppu.set(workerObj=self, workerMethod="makeComponentPathListMulti")
-            ok, failList, retLists, diagList = mppu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
+            if OSVersion().IsRhel8Like() is False:
+                mpu = MultiProcUtil(verbose=True)
+                mpu.set(workerObj=self, workerMethod="makeComponentPathListMulti")
+                ok, failList, retLists, diagList = mpu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
+            else:
+                mppu = MultiProcPoolUtil(verbose=True)
+                mppu.set(workerObj=self, workerMethod="makeComponentPathListMulti")
+                ok, failList, retLists, diagList = mppu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
             pathList = retLists[0]
             endTime0 = time.time()
             if self.__verbose:
@@ -283,22 +290,31 @@ class ChemRefDataDbUtils(MyConnectionBase):
                                   warnings='default', verbose=self.__verbose, log=self.__lfh)
 
             #
-            mppu = MultiProcPoolUtil(verbose=True)
-            mppu.set(workerObj=sml, workerMethod="fetchMulti")
-            mppu.setWorkingDir(self.__sessionPath)
-            ok, failList, tableDictList, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
+            if OSVersion().IsRhel8Like() is False:
+                mpu = MultiProcUtil(verbose=True)
+                mpu.set(workerObj=sml, workerMethod="makeLoadFilesMulti")
+                mpu.setWorkingDir(self.__sessionPath)
+                ok, failList, retLists, diagList = mpu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
+                #
+                #containerNameList = retLists[0]
+                tList = retLists[1]
+            else:
+                mppu = MultiProcPoolUtil(verbose=True)
+                mppu.set(workerObj=sml, workerMethod="fetchMulti")
+                mppu.setWorkingDir(self.__sessionPath)
+                ok, failList, tableDictList, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
             
-            # we must first join the retList and merge the dictionaries
-            # this must be improved
-            tableDict = {}
-            for mpresult in tableDictList[1]:
-                for k,v in mpresult.items():
-                    tableDict.setdefault(k, [])
-                    tableDict[k].extend(v)
+                # we must first join the retList and merge the dictionaries
+                # this must be improved
+                tableDict = {}
+                for mpresult in tableDictList[1]:
+                    for k,v in mpresult.items():
+                        tableDict.setdefault(k, [])
+                        tableDict[k].extend(v)
 
-            # create the files single-threadily
-            tList = sml.export(tableDict=tableDict)
-            self.__lfh.write("Export list %s\n" % (tList))
+                # create the files single-threadily
+                tList = sml.export(tableDict=tableDict)
+                self.__lfh.write("Export list %s\n" % (tList))
 
             if self.__verbose:
                 for tId, fn in tList:
