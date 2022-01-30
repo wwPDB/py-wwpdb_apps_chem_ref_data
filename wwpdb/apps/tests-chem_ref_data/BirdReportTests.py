@@ -18,8 +18,8 @@ __version__ = "V0.01"
 
 import sys
 import unittest
-import traceback
 import os.path
+import logging
 
 try:
     from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
@@ -30,6 +30,9 @@ try:
 except ImportError:
     skiptests = True
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+
 
 @unittest.skipIf(skiptests, "Openeye import failed")
 class BirdReportTests(unittest.TestCase):
@@ -39,7 +42,7 @@ class BirdReportTests(unittest.TestCase):
 
         # Pick up site information from the environment or failover to the development site id.
         self.__siteId = getSiteId(defaultSiteId="WWPDB_DEV_TEST")
-        self.__lfh.write("\nTesting with site environment for:  %s\n" % self.__siteId)
+        logger.info("\nTesting with site environment for:  %s", self.__siteId)
         cI = ConfigInfo(self.__siteId)
         self.__topPath = cI.get("SITE_WEB_APPS_TOP_PATH")
         self.__topSessionPath = cI.get("SITE_WEB_APPS_TOP_SESSIONS_PATH")
@@ -59,15 +62,15 @@ class BirdReportTests(unittest.TestCase):
 
     def testReportFileOne(self):
         """ """
-        self.__lfh.write("\n------------------------ ")
-        self.__lfh.write("Starting test function  testReportFileOne")
-        self.__lfh.write(" -------------------------\n")
+        logger.info("\n------------------------ ")
+        logger.info("Starting test function  testReportFileOne")
+        logger.info(" -------------------------")
         try:
             prdId = self.__fileList[0][1]
             fileFormat = "cif"
             filePath = self.__fileList[0][0]
             #
-            self.__lfh.write("Session path is %s\n" % self.__sessionPath)
+            logger.info("Session path is %s", self.__sessionPath)
             prd = BirdReport(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
             prd.setFilePath(filePath, prdFileFormat=fileFormat, prdId=prdId)
             pD = prd.doReport()
@@ -76,10 +79,10 @@ class BirdReportTests(unittest.TestCase):
 
             # prdD=BirdReportDepict(verbose=self.__verbose,log=self.__lfh)
             # oL=prdD.doRender(pD)
-            # self.__lfh.write("%s\n" % '\n'.join(oL))
+            # logger.info("%s\n" % '\n'.join(oL))
 
         except:  # noqa: E722 pylint: disable=bare-except
-            traceback.print_exc(file=self.__lfh)
+            logger.exception("Failure")
             self.fail()
 
 

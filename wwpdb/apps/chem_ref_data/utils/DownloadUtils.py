@@ -20,11 +20,13 @@ import sys
 import os
 import os.path
 import shutil
-import traceback
+import logging
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from wwpdb.io.locator.ChemRefPathInfo import ChemRefPathInfo
+
+logger = logging.getLogger(__name__)
 
 
 class DownloadUtils(object):
@@ -78,7 +80,7 @@ class DownloadUtils(object):
         """Save input file in session download"""
         try:
             if self.__verbose:
-                self.__lfh.write("+DownloadUtils.fetchFile() + target file path %s\n" % filePath)
+                logger.info("+DownloadUtils.fetchFile() + target file path %s", filePath)
             self.__targetFilePath = filePath
             (_pth, self.__targetFileName) = os.path.split(self.__targetFilePath)
             self.__downloadFilePath = os.path.join(self.__downloadDirPath, self.__targetFileName)
@@ -87,8 +89,8 @@ class DownloadUtils(object):
             return True
         except:  # noqa: E722 pylint: disable=bare-except
             if self.__verbose:
-                self.__lfh.write("+DownloadUtils.fetchFile() + failed for file %s\n" % filePath)
-                traceback.print_exc(file=self.__lfh)
+                logger.info("+DownloadUtils.fetchFile() + failed for file %s", filePath)
+            logger.exception("Failure in fetchFile")
         return False
 
     def getWebPath(self):

@@ -22,7 +22,6 @@ __version__ = "V0.01"
 
 import sys
 import random
-import traceback
 from wwpdb.apps.chem_ref_data.depict.ChemRefDataDepictBootstrap import ChemRefDataDepictBootstrap
 
 import logging
@@ -45,7 +44,6 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
 
         """
         super(ChemRefReportDepictBootstrap, self).__init__(verbose, log)
-        self.__lfh = log
         self.__debug = False
         #
         self.__st = styleObject
@@ -131,9 +129,9 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         #
         if self.__debug:
             for ii, tup in enumerate(catList):
-                self.__lfh.write("ChemRefReportDepict (doRenderTabs) ii %d  tup %r\n" % (ii, tup))
+                logger.debug("ChemRefReportDepict (doRenderTabs) ii %d  tup %r", ii, tup)
             for ii, (x, y, z) in enumerate(catList):
-                self.__lfh.write("ChemRefReportDepict (doRenderTabs) ii %d  values  %s %s %s\n" % (ii, x, y, z))
+                logger.debug("ChemRefReportDepict (doRenderTabs) ii %d  values  %s %s %s", ii, x, y, z)
         #
         oL = []
         #
@@ -427,8 +425,8 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                     le = '<a target="_blank" href="http://ligand-expo.rcsb.org/pyapps/ldHandler.py?formid=cc-index-search&operation=ccid&target=%s">(LE)</a>' % cVal
                     rst = "%s &nbsp; %s" % (rpt, le)
         except Exception as e:
-            self.__lfh.write("ChemRefReportDepict (markuplinks) failing cName %r cVal %r %r\n" % (cName, cVal, str(e)))
-            traceback.print_exc(file=self.__lfh)
+            logger.info("ChemRefReportDepict (markuplinks) failing cName %r cVal %r %r", cName, cVal, str(e))
+            logger.exception("Failure in __markupLinks")
         return rst
 
     def __markupRow(self, catName, rD):

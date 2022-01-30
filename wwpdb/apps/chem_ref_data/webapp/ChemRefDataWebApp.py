@@ -44,7 +44,6 @@ import os
 import sys
 import shutil
 import types
-import traceback
 import ntpath
 
 from wwpdb.io.file.mmCIFUtil import mmCIFUtil
@@ -620,7 +619,7 @@ class ChemRefDataWebAppWorker(object):
                     errorMessage += "The ligand '" + idCode + "' has REL status and it should not be removed.\n"
                 #
             except:  # noqa: E722 pylint: disable=bare-except
-                traceback.print_exc(file=self.__lfh)
+                logger.exception("Failure in __makeIdListCvsRemoveResponse")
             #
         #
         if errorMessage:
@@ -882,7 +881,7 @@ class ChemRefDataWebAppWorker(object):
             ok3 = mu.updatePrdSupportFiles()
             ok = ok1 and ok2 and ok3
         except:  # noqa: E722 pylint: disable=bare-except
-            traceback.print_exc(file=self.__lfh)
+            logger.exception("Failure in __chemRefSupportFiles")
             ok = False
         return ok
 
@@ -911,7 +910,7 @@ class ChemRefDataWebAppWorker(object):
             mu = ChemRefDataMiscUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
             ok = mu.updateChemCompPySupportFiles()
         except:  # noqa: E722 pylint: disable=bare-except
-            traceback.print_exc(file=self.__lfh)
+            logger.exception("Failure in __chemRefIndexFiles")
 
         return ok
 
@@ -1128,7 +1127,7 @@ class ChemRefDataWebAppWorker(object):
                 cifObj = mmCIFUtil(filePath=localFilePath)
                 relStatus = cifObj.GetSingleValue("chem_comp", "pdbx_release_status").strip().upper()
             except:  # noqa: E722 pylint: disable=bare-except
-                traceback.print_exc(file=self.__lfh)
+                logger.exception("Failure in in _ChemRefEditorOps")
             #
             myD = {}
             myD["sessionid"] = self.__sessionId
