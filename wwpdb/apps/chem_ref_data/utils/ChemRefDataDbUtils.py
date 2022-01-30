@@ -24,11 +24,12 @@ import os
 import os.path
 import time
 import scandir
-import traceback
-try:
-    from itertools import zip_longest
-except ImportError:
-    from itertools import izip_longest as zip_longest
+import logging
+
+# try:
+#    from itertools import zip_longest
+# except ImportError:
+#    from itertools import izip_longest as zip_longest
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
@@ -55,10 +56,12 @@ from wwpdb.utils.db.MyConnectionBase import MyConnectionBase
 
 from wwpdb.apps.chem_ref_data.utils.OSVersion import OSVersion
 
+logger = logging.getLogger(__name__)
+
 
 class ChemRefDataDbUtils(MyConnectionBase):
-    """ Wrapper for utilities for database loading of content from PRD repositories and sandboxes.
-    """
+    """Wrapper for utilities for database loading of content from PRD repositories and sandboxes."""
+
     #
 
     def __init__(self, reqObj, verbose=False, log=sys.stderr):
@@ -66,21 +69,20 @@ class ChemRefDataDbUtils(MyConnectionBase):
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         #
         super(ChemRefDataDbUtils, self).__init__(siteId=self.__siteId, verbose=verbose, log=log)
-        """
-        """
+        #
         self.__verbose = verbose
         self.__lfh = log
         self.__debug = verbose
         #
         # Information injected from the request object -
         #
-        self.__topPath = self.__reqObj.getValue("TopPath")
-        self.__topSessioPath = self.__reqObj.getValue("TopSessionPath")
+        # self.__topPath = self.__reqObj.getValue("TopPath")
+        # self.__topSessionPath = self.__reqObj.getValue("TopSessionPath")
         #
         self.__sObj = self.__reqObj.getSessionObj()
         self.__sessionPath = self.__sObj.getPath()
-        self.__sessionRelativePath = self.__sObj.getRelativePath()
-        self.__sessionId = self.__sObj.getId()
+        # self.__sessionRelativePath = self.__sObj.getRelativePath()
+        # self.__sessionId = self.__sObj.getId()
         #
 
         self.__ioObj = IoAdapterCore(verbose=self.__verbose, log=self.__lfh)
@@ -89,15 +91,14 @@ class ChemRefDataDbUtils(MyConnectionBase):
         self.__cI = ConfigInfo(self.__siteId)
         self.__cICommon = ConfigInfoAppCommon(self.__siteId)
         self.__sbTopPath = self.__cICommon.get_site_refdata_top_cvs_sb_path()
-        self.__projName = self.__cI.get('SITE_REFDATA_PROJ_NAME_CC')
+        self.__projName = self.__cI.get("SITE_REFDATA_PROJ_NAME_CC")
 
     def loadBird(self):
-        """  Load database containing BIRD PRD and PRD Family data.  Materialized some sequence
-             details prior to load.
+        """Load database containing BIRD PRD and PRD Family data.  Materialized some sequence
+        details prior to load.
         """
         startTime = time.time()
-        self.__lfh.write("\n+ChemRefDataLoad(loadBird) Starting %s %s at %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name,
-                                                                                  time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        logger.info("+ChemRefDataLoad(loadBird) Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             birdCachePath = self.__cICommon.get_site_prd_cvs_path()
             birdFamilyCachePath = self.__cICommon.get_site_family_cvs_path()
@@ -105,25 +106,25 @@ class ChemRefDataDbUtils(MyConnectionBase):
             #
             prd = PdbxPrdIo(verbose=self.__verbose, log=self.__lfh)
             prd.setCachePath(birdCachePath)
-            self.__pathList = prd.makeDefinitionPathList()
+            pathList = prd.makeDefinitionPathList()
             #
-            for pth in self.__pathList:
+            for pth in pathList:
                 prd.setFilePath(pth)
             if self.__verbose:
-                self.__lfh.write("+ChemRefDataLoad(loadBird) PRD repository read completed\n")
+                logger.info("+ChemRefDataLoad(loadBird) PRD repository read completed")
             #
             prdU = PdbxPrdUtils(prd, verbose=self.__verbose, log=self.__lfh)
-            rD = prdU.getComponentSequences(addCategory=True)
+            _rD = prdU.getComponentSequences(addCategory=True)  # noqa: F841  might have side effects
             #
             #
             prdFam = PdbxFamilyIo(verbose=self.__verbose, log=self.__lfh)
             prdFam.setCachePath(birdFamilyCachePath)
-            self.__familyPathList = prdFam.makeDefinitionPathList()
+            familyPathList = prdFam.makeDefinitionPathList()
             #
-            for pth in self.__familyPathList:
+            for pth in familyPathList:
                 prdFam.setFilePath(pth)
             if self.__verbose:
-                self.__lfh.write("+ChemRefDataLoad(loadBird) Family repository read completed\n")
+                logger.info("+ChemRefDataLoad(loadBird) Family repository read completed")
             #
             # Combine containers -
             containerList = prd.getCurrentContainerList()
@@ -137,44 +138,41 @@ class ChemRefDataDbUtils(MyConnectionBase):
                 sd = BirdSchemaDef()
                 self.__schemaCreate(schemaDefObj=sd)
 
-                sdl = SchemaDefLoader(schemaDefObj=sd, ioObj=self.__ioObj, dbCon=self._dbCon, workPath=self.__sessionPath,
-                                      cleanUp=False, warnings='error', verbose=self.__verbose, log=self.__lfh)
-                ok = sdl.load(containerList=containerList, loadType='batch-file', deleteOpt='truncate')
+                sdl = SchemaDefLoader(
+                    schemaDefObj=sd, ioObj=self.__ioObj, dbCon=self._dbCon, workPath=self.__sessionPath, cleanUp=False, warnings="error", verbose=self.__verbose, log=self.__lfh
+                )
+                ok = sdl.load(containerList=containerList, loadType="batch-file", deleteOpt="truncate")
 
                 self.closeConnection()
             else:
                 if self.__verbose:
-                    self.__lfh.write("+ChemRefDataLoad(loadBird) database connection failed\n")
+                    logger.info("+ChemRefDataLoad(loadBird) database connection failed")
 
-        except:
+        except:  # noqa: E722 pylint: disable=bare-except
             self.closeConnection()
-            traceback.print_exc(file=self.__lfh)
+            logger.exception("loadBird exception...")
             ok = False
 
         endTime = time.time()
-        self.__lfh.write("\n+ChemRefDataLoad(loadBird) Completed %s %s at %s (%.4f seconds)\n" % (self.__class__.__name__,
-                                                                                                  sys._getframe().f_code.co_name,
-                                                                                                  time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                                                  endTime - startTime))
+        logger.info("+ChemRefDataLoad(loadBird) Completed at %s (%.4f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
         return ok
 
     def loadChemComp(self):
         startTime = time.time()
-        self.__lfh.write("\n+ChemRefDataDbUtils(loadChemComp) Starting %s %s at %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name,
-                                                                                         time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        logger.info("+ChemRefDataDbUtils(loadChemComp) Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             chemCompCachePath = self.__cICommon.get_site_cc_cvs_path()
             #
             cc = PdbxChemCompIo(verbose=self.__verbose, log=self.__lfh)
             cc.setCachePath(chemCompCachePath)
-            self.__pathList = cc.makeComponentPathList()
+            pathList = cc.makeComponentPathList()
             #
-            for pth in self.__pathList:
+            for pth in pathList:
                 cc.setFilePath(pth)
 
             containerList = cc.getCurrentContainerList()
             if self.__verbose:
-                self.__lfh.write("+ChemRefDataDbUtils(loadChemComp) Reading definitions in chemical component repository read completed length %r\n" % len(containerList))
+                logger.info("+ChemRefDataDbUtils(loadChemComp) Reading definitions in chemical component repository read completed length %r", len(containerList))
 
             # --------------------------------------------------
             # Create schema and run loader on container list --
@@ -187,32 +185,28 @@ class ChemRefDataDbUtils(MyConnectionBase):
                 #
                 # sdl=SchemaDefLoader(schemaDefObj=sd,ioObj=self.__ioObj,dbCon=self._dbCon,workPath='.',
                 #                cleanUp=False,warnings='error',verbose=self.__verbose,log=self.__lfh)
-                sdl = SchemaDefLoader(schemaDefObj=sd, ioObj=self.__ioObj, dbCon=self._dbCon, workPath=self.__sessionPath,
-                                      cleanUp=False, warnings='error', verbose=self.__verbose, log=self.__lfh)
-                ok = sdl.load(containerList=containerList, loadType='batch-file', deleteOpt='truncate')
+                sdl = SchemaDefLoader(
+                    schemaDefObj=sd, ioObj=self.__ioObj, dbCon=self._dbCon, workPath=self.__sessionPath, cleanUp=False, warnings="error", verbose=self.__verbose, log=self.__lfh
+                )
+                ok = sdl.load(containerList=containerList, loadType="batch-file", deleteOpt="truncate")
                 self.closeConnection()
             else:
                 if self.__verbose:
-                    self.__lfh.write("+ChemRefDataDbUtils(loadChemComp) database connection failed\n")
+                    logger.info("+ChemRefDataDbUtils(loadChemComp) database connection failed")
 
-        except:
+        except:  # noqa: E722 pylint: disable=bare-except
             self.closeConnection()
-            traceback.print_exc(file=self.__lfh)
+            logger.exception("load ChemComp...")
             ok = False
 
         endTime = time.time()
-        self.__lfh.write("\n+ChemRefDataDbUtils(loadChemComp) Completed %s %s at %s (%.4f seconds)\n" % (self.__class__.__name__,
-                                                                                                         sys._getframe().f_code.co_name,
-                                                                                                         time.strftime("%Y %m %d %H:%M:%S", time.localtime()),                                                                                                         endTime - startTime))
+        logger.info("+ChemRefDataDbUtils(loadChemComp) Completed at %s (%.4f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
         return ok
 
     def __schemaCreate(self, schemaDefObj):
-        """Create and load table schema using schema definition
-        """
+        """Create and load table schema using schema definition"""
         startTime = time.time()
-        self.__lfh.write("\n+ChemRefDataLoad(__schemaCreate) Starting %s %s at %s\n" % (self.__class__.__name__,
-                                                                                        sys._getframe().f_code.co_name,
-                                                                                        time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        logger.info("+ChemRefDataLoad(__schemaCreate) Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             tableIdList = schemaDefObj.getTableIdList()
             sqlGen = MyDbAdminSqlGen(self.__verbose, self.__lfh)
@@ -221,40 +215,35 @@ class ChemRefDataDbUtils(MyConnectionBase):
                 tableDefObj = schemaDefObj.getTable(tableId)
                 sqlL.extend(sqlGen.createTableSQL(databaseName=schemaDefObj.getDatabaseName(), tableDefObj=tableDefObj))
 
-            if (self.__debug):
-                self.__lfh.write("\n+ChemRefDataLoad(__schemaCreate) Schema creation SQL string\n %s\n\n" % '\n'.join(sqlL))
+            if self.__debug:
+                logger.debug("+ChemRefDataLoad(__schemaCreate) Schema creation SQL string\n %s", "\n".join(sqlL))
 
             myQ = MyDbQuery(dbcon=self._dbCon, verbose=self.__verbose, log=self.__lfh)
             #
             # Permit warnings to support "drop table if exists" for missing tables.
             #
-            myQ.setWarning('default')
+            myQ.setWarning("default")
             ret = myQ.sqlCommand(sqlCommandList=sqlL)
-            if (self.__verbose):
-                self.__lfh.write("\n\n+INFO mysql server returns %r\n" % ret)
-        except:
-            traceback.print_exc(file=self.__lfh)
+            if self.__verbose:
+                logger.info("+INFO mysql server returns %r", ret)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("Schema creation...")
             return False
 
         endTime = time.time()
-        self.__lfh.write("\n+ChemRefDataLoad(__schemaCreate) Completed %s %s at %s (%.2f seconds)\n" % (self.__class__.__name__,
-                                                                                                        sys._getframe().f_code.co_name,
-                                                                                                        time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                                                        endTime - startTime))
+        logger.info("+ChemRefDataLoad(__schemaCreate) Completed at %s (%.2f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
         return ret
 
-    def __makeSubLists(self, n, iterable):
-        args = [iter(iterable)] * n
-        return ([e for e in t if e is not None] for t in zip_longest(*args))
+    # def __makeSubLists(self, n, iterable):
+    #     args = [iter(iterable)] * n
+    #     return ([e for e in t if e is not None] for t in zip_longest(*args))
 
-
-    def makeComponentPathListMulti(self, dataList, procName, optionsD, workingDir):
-        """ Return the list of chemical component definition file paths in the current repository.
-        """
+    def makeComponentPathListMulti(self, dataList, procName, optionsD, workingDir):  # pylint: disable=unused-argument
+        """Return the list of chemical component definition file paths in the current repository."""
         pathList = []
         for subdir in dataList:
             dd = os.path.join(self.__sbTopPath, self.__projName, subdir)
-            for root, dirs, files in scandir.walk(dd, topdown=False):
+            for root, _dirs, files in scandir.walk(dd, topdown=False):
                 if "REMOVE" in root:
                     continue
                 for name in files:
@@ -264,65 +253,65 @@ class ChemRefDataDbUtils(MyConnectionBase):
         return dataList, pathList, []
 
     def loadChemCompMulti(self, numProc=8):
-        """ Create batch load files for all chemical component definition data files - (multiprocessing for file generation only)
-        """
+        """Create batch load files for all chemical component definition data files - (multiprocessing for file generation only)"""
         if self.__verbose:
-            self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
+            logger.info("Startin")
         startTime = time.time()
         try:
-            dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+            dataS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
             dataList = [a for a in dataS]
             if OSVersion().IsRhel8Like() is False:
                 mpu = MultiProcUtil(verbose=True)
                 mpu.set(workerObj=self, workerMethod="makeComponentPathListMulti")
-                ok, failList, retLists, diagList = mpu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
+                ok, _failList, retLists, _diagList = mpu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
             else:
                 mppu = MultiProcPoolUtil(verbose=True)
                 mppu.set(workerObj=self, workerMethod="makeComponentPathListMulti")
-                ok, failList, retLists, diagList = mppu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
+                ok, _failList, retLists, _diagList = mppu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
             pathList = retLists[0]
             endTime0 = time.time()
             if self.__verbose:
-                self.__lfh.write("\nPath list length %d  in %.2f seconds\n" % (len(pathList), endTime0 - startTime))
+                logger.info("Path list length %d  in %.2f seconds", len(pathList), endTime0 - startTime)
 
             ccsd = ChemCompSchemaDef()
-            sml = SchemaDefLoader(schemaDefObj=ccsd, ioObj=self.__ioObj, dbCon=None, workPath=self.__sessionPath, cleanUp=False,
-                                  warnings='default', verbose=self.__verbose, log=self.__lfh)
+            sml = SchemaDefLoader(
+                schemaDefObj=ccsd, ioObj=self.__ioObj, dbCon=None, workPath=self.__sessionPath, cleanUp=False, warnings="default", verbose=self.__verbose, log=self.__lfh
+            )
 
             #
             if OSVersion().IsRhel8Like() is False:
                 mpu = MultiProcUtil(verbose=True)
                 mpu.set(workerObj=sml, workerMethod="makeLoadFilesMulti")
                 mpu.setWorkingDir(self.__sessionPath)
-                ok, failList, retLists, diagList = mpu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
+                ok, _failList, retLists, _diagList = mpu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
                 #
-                #containerNameList = retLists[0]
+                # containerNameList = retLists[0]
                 tList = retLists[1]
             else:
                 mppu = MultiProcPoolUtil(verbose=True)
                 mppu.set(workerObj=sml, workerMethod="fetchMulti")
                 mppu.setWorkingDir(self.__sessionPath)
-                ok, failList, tableDictList, diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
-            
+                ok, _failList, tableDictList, _diagList = mppu.runMulti(dataList=pathList, numProc=numProc, numResults=2)
+
                 # we must first join the retList and merge the dictionaries
                 # this must be improved
                 tableDict = {}
                 for mpresult in tableDictList[1]:
-                    for k,v in mpresult.items():
+                    for k, v in mpresult.items():
                         tableDict.setdefault(k, [])
                         tableDict[k].extend(v)
 
                 # create the files single-threadily
                 tList = sml.export(tableDict=tableDict)
-                self.__lfh.write("Export list %s\n" % (tList))
+                logger.info("Export list %s", tList)
 
             if self.__verbose:
                 for tId, fn in tList:
-                    self.__lfh.write("\nCreated table %s load file %s\n" % (tId, fn))
+                    logger.info("Created table %s load file %s", tId, fn)
             #
             endTime1 = time.time()
             if self.__verbose:
-                self.__lfh.write("\nBatch files %r created in %.4f seconds\n" % (len(tList), endTime1 - endTime0))
+                logger.info("Batch files %r created in %.4f seconds", len(tList), endTime1 - endTime0)
 
             #
             # --------------------------------------------------
@@ -336,15 +325,16 @@ class ChemRefDataDbUtils(MyConnectionBase):
                 self.closeConnection()
             else:
                 if self.__verbose:
-                    self.__lfh.write("+ChemRefDataDbUtils(loadChemCompMulti) database connection failed\n")
+                    logger.info("+ChemRefDataDbUtils(loadChemCompMulti) database connection failed")
                 return False
             #
             #
             self.setResource(resourceName="CC")
             ok = self.openConnection()
             #
-            sdl = SchemaDefLoader(schemaDefObj=ccsd, ioObj=self.__ioObj, dbCon=self._dbCon, workPath=self.__sessionPath, cleanUp=False,
-                                  warnings='default', verbose=self.__verbose, log=self.__lfh)
+            sdl = SchemaDefLoader(
+                schemaDefObj=ccsd, ioObj=self.__ioObj, dbCon=self._dbCon, workPath=self.__sessionPath, cleanUp=False, warnings="default", verbose=self.__verbose, log=self.__lfh
+            )
 
             ok = sdl.loadBatchFiles(loadList=tList, containerNameList=None, deleteOpt=None)
             self.closeConnection()
@@ -352,14 +342,11 @@ class ChemRefDataDbUtils(MyConnectionBase):
             # --------------------------------------------------
             endTime2 = time.time()
             if self.__verbose:
-                self.__lfh.write("\nLoad completed in %.4f seconds\n" % (endTime2 - endTime1))
+                logger.info("Load completed in %.4f seconds", endTime2 - endTime1)
             return ok
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("Loading...")
             return False
 
         endTime = time.time()
-        self.__lfh.write("\nCompleted %s %s at %s (%.4f seconds)\n" % (self.__class__.__name__,
-                                                                       sys._getframe().f_code.co_name,
-                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                       endTime2 - startTime))
+        logger.info("Completed at %s (%.4f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)

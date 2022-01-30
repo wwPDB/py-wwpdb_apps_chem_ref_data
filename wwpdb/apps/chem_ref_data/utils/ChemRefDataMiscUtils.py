@@ -22,16 +22,10 @@ import os
 import os.path
 import shutil
 import time
-import copy
 import scandir
-import traceback
 import filecmp
-try:
-    from itertools import zip_longest
-except ImportError:
-    from itertools import izip_longest as zip_longest
-import string
 import fnmatch
+import logging
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
@@ -41,27 +35,25 @@ from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
 from mmcif_utils.bird.PdbxPrdIo import PdbxPrdIo
 from mmcif_utils.bird.PdbxPrdCcIo import PdbxPrdCcIo
 from mmcif_utils.bird.PdbxFamilyIo import PdbxFamilyIo
-from mmcif_utils.bird.PdbxPrdUtils import PdbxPrdUtils
 
 from mmcif_utils.chemcomp.PdbxChemCompIo import PdbxChemCompIo
 
-# from mmcif.io.IoAdapterPy       import IoAdapterPy
-from mmcif.io.IoAdapterCore import IoAdapterCore
 from wwpdb.utils.dp.RcsbDpUtility import RcsbDpUtility
 from wwpdb.io.file.DataFile import DataFile
 
 from wwpdb.utils.cc_dict_util.persist.PdbxChemCompDictUtil import PdbxChemCompDictUtil
 from wwpdb.utils.cc_dict_util.persist.PdbxChemCompDictIndex import PdbxChemCompDictIndex
 
+logger = logging.getLogger(__name__)
+
 
 class ChemRefDataMiscUtils(object):
-    """ Wrapper for utilities for creating and maintaining various resource files containing
-       chemical reference data content stored in repositories and sandboxes.
+    """Wrapper for utilities for creating and maintaining various resource files containing
+    chemical reference data content stored in repositories and sandboxes.
     """
 
     def __init__(self, reqObj, verbose=False, log=sys.stderr):
-        """
-        """
+        """ """
         self.__verbose = verbose
         self.__lfh = log
         self.__debug = False
@@ -69,22 +61,16 @@ class ChemRefDataMiscUtils(object):
         # Information injected from the request object -
         #
         self.__reqObj = reqObj
-        self.__topPath = self.__reqObj.getValue("TopPath")
-        self.__topSessioPath = self.__reqObj.getValue("TopSessionPath")
         #
         self.__sObj = self.__reqObj.getSessionObj()
         self.__sessionPath = self.__sObj.getPath()
-        self.__sessionRelativePath = self.__sObj.getRelativePath()
-        self.__sessionId = self.__sObj.getId()
         #
 
-        self.__ioObj = IoAdapterCore(verbose=self.__verbose, log=self.__lfh)
-        #
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         self.__cI = ConfigInfo(self.__siteId)
         self.__cICommon = ConfigInfoAppCommon(self.__siteId)
         self.__sbTopPath = self.__cICommon.get_site_refdata_top_cvs_sb_path()
-        self.__projName = self.__cI.get('SITE_REFDATA_PROJ_NAME_CC')
+        self.__projName = self.__cI.get("SITE_REFDATA_PROJ_NAME_CC")
         self.__ccDictPath = self.__cICommon.get_site_cc_dict_path()
         #
         self.__pathCCDict = self.__cICommon.get_cc_dict()
@@ -118,11 +104,8 @@ class ChemRefDataMiscUtils(object):
                 os.makedirs(top_path)
 
     def getBirdPathList(self):
-        """  Get pathlist for BIRD PRD and PRD Family data.
-        """
-        startTime = time.time()
-        self.__lfh.write("\n+ChemRefDataLoad(getBirdPathList) Starting %s %s at %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name,
-                                                                                         time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        """Get pathlist for BIRD PRD and PRD Family data."""
+        logger.info("+ChemRefDataLoad(getBirdPathList) Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             #
             birdCachePath = self.__cICommon.get_site_prd_cvs_path()
@@ -143,49 +126,44 @@ class ChemRefDataMiscUtils(object):
             prdCcPathList = prdCc.makeDefinitionPathList()
             #
             return pathList, familyPathList, prdCcPathList
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("In getBirdPathList")
 
-        endTime = time.time()
-        self.__lfh.write("\n+ChemRefDataLoad(getBirdPathList) Completed %s %s at %s\n" % (self.__class__.__name__,
-                                                                                          sys._getframe().f_code.co_name,
-                                                                                          time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        logger.info("+ChemRefDataLoad(getBirdPathList) Completed at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         return [], [], []
 
     def __makeTempPath(self, inpPath):
         try:
             pid = str(os.getpid())
             return inpPath + pid
-        except:
+        except:  # noqa: E722 pylint: disable=bare-except
             return inpPath
 
-    def writeList(self, myList, outPath, mode=0o664):
-        """
-        """
+    def writeList(self, myList, outPath, mode=0o664):  # pylint: disable=unused-argument
+        """ """
         try:
             tPath = self.__makeTempPath(outPath)
-            ofh = open(tPath, 'w')
+            ofh = open(tPath, "w")
             for el in myList:
                 ofh.write("%s\n" % el)
             ofh.close()
             os.chmod(tPath, 0o664)
             shutil.move(tPath, outPath)
             return True
-        except:
+        except:  # noqa: E722 pylint: disable=bare-except
             return False
 
     def concatPathList(self, pathList, outPath, mode=0o664):
-        """
-        """
-        (ok, update) = self.concatPathListExt(pathList, outPath, mode)
+        """ """
+        (ok, _update) = self.concatPathListExt(pathList, outPath, mode)
         return ok
 
-    def concatPathListExt(self, pathList, outPath, mode=0o664, avoidUpdate = False):
+    def concatPathListExt(self, pathList, outPath, mode=0o664, avoidUpdate=False):  # pylint: disable=unused-argument
         """
         Concatenates files in pathList. If avoidUpdate is set, compare temporary file
         vs. destination.
 
-        Returns (status, updated) - status if concatenation good. If True, updated will be 
+        Returns (status, updated) - status if concatenation good. If True, updated will be
         set of file moved into place.
         """
         try:
@@ -201,26 +179,25 @@ class ChemRefDataMiscUtils(object):
             if avoidUpdate and os.path.exists(outPath):
                 if filecmp.cmp(tPath, outPath, shallow=False):
                     os.unlink(tPath)
-                    return(True, False)
+                    return (True, False)
 
             shutil.move(tPath, outPath)
             return (True, True)
-        except:
-            traceback.print_exc(file=sys.stderr)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("In concatPathListExt")
             return (False, False)
 
-
     def updateChemCompSupportFiles(self, idMaxLen=3, numProc=4):
-        """  Create full idlist, pathlist, concatenated chemical component dictionary file,
+        """Create full idlist, pathlist, concatenated chemical component dictionary file,
         serialized dictionary, and dictionary index.
         """
         ok1 = ok2 = ok3 = False
         pathList = self.getChemCompPathListMulti(numProc=numProc)
         idList = []
         for pth in pathList:
-            (dn, fn) = os.path.split(pth)
+            (_dn, fn) = os.path.split(pth)
             (ccId, ext) = os.path.splitext(fn)
-            if ((len(ccId) <= idMaxLen) and (ext == '.cif')):
+            if (len(ccId) <= idMaxLen) and (ext == ".cif"):
                 idList.append(ccId)
         self.writeList(idList, self.__pathCCIdList)
         self.writeList(pathList, self.__pathCCPathList)
@@ -231,13 +208,10 @@ class ChemRefDataMiscUtils(object):
         return ok1 and ok2 and ok3
 
     def updateChemCompPySupportFiles(self):
-        """Create BSD DB of full chemical component dictionary, PRD CC files, index and parent index pickle files.
-        """
+        """Create BSD DB of full chemical component dictionary, PRD CC files, index and parent index pickle files."""
         ok = False
         startTime = time.time()
-        self.__lfh.write("\nStarting %s %s at %s\n" % (self.__class__.__name__,
-                                                       sys._getframe().f_code.co_name,
-                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             dU = PdbxChemCompDictUtil(verbose=self.__verbose, log=self.__lfh)
             ok = dU.makeStoreFromFile(dictPath=self.__pathCCDict, storePath=self.__pathCCDb)
@@ -245,26 +219,26 @@ class ChemRefDataMiscUtils(object):
             if ok:
                 dIndx = PdbxChemCompDictIndex(verbose=self.__verbose, log=self.__lfh)
                 dIndx.makeIndex(storePath=self.__pathCCDb, indexPath=self.__pathCCIndex)
-                pD, cD = dIndx.makeParentComponentIndex(storePath=self.__pathCCDb, indexPath=self.__pathCCParentIndex)
+                _pD, _cD = dIndx.makeParentComponentIndex(storePath=self.__pathCCDb, indexPath=self.__pathCCParentIndex)
                 ok = True
             else:
                 ok = False
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("In updateChemCompPySupportFiles")
             ok = False
 
         endTime = time.time()
-        self.__lfh.write("\nCompleted %s %s at %s (%d seconds)\n" % (self.__class__.__name__,
-                                                                     sys._getframe().f_code.co_name,
-                                                                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                     endTime - startTime))
+        logger.info("Completed at %s (%d seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
         return ok
 
-    def __getPathList(self, topPath, pattern='*', excludeDirs=[], recurse=True):
-        """ Return a list of file paths in the input topPath which satisfy the input search criteria.
+    def __getPathList(self, topPath, pattern="*", excludeDirs=None, recurse=True):
+        """Return a list of file paths in the input topPath which satisfy the input search criteria.
 
-            This version does not follow symbolic links.
+        This version does not follow symbolic links.
         """
+        if excludeDirs is None:
+            excludeDirs = []
+
         pathList = []
         #
         try:
@@ -273,8 +247,8 @@ class ChemRefDataMiscUtils(object):
             return pathList
 
         # expand pattern
-        pattern = pattern or '*'
-        patternList = pattern.split(';')
+        pattern = pattern or "*"
+        patternList = pattern.split(";")
 
         for name in names:
             fullname = os.path.normpath(os.path.join(topPath, name))
@@ -292,36 +266,29 @@ class ChemRefDataMiscUtils(object):
         return pathList
 
     def updatePrdCCFiles(self):
-        """Update persistent store from a path list of PRD chemical component defintions.
-        """
+        """Update persistent store from a path list of PRD chemical component defintions."""
         ok = False
         startTime = time.time()
-        self.__lfh.write("\nStarting %s %s at %s\n" % (self.__class__.__name__,
-                                                       sys._getframe().f_code.co_name,
-                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
-            ccPathList = self.__getPathList(topPath=self.__pathPrdChemCompCVS, pattern="*.cif", excludeDirs=['CVS', 'REMOVED', 'FULL'])
-            if (self.__verbose):
-                self.__lfh.write("PRD CC pathlist length is %d\n" % len(ccPathList))
+            ccPathList = self.__getPathList(topPath=self.__pathPrdChemCompCVS, pattern="*.cif", excludeDirs=["CVS", "REMOVED", "FULL"])
+            if self.__verbose:
+                logger.info("PRD CC pathlist length is %d", len(ccPathList))
             #
             dUtil = PdbxChemCompDictUtil(verbose=self.__verbose, log=self.__lfh)
             dUtil.updateStoreByFile(pathList=ccPathList, storePath=self.__pathCCDb)
             ok = True
             #
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("updatePrdCCFiles")
 
         endTime = time.time()
-        self.__lfh.write("\nCompleted %s %s at %s (%d seconds)\n" % (self.__class__.__name__,
-                                                                     sys._getframe().f_code.co_name,
-                                                                     time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                     endTime - startTime))
+        logger.info("Completed at %s (%d seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
         return ok
 
     def __indexDictOp(self, minSize=10):
-        """  Make chemical component dictionary index from serialized dictionary.
-        """
-        self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
+        """Make chemical component dictionary index from serialized dictionary."""
+        logger.info("Starting")
         startTime = time.time()
         try:
             outPathTmp = self.__makeTempPath(self.__pathCCDictIdx)
@@ -346,16 +313,15 @@ class ChemRefDataMiscUtils(object):
                 dp.cleanup()
             endTime0 = time.time()
             if self.__verbose:
-                self.__lfh.write("\nDictionary index file size %d  in %.2f seconds\n" % (fSize, endTime0 - startTime))
+                logger.info("Dictionary index file size %d  in %.2f seconds", fSize, endTime0 - startTime)
             return ok
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("Failure in __indexDictOp")
         return False
 
     def __serializeDictOp(self, minSize=10):
-        """  Serialize chemical component dictionary from concatenated dictionary text.
-        """
-        self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
+        """Serialize chemical component dictionary from concatenated dictionary text."""
+        logger.info("Starting %s %s")
         startTime = time.time()
         try:
             outPathTmp = self.__makeTempPath(self.__pathCCDictSerial)
@@ -380,16 +346,15 @@ class ChemRefDataMiscUtils(object):
                 dp.cleanup()
             endTime0 = time.time()
             if self.__verbose:
-                self.__lfh.write("\nSerialized dictionary file size %d  in %.2f seconds\n" % (fSize, endTime0 - startTime))
+                logger.info("Serialized dictionary file size %d  in %.2f seconds", fSize, endTime0 - startTime)
             return ok
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("Failure in __serializeDictOp")
         return False
 
     def getChemCompPathList(self):
         startTime = time.time()
-        self.__lfh.write("\n+ChemRefDataDbUtils(getChemCompPathList) Starting %s %s at %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name,
-                                                                                                time.strftime("%Y %m %d %H:%M:%S", time.localtime())))
+        logger.info("+ChemRefDataDbUtils(getChemCompPathList) Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             chemCompCachePath = self.__cICommon.get_site_cc_cvs_path()
             #
@@ -399,29 +364,21 @@ class ChemRefDataMiscUtils(object):
             pathList = cc.makeComponentPathList()
             endTime0 = time.time()
             if self.__verbose:
-                self.__lfh.write("\nPath list length %d  in %.2f seconds\n" % (len(pathList), endTime0 - startTime))
+                logger.info("Path list length %d  in %.2f seconds", len(pathList), endTime0 - startTime)
             return pathList
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("In getChemCompPathLisr")
 
         endTime = time.time()
-        self.__lfh.write("\n+ChemRefDataDbUtils(getChemCompPathList) Completed %s %s at %s (%.2f seconds)\n" % (self.__class__.__name__,
-                                                                                                                sys._getframe().f_code.co_name,
-                                                                                                                time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                                                                endTime - startTime))
+        logger.info("+ChemRefDataDbUtils(getChemCompPathList) Completed at %s (%.2f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
         return []
 
-    def __makeSubLists(self, n, iterable):
-        args = [iter(iterable)] * n
-        return ([e for e in t if e is not None] for t in zip_longest(*args))
-
-    def _makeComponentPathListMulti(self, dataList, procName, optionsD, workingDir):
-        """ Return the list of chemical component definition file paths in the current repository.
-        """
+    def _makeComponentPathListMulti(self, dataList, procName, optionsD, workingDir):  # pylint: disable=unused-argument
+        """Return the list of chemical component definition file paths in the current repository."""
         pathList = []
         for subdir in dataList:
             dd = os.path.join(self.__sbTopPath, self.__projName, subdir)
-            for root, dirs, files in scandir.walk(dd, topdown=False):
+            for root, _dirs, files in scandir.walk(dd, topdown=False):
                 if "REMOVE" in root:
                     continue
                 for name in files:
@@ -431,53 +388,49 @@ class ChemRefDataMiscUtils(object):
         return dataList, pathList, []
 
     def getChemCompPathListMulti(self, numProc=8):
-        """ Return path list for all chemical component definition data files - (multiprocessing version)
-        """
+        """Return path list for all chemical component definition data files - (multiprocessing version)"""
         if self.__verbose:
-            self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
+            logger.info("Starting")
         startTime = time.time()
         try:
-            dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+            dataS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
             dataList = [a for a in dataS]
             mpu = MultiProcUtil(verbose=True)
             mpu.set(workerObj=self, workerMethod="_makeComponentPathListMulti")
-            ok, failList, retLists, diagList = mpu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
+            _ok, _failList, retLists, _diagList = mpu.runMulti(dataList=dataList, numProc=numProc, numResults=1)
             pathList = retLists[0]
             endTime0 = time.time()
             if self.__verbose:
-                self.__lfh.write("\nPath list length %d  in %.2f seconds\n" % (len(pathList), endTime0 - startTime))
+                logger.info("Path list length %d  in %.2f seconds", len(pathList), endTime0 - startTime)
 
             return pathList
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("In getChemCompPathListMulti")
 
         endTime = time.time()
-        self.__lfh.write("\nCompleted %s %s at %s (%.2f seconds)\n" % (self.__class__.__name__,
-                                                                       sys._getframe().f_code.co_name,
-                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                       endTime - startTime))
+        logger.info("Completed at %s (%.2f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
         return []
 
-    def updatePrdSupportFiles(self, idMaxLen=14, numProc=4):
-        """  Create full idlist, pathlist, concatenated PRD dictionary file,
+    def updatePrdSupportFiles(self, idMaxLen=14, numProc=4):  # pylint: disable=unused-argument
+        """Create full idlist, pathlist, concatenated PRD dictionary file,
         serialized dictionary, and dictionary index.
         """
         startTime = time.time()
         ok1 = ok2 = ok3 = ok4 = ok5 = ok6 = False
         pathList, familyPathList, ccPathList = self.getBirdPathList()
 
-#        self.writeList(idList, self.__pathCCIdList)
-#        self.writeList(pathList, self.__pathCCPathList)
-        (ok1, updated) = self.concatPathListExt(pathList, self.__pathPrdDictFile, avoidUpdate = True)
+        #        self.writeList(idList, self.__pathCCIdList)
+        #        self.writeList(pathList, self.__pathCCPathList)
+        (ok1, updated) = self.concatPathListExt(pathList, self.__pathPrdDictFile, avoidUpdate=True)
         # If prd file updated, then need serial
         if ok1 and updated:
-            ok2 = self.__serializePrdDictOp('prd')
+            ok2 = self.__serializePrdDictOp("prd")
         else:
             ok2 = True
 
-        (ok3, updated) = self.concatPathListExt(ccPathList, self.__pathPrdCcFile, avoidUpdate = True)
+        (ok3, updated) = self.concatPathListExt(ccPathList, self.__pathPrdCcFile, avoidUpdate=True)
         if ok3 and updated:
-            ok4 = self.__serializePrdDictOp('prdcc')
+            ok4 = self.__serializePrdDictOp("prdcc")
         else:
             ok4 = True
 
@@ -488,26 +441,22 @@ class ChemRefDataMiscUtils(object):
         ok6 = self.__generatePrdFamilyMapOp(familyPathList)
 
         endTime = time.time()
-        self.__lfh.write("\nCompleted %s %s at %s (%.2f seconds)\n" % (self.__class__.__name__,
-                                                                       sys._getframe().f_code.co_name,
-                                                                       time.strftime("%Y %m %d %H:%M:%S", time.localtime()),
-                                                                       endTime - startTime))
-#        #
-#        ok2 = 
-#        ok3 = self.__indexDictOp()
-#        return ok1 and ok2 and ok3
+        logger.info("Completed  at %s (%.2f seconds)", time.strftime("%Y %m %d %H:%M:%S", time.localtime()), endTime - startTime)
+        #        #
+        #        ok2 =
+        #        ok3 = self.__indexDictOp()
+        #        return ok1 and ok2 and ok3
         return ok1 and ok2 and ok3 and ok4 and ok5 and ok6
 
-
     def __serializePrdDictOp(self, which, minSize=10):
-        """  Serialize chemical component dictionary from concatenated dictionary text.
-        """
-        self.__lfh.write("\nStarting %s %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name, which))
+        """Serialize chemical component dictionary from concatenated dictionary text."""
+        logger.info("Starting %s", which)
         startTime = time.time()
 
-        fList = {'prd' : [ self.__pathPrdDictFile, self.__pathPrdDictSerial, "prd-dict-serialize.log"],
-                 'prdcc' : [ self.__pathPrdCcFile, self.__pathPrdCcSerial, "prdcc-dict-serialize.log"],
-                 }
+        fList = {
+            "prd": [self.__pathPrdDictFile, self.__pathPrdDictSerial, "prd-dict-serialize.log"],
+            "prdcc": [self.__pathPrdCcFile, self.__pathPrdCcSerial, "prdcc-dict-serialize.log"],
+        }
         try:
             ref = fList[which]
             outPathTmp = self.__makeTempPath(ref[1])
@@ -532,19 +481,19 @@ class ChemRefDataMiscUtils(object):
                 dp.cleanup()
             endTime0 = time.time()
             if self.__verbose:
-                self.__lfh.write("\nSerialized dictionary file size %d  in %.2f seconds\n" % (fSize, endTime0 - startTime))
+                logger.info("Serialized dictionary file size %d  in %.2f seconds", fSize, endTime0 - startTime)
             return ok
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("In __serializePrdDictOp")
         return False
 
     def __generatePrdSummaryOp(self, minSize=10):
         """Generate summary cif file and serialize it"""
-        self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
+        logger.info("Starting")
         startTime = time.time()
 
         ccSDBin = self.__pathCCDictSerial
-        prdSDBin = self.__pathPrdDictSerial        
+        prdSDBin = self.__pathPrdDictSerial
         outPathTmp = self.__makeTempPath(self.__pathPrdSummary)
         outPathSerialTmp = self.__makeTempPath(self.__pathPrdSummarySerial)
         fSize = 0
@@ -555,7 +504,7 @@ class ChemRefDataMiscUtils(object):
             dp = RcsbDpUtility(tmpPath=self.__sessionPath, siteId=self.__siteId, verbose=self.__verbose)
             dp.setDebugMode(flag=self.__debug)
             dp.imp(prdSDBin)
-            dp.addInput(name="ccsdb_path", value = ccSDBin)
+            dp.addInput(name="ccsdb_path", value=ccSDBin)
             dp.op("prd-summary-serialize")
             dp.expLog(logPath)
             dp.expList([outPathTmp, outPathSerialTmp])
@@ -614,27 +563,25 @@ class ChemRefDataMiscUtils(object):
                 dp.cleanup()
             endTime0 = time.time()
 
-            #self.__lfh.write("\nDictionary summary update ok1 %s ok2 %s\n" % (ok1, ok2))
+            # logger.info("Dictionary summary update ok1 %s ok2 %s", ok1, ok2)
             if self.__verbose:
-                self.__lfh.write("\nDictionary summary file size %d  in %.2f seconds\n" % (fSize, endTime0 - startTime))
+                logger.info("Dictionary summary file size %d  in %.2f seconds", fSize, endTime0 - startTime)
             return ok1 and ok2
 
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("In generatePrdSummaryOp")
 
         return False
 
     def __generatePrdFamilyMapOp(self, familyPathList, minSize=10):
         """Generate family mapping file"""
-        self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
-        startTime = time.time()
+        logger.info("Starting")
 
         # We do not retain concatenation when done...
         tempFamilyFile = os.path.join(self.__pathPrdDictRef, "prd-family-temp.cif")
         outPathTmp = self.__makeTempPath(self.__pathPrdFamilyMapping)
 
         ok = self.concatPathList(familyPathList, tempFamilyFile)
-
 
         if ok:
             try:
@@ -663,19 +610,19 @@ class ChemRefDataMiscUtils(object):
                     else:
                         try:
                             os.unlink(outPathTmp)
-                        except:
+                        except:  # noqa: E722 pylint: disable=bare-except
                             pass
                     # Remove tempFamilyFile
                     try:
                         os.unlink(tempFamilyFile)
-                    except:
+                    except:  # noqa: E722 pylint: disable=bare-except
                         pass
 
                 if not self.__debug:
                     dp.cleanup()
                 return True
 
-            except:
-                traceback.print_exc(file=self.__lfh)
+            except:  # noqa: E722 pylint: disable=bare-except
+                logger.exception("Failure in generatePrdMapOp")
 
         return False

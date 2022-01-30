@@ -1,0 +1,14 @@
+distro
+mmcif.utils
+rcsb.utils.multiproc
+wwpdb.io
+wwpdb.utils.cc_dict_util
+wwpdb.utils.config
+wwpdb.utils.db
+wwpdb.utils.dp
+wwpdb.utils.oe_util
+wwpdb.utils.session
+wwpdb.utils.ws_utils
+
+# The next is for openeye code
+--extra-index-url https://pypi.anaconda.org/OpenEye/simple

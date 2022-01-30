@@ -10,7 +10,6 @@ Chemical reference search general implementation -
 
 """
 
-import os
 import sys
 
 from wwpdb.apps.chem_ref_data.search.ChemRefSearchBase import ChemRefSearchBase
@@ -18,7 +17,6 @@ from wwpdb.apps.chem_ref_data.search.ChemRefSearchDef import ChemRefSearchDef
 
 
 class ChemRefSearch(ChemRefSearchBase):
-
     def __init__(self, siteId=None, verbose=False, log=sys.stderr):
         super(ChemRefSearch, self).__init__(siteId=siteId, verbose=verbose, log=log)
         #
