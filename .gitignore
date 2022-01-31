@@ -109,3 +109,6 @@ venv.bak/
 
 # emacs
 *~
+
+# From runs
+wwpdb/apps/tests-chem_ref_data/test-output/

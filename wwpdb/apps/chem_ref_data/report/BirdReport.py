@@ -109,7 +109,7 @@ class BirdReport(object):
         blockId = self.__prdId
         prdCcFilePath = self.__prdCcFilePath
         #
-        logger.info("+BirdReport.doReport()  - Starting doReport()n")
+        logger.info("+BirdReport.doReport()  - Starting doReport()")
         logger.info("+BirdReport.doReport()  - file path    %s", filePath)
         logger.info("+BirdReport.doReport()  - file format  %s", fileFormat)
         logger.info("+BirdReport.doReport()  - block Id     %s", blockId)
@@ -177,36 +177,37 @@ class BirdReport(object):
             logger.exception("Report preparation failed for:  %s", fileName)
 
         #
-        try:
-            prdCcFilePath = pathToImage
-            if prdCcFilePath is not None:
-                (_pth, prdCcFileName) = os.path.split(prdCcFilePath)
-                dp = os.path.join(self.__sessionPath, "report")
-                localPrdCcPath = os.path.join(dp, prdCcFileName)
-                localPrdCcRelativePath = os.path.join(self.__sessionRelativePath, "report", prdCcFileName)
-                if prdCcFilePath != localPrdCcPath:
-                    if not os.access(dp, os.F_OK):
-                        os.makedirs(dp)
-                shutil.copyfile(prdCcFilePath, localPrdCcPath)
-                #
-                logger.info("+BirdReport.doReport() - Copied input PRDCC file %s to report session path %s", prdCcFilePath, localPrdCcPath)
+        oD["hasExpt"] = False
+        oD["hasIdeal"] = False
+        if pathToImage is not None:
+            try:
+                prdCcFilePath = pathToImage
+                if prdCcFilePath is not None:
+                    (_pth, prdCcFileName) = os.path.split(prdCcFilePath)
+                    dp = os.path.join(self.__sessionPath, "report")
+                    localPrdCcPath = os.path.join(dp, prdCcFileName)
+                    localPrdCcRelativePath = os.path.join(self.__sessionRelativePath, "report", prdCcFileName)
+                    if prdCcFilePath != localPrdCcPath:
+                        if not os.access(dp, os.F_OK):
+                            os.makedirs(dp)
+                    shutil.copyfile(prdCcFilePath, localPrdCcPath)
+                    #
+                    logger.info("+BirdReport.doReport() - Copied input PRDCC file %s to report session path %s", prdCcFilePath, localPrdCcPath)
 
-            tD = {}
-            tD["dataDict"] = {}
-            ccR = PdbxChemCompIo(verbose=self.__verbose, log=self.__lfh)
-            ccR.setFilePath(localPrdCcPath, compId=None)
+                tD = {}
+                tD["dataDict"] = {}
+                ccR = PdbxChemCompIo(verbose=self.__verbose, log=self.__lfh)
+                ccR.setFilePath(localPrdCcPath, compId=None)
 
-            tD["blockId"] = ccR.getCurrentContainerId()
-            logger.info("Category name list %r", ccR.getCurrentCategoryNameList())
-            for catName in ccR.getCurrentCategoryNameList():
-                tD["dataDict"][catName] = ccR.getCategory(catName=catName)
-            hasExpt, hasIdeal = self.__rU.coordinatesExist(tD["dataDict"])
-            oD["hasExpt"] = hasExpt
-            oD["hasIdeal"] = hasIdeal
-            oD["xyzRelativePath"] = localPrdCcRelativePath
-        except:  # noqa: E722 pylint: disable=bare-except
-            oD["hasExpt"] = False
-            oD["hasIdeal"] = False
-            logger.exception("Failing with fileName %r", fileName)
+                tD["blockId"] = ccR.getCurrentContainerId()
+                logger.info("Category name list %r", ccR.getCurrentCategoryNameList())
+                for catName in ccR.getCurrentCategoryNameList():
+                    tD["dataDict"][catName] = ccR.getCategory(catName=catName)
+                hasExpt, hasIdeal = self.__rU.coordinatesExist(tD["dataDict"])
+                oD["hasExpt"] = hasExpt
+                oD["hasIdeal"] = hasIdeal
+                oD["xyzRelativePath"] = localPrdCcRelativePath
+            except:  # noqa: E722 pylint: disable=bare-except
+                logger.exception("Failing with fileName %r", fileName)
 
         return oD
