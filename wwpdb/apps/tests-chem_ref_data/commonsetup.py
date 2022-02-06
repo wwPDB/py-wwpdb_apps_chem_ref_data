@@ -19,6 +19,8 @@ configInfo = {
     "SITE_REFDATA_PROJ_NAME_CC": "ligand-dict-v3",
     "SITE_WEB_APPS_TOP_SESSIONS_PATH": TESTOUTPUT,
     "REFERENCE_PATH": os.path.join(HERE, "data"),
+    "SITE_REFDATA_PROJ_NAME_PRDCC": os.path.join(HERE, "data", "prdcc"),
+    "SITE_CC_DICT_PATH": os.path.join(TESTOUTPUT, "cc-dict"),
 }
 
 configInfoMockConfig = {

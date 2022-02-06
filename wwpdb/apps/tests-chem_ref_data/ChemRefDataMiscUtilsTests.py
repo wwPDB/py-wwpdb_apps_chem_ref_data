@@ -22,6 +22,13 @@ __version__ = "V0.01"
 import unittest
 import sys
 import logging
+import os
+
+if __package__ is None or __package__ == "":
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from commonsetup import HERE  # noqa:  F401 pylint: disable=import-error,unused-import
+else:
+    from .commonsetup import HERE  # noqa: F401 pylint: disable=relative-beyond-top-level
 
 from wwpdb.utils.session.WebRequest import InputRequest
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
@@ -80,6 +87,7 @@ class ChemRefDataMiscUtilsTests(unittest.TestCase):
             logger.exception("In testGetCompPathListMulti")
             self.fail()
 
+    @unittest.skipUnless(Features().haveToolsRuntime(), "Need runtime tools for test")
     def testUpdateChemRefDataFiles(self):
         """Test case -  create chemical component definition file idList, pathList, and concatenated dictionary."""
         logger.info("Starting")
