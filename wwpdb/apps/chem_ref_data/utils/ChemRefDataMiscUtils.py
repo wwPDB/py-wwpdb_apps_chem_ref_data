@@ -187,9 +187,10 @@ class ChemRefDataMiscUtils(object):
             logger.exception("In concatPathListExt")
             return (False, False)
 
-    def updateChemCompSupportFiles(self, idMaxLen=3, numProc=4):
+    def updateChemCompSupportFiles(self, idMaxLen=3, numProc=4, skipIndex=False):
         """Create full idlist, pathlist, concatenated chemical component dictionary file,
         serialized dictionary, and dictionary index.
+        If skipIndex is set, will avoid serialization and indexing operations for testing
         """
         ok1 = ok2 = ok3 = False
         pathList = self.getChemCompPathListMulti(numProc=numProc)
@@ -203,8 +204,12 @@ class ChemRefDataMiscUtils(object):
         self.writeList(pathList, self.__pathCCPathList)
         ok1 = self.concatPathList(pathList, self.__pathCCDict)
         #
-        ok2 = self.__serializeDictOp()
-        ok3 = self.__indexDictOp()
+        if skipIndex:
+            ok2 = True
+            ok3 = True
+        else:
+            ok2 = self.__serializeDictOp()
+            ok3 = self.__indexDictOp()
         return ok1 and ok2 and ok3
 
     def updateChemCompPySupportFiles(self):

@@ -72,7 +72,7 @@ class ChemCompSearchIndexUtils(object):
             try:
                 refV = d[key]
                 mL = self.searchIndex(refV, key)
-                if len(mL) > 1:
+                if len(mL) > 0:  # THIS WAS > 1 - so seach for single row failed
                     rD[ccId] = mL
             except Exception as e:
                 logger.exception("Index search failing for key %r  %r", key, str(e))
@@ -242,7 +242,7 @@ class ChemCompSearchIndexUtils(object):
                     idList.append(ccId)
 
             endTime = time.time()
-            logger.info("Formula match list for length %d (%.3f seconds)", len(idList), endTime - startTime)
+            logger.info("FormulaBounded match list for length %d (%.3f seconds)", len(idList), endTime - startTime)
 
         except:  # noqa: E722 pylint: disable=bare-except
             logger.exception("Formula search failing")
