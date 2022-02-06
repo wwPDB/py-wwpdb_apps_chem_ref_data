@@ -27,8 +27,13 @@ configInfoMockConfig = {
 
 configMock = MagicMock(**configInfoMockConfig)
 
+
+def getSiteIdReplace(defaultSiteId=None):  # pylint: disable=unused-argument
+    return "WWPDB_DEPLOY"
+
+
 # Returns a dictionary by default - which has a get operator
-sys.modules["wwpdb.utils.config.ConfigInfo"] = Mock(ConfigInfo=configMock)
+sys.modules["wwpdb.utils.config.ConfigInfo"] = Mock(ConfigInfo=configMock, getSiteId=getSiteIdReplace)
 
 
 # ConfigInfoAppCommon
@@ -44,6 +49,9 @@ class ConfigInfoAppReplace(object):
 
     def get_site_refdata_top_cvs_sb_path(self):
         return os.path.join(HERE, "data", "components")
+
+    def get_site_cc_cvs_path(self):
+        return os.path.join(self.get_site_refdata_top_cvs_sb_path(), "ligand-dict-v3")
 
     def get_cc_dict(self):
         return os.path.join(self.get_site_cc_dict_path(), "Components-all-v3.cif")

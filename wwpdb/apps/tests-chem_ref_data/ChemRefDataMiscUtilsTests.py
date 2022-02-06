@@ -33,13 +33,13 @@ else:
 from wwpdb.utils.session.WebRequest import InputRequest
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataMiscUtils import ChemRefDataMiscUtils
-from wwpdb.utils.testing.Features import Features
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
-@unittest.skipUnless(Features().haveCCD(), "Need full CCD for tests")
+# @unittest.skipUnless(Features().haveCCD(), "Need full CCD for tests")
 class ChemRefDataMiscUtilsTests(unittest.TestCase):
     def setUp(self):
         self.__lfh = sys.stderr
@@ -87,14 +87,13 @@ class ChemRefDataMiscUtilsTests(unittest.TestCase):
             logger.exception("In testGetCompPathListMulti")
             self.fail()
 
-    @unittest.skipUnless(Features().haveToolsRuntime(), "Need runtime tools for test")
     def testUpdateChemRefDataFiles(self):
         """Test case -  create chemical component definition file idList, pathList, and concatenated dictionary."""
         logger.info("Starting")
         ok = False
         try:
             mu = ChemRefDataMiscUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
-            ok = mu.updateChemCompSupportFiles()
+            ok = mu.updateChemCompSupportFiles(skipIndex=True)  # Do not generate sdb or index file
             self.assertTrue(ok)
         except:  # noqa: E722 pylint: disable=bare-except
             logger.exception("In testUpdateChemRefDataFiles")
