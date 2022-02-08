@@ -133,7 +133,7 @@ jobs:
         path: $(PIP_CACHE_DIR)
       displayName: Cache pip packages
 
-    - script: pip install -r requirements.txt -r requirements-test.txt
+    - script: pip install -r requirements.txt
       displayName: 'Install dependencies'
     #
     - ${{ if startsWith(parameters.tox, 'py') }}:
