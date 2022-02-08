@@ -126,7 +126,7 @@ jobs:
       #
     - task: Cache@2
       inputs:
-        key: 'python | "$(Agent.OS)" | requirements.txt | requirements-test.txt'
+        key: 'python | "$(Agent.OS)" | requirements.txt'
         restoreKeys: | 
           python | "$(Agent.OS)"
           python
