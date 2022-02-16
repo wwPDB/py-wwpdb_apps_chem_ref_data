@@ -20,22 +20,24 @@ import sys
 import os
 import os.path
 import shutil
-import traceback
+import logging
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from wwpdb.io.locator.ChemRefPathInfo import ChemRefPathInfo
 
+logger = logging.getLogger(__name__)
+
 
 class DownloadUtils(object):
-    """ Common methods for managing session files and chemical reference data files for
-        download.
+    """Common methods for managing session files and chemical reference data files for
+    download.
     """
-#
+
+    #
 
     def __init__(self, reqObj=None, verbose=False, log=sys.stderr):
-        """ Input request object is used to determine session context.
-        """
+        """Input request object is used to determine session context."""
         self.__verbose = verbose
         self.__lfh = log
         self.__reqObj = reqObj
@@ -43,8 +45,7 @@ class DownloadUtils(object):
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         self.__cI = ConfigInfo(self.__siteId)
         self.__cICommon = ConfigInfoAppCommon(self.__siteId)
-        self.__crPI = ChemRefPathInfo(configObj=self.__cI, configCommonObj=self.__cICommon,
-                                      verbose=self.__verbose, log=self.__lfh)
+        self.__crPI = ChemRefPathInfo(configObj=self.__cI, configCommonObj=self.__cICommon, verbose=self.__verbose, log=self.__lfh)
         #
         self.__sessionId = self.__reqObj.getSessionId()
         self.__sessionPath = self.__reqObj.getSessionPath()
@@ -53,7 +54,7 @@ class DownloadUtils(object):
         self.__downloadDir = "downloads"
         #
         self.__downloadDirPath = os.path.join(self.__sessionPath, self.__sessionId, self.__downloadDir)
-        self.__webDownloadDirPath = os.path.join('/', self.__sessionDir, self.__sessionId, self.__downloadDir)
+        self.__webDownloadDirPath = os.path.join("/", self.__sessionDir, self.__sessionId, self.__downloadDir)
         self.__webDownloadFilePath = None
         #
         self.__targetFilePath = None
@@ -76,36 +77,32 @@ class DownloadUtils(object):
         return self.fetchFile(filePath)
 
     def fetchFile(self, filePath):
-        """ Save input file in session download
-        """
+        """Save input file in session download"""
         try:
             if self.__verbose:
-                self.__lfh.write("+DownloadUtils.fetchFile() + target file path %s\n" % filePath)
+                logger.info("+DownloadUtils.fetchFile() + target file path %s", filePath)
             self.__targetFilePath = filePath
-            (pth, self.__targetFileName) = os.path.split(self.__targetFilePath)
+            (_pth, self.__targetFileName) = os.path.split(self.__targetFilePath)
             self.__downloadFilePath = os.path.join(self.__downloadDirPath, self.__targetFileName)
             shutil.copyfile(self.__targetFilePath, self.__downloadFilePath)
             self.__webDownloadFilePath = os.path.join(self.__webDownloadDirPath, self.__targetFileName)
             return True
-        except:
+        except:  # noqa: E722 pylint: disable=bare-except
             if self.__verbose:
-                self.__lfh.write("+DownloadUtils.fetchFile() + failed for file %s\n" % filePath)
-                traceback.print_exc(file=self.__lfh)
+                logger.info("+DownloadUtils.fetchFile() + failed for file %s", filePath)
+            logger.exception("Failure in fetchFile")
         return False
 
     def getWebPath(self):
-        """
-        """
+        """ """
         return self.__webDownloadFilePath
 
     def getDownloadPath(self):
-        """
-        """
+        """ """
         return self.__downloadFilePath
 
-    def getAnchorTag(self, label=None, target='_blank'):
-        """ Return the anchor tag corresponding the current download file selection.
-        """
+    def getAnchorTag(self, label=None, target="_blank"):
+        """Return the anchor tag corresponding the current download file selection."""
         if label is not None and len(label) > 0:
             txt = label
         else:

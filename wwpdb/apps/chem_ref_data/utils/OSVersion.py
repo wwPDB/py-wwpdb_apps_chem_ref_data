@@ -51,9 +51,6 @@ def main():
     osv = OSVersion()
     print(osv.IsRhel8Like())
 
+
 if __name__ == main():
     main()
-
-
-        
-

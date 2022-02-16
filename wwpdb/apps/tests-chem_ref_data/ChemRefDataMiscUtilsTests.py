@@ -19,36 +19,37 @@ __license__ = "Creative Commons Attribution 3.0 Unported"
 __version__ = "V0.01"
 
 
-import sys
 import unittest
-import traceback
 import sys
-import time
+import logging
 import os
-import os.path
-import shutil
 
-
-from mmcif_utils.chemcomp.PdbxChemCompIo import PdbxChemCompIo
+if __package__ is None or __package__ == "":
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from commonsetup import HERE  # noqa:  F401 pylint: disable=import-error,unused-import
+else:
+    from .commonsetup import HERE  # noqa: F401 pylint: disable=relative-beyond-top-level
 
 from wwpdb.utils.session.WebRequest import InputRequest
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataMiscUtils import ChemRefDataMiscUtils
-from wwpdb.utils.testing.Features import Features
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 
-@unittest.skipUnless(Features().haveCCD(), "Need full CCD for tests")
+# @unittest.skipUnless(Features().haveCCD(), "Need full CCD for tests")
 class ChemRefDataMiscUtilsTests(unittest.TestCase):
-
     def setUp(self):
         self.__lfh = sys.stderr
         self.__verbose = True
         # Pick up site information from the environment or failover to the development site id.
-        self.__siteId = getSiteId(defaultSiteId='WWPDB_DEPLOY_TEST_RU')
-        self.__lfh.write("\nTesting with site environment for:  %s\n" % self.__siteId)
+        self.__siteId = getSiteId(defaultSiteId="WWPDB_DEPLOY_TEST_RU")
+        logger.info("Testing with site environment for:  %s", self.__siteId)
         self.__cI = ConfigInfo(self.__siteId)
-        self.__topPath = self.__cI.get('SITE_WEB_APPS_TOP_PATH')
-        self.__topSessionPath = self.__cI.get('SITE_WEB_APPS_TOP_SESSIONS_PATH')
+        self.__topPath = self.__cI.get("SITE_WEB_APPS_TOP_PATH")
+        self.__topSessionPath = self.__cI.get("SITE_WEB_APPS_TOP_SESSIONS_PATH")
         #
         # Create a request object and session directories for test cases
         #
@@ -63,41 +64,39 @@ class ChemRefDataMiscUtilsTests(unittest.TestCase):
         pass
 
     def testGetCompPathList(self):
-        """Test case -  get chemical component definition file path list (serial)
-        """
-        self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
+        """Test case -  get chemical component definition file path list (serial)"""
+        logger.info("Starting")
         try:
             mu = ChemRefDataMiscUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
             pathList = mu.getChemCompPathList()
-            self.__lfh.write("Length of path list %d\n" % len(pathList))
+            logger.info("Length of path list %d", len(pathList))
 
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("In test")
             self.fail()
 
     def testGetCompPathListMulti(self):
-        """Test case -  get chemical component definition file path list (multiprocess)
-        """
-        self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
+        """Test case -  get chemical component definition file path list (multiprocess)"""
+        logger.info("Starting")
         try:
             mu = ChemRefDataMiscUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
             pathList = mu.getChemCompPathListMulti(numProc=4)
-            self.__lfh.write("Length of path list %d\n" % len(pathList))
+            logger.info("Length of path list %d", len(pathList))
 
-        except:
-            traceback.print_exc(file=self.__lfh)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("In testGetCompPathListMulti")
             self.fail()
 
     def testUpdateChemRefDataFiles(self):
-        """Test case -  create chemical component definition file idList, pathList, and concatenated dictionary.
-        """
-        self.__lfh.write("\nStarting %s %s\n" % (self.__class__.__name__, sys._getframe().f_code.co_name))
+        """Test case -  create chemical component definition file idList, pathList, and concatenated dictionary."""
+        logger.info("Starting")
         ok = False
         try:
             mu = ChemRefDataMiscUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
-            ok = mu.updateChemCompSupportFiles()
-        except:
-            traceback.print_exc(file=self.__lfh)
+            ok = mu.updateChemCompSupportFiles(skipIndex=True)  # Do not generate sdb or index file
+            self.assertTrue(ok)
+        except:  # noqa: E722 pylint: disable=bare-except
+            logger.exception("In testUpdateChemRefDataFiles")
             self.fail()
 
 
@@ -114,9 +113,9 @@ def suiteUpdateReferenceFiles():
     return suiteSelect
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     #
-    if (True):
+    if True:  # pylint: disable=using-constant-test
         mySuite = suitePathList()
         unittest.TextTestRunner(verbosity=2).run(mySuite)
 

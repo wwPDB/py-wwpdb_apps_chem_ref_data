@@ -23,23 +23,25 @@ import os
 import os.path
 import shutil
 import time
-import traceback
+import logging
+
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from wwpdb.io.cvs.CvsAdmin import CvsAdmin, CvsSandBoxAdmin
 from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
 from wwpdb.io.locator.ChemRefPathInfo import ChemRefPathInfo
 
+logger = logging.getLogger(__name__)
+
 
 class ChemRefDataCvsUtils(object):
 
-    """ Wrapper for utilities for managing chemical reference data repositories and sandboxes.
-    """
+    """Wrapper for utilities for managing chemical reference data repositories and sandboxes."""
+
     #
 
     def __init__(self, reqObj, verbose=False, log=sys.stderr):
-        """
-        """
+        """ """
         self.__verbose = verbose
         self.__lfh = log
         self.__debug = False
@@ -59,8 +61,7 @@ class ChemRefDataCvsUtils(object):
         self.__cI = ConfigInfo(self.__siteId)
         self.__cICommon = ConfigInfoAppCommon(self.__siteId)
         self.__sbTopPath = self.__cICommon.get_site_refdata_top_cvs_sb_path()
-        self.__pI = ChemRefPathInfo(configObj=self.__cI, configCommonObj=self.__cICommon,
-                                    verbose=self.__verbose, log=self.__lfh)
+        self.__pI = ChemRefPathInfo(configObj=self.__cI, configCommonObj=self.__cICommon, verbose=self.__verbose, log=self.__lfh)
         #
         self.__vc, self.__vcAd = self.__setupCvs()
         #
@@ -68,8 +69,8 @@ class ChemRefDataCvsUtils(object):
     def __setupCvs(self):
         #  Assign site specific chemical reference data CVS repository details --
         #
-        cvsRepositoryHost = self.__cI.get('SITE_REFDATA_CVS_HOST')
-        cvsRepositoryPath = self.__cI.get('SITE_REFDATA_CVS_PATH')
+        cvsRepositoryHost = self.__cI.get("SITE_REFDATA_CVS_HOST")
+        cvsRepositoryPath = self.__cI.get("SITE_REFDATA_CVS_PATH")
         #
         # Assign authentication details from the request environment -
         #
@@ -93,27 +94,26 @@ class ChemRefDataCvsUtils(object):
         return self.__vc.getSandBoxTopPath()
 
     def syncBird(self):
-        """  Update the CVS repositories related to BIRD PRD, family and chemical component definitions.
-        """
+        """Update the CVS repositories related to BIRD PRD, family and chemical component definitions."""
         #
         textList = []
         #
         cvsProjectName = self.__pI.assignCvsProjectName(repType="PRD")
         ok1, text = self.__vc.update(projectDir=cvsProjectName, prune=True)
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName, text))
+            logger.info("+ChemRefDataCvsUtils(sync) CVS %s update output is: %s", cvsProjectName, text)
         textList.append(text)
         #
         cvsProjectName = self.__pI.assignCvsProjectName(repType="PRD_FAMILY")
         ok2, text = self.__vc.update(projectDir=cvsProjectName)
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName, text))
+            logger.info("+ChemRefDataCvsUtils(sync) CVS %s update output is: %s", cvsProjectName, text)
         textList.append(text)
         #
         cvsProjectName = self.__pI.assignCvsProjectName(repType="PRDCC")
         ok3, text = self.__vc.update(projectDir=cvsProjectName)
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName, text))
+            logger.info("+ChemRefDataCvsUtils(sync) CVS %s update output is:%s", cvsProjectName, text)
         textList.append(text)
         self.__vc.cleanup()
         #
@@ -128,8 +128,8 @@ class ChemRefDataCvsUtils(object):
         cvsProjectName = self.__pI.assignCvsProjectName(repType="CC")
         ok, text = self.__vc.checkOut(projectPath=cvsProjectName)
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r\n" % (cvsProjectName, ok))
-            #self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
+            logger.info("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r", cvsProjectName, ok)
+            # logger.info("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
         textList.append(text[:100])
         #
         # self.__vc.cleanup()
@@ -144,38 +144,36 @@ class ChemRefDataCvsUtils(object):
         cvsProjectName = self.__pI.assignCvsProjectName(repType="PRD")
         ok, text = self.__vc.checkOut(projectPath=cvsProjectName)
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r\n" % (cvsProjectName, ok))
-            #self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
+            logger.info("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r", cvsProjectName, ok)
+            # logger.info("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
         textList.append(text[:100])
         cvsProjectName = self.__pI.assignCvsProjectName(repType="PRD_FAMILY")
         ok, text = self.__vc.checkOut(projectPath=cvsProjectName)
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r\n" % (cvsProjectName, ok))
-            #self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
+            logger.info("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r", cvsProjectName, ok)
+            # logger.info("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
         textList.append(text[:100])
         cvsProjectName = self.__pI.assignCvsProjectName(repType="PRDCC")
         ok, text = self.__vc.checkOut(projectPath=cvsProjectName)
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r\n" % (cvsProjectName, ok))
-            #self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
+            logger.info("+ChemRefDataCvsUtils(checkout) CVS %s update status is: %r", cvsProjectName, ok)
+            # logger.info("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
         textList.append(text[:100])
         #
         # self.__vc.cleanup()
         #
         return (ok, textList)
 
-
     def syncChemCompSerial(self):
-        """  Update the CVS repositories related to the chemical component dicitonary.
-        """
+        """Update the CVS repositories related to the chemical component dicitonary."""
         #
         textList = []
         #
         cvsProjectName = self.__pI.assignCvsProjectName(repType="CC")
         ok, text = self.__vc.update(projectDir=cvsProjectName, prune=True)
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update status is: %r\n" % (cvsProjectName, ok))
-            #self.__lfh.write("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
+            logger.info("+ChemRefDataCvsUtils(sync) CVS %s update status is: %r", cvsProjectName, ok)
+            # logger.info("+ChemRefDataCvsUtils(sync) CVS %s update output is:\n%s\n" % (cvsProjectName,text[:100]))
         textList.append(text[:100])
         #
         # self.__vc.cleanup()
@@ -183,31 +181,28 @@ class ChemRefDataCvsUtils(object):
         return (ok, textList)
 
     def syncChemComp(self, numProc=8):
-        """  Update the CVS repositories related to the chemical component dicitonary.
-        """
+        """Update the CVS repositories related to the chemical component dicitonary."""
         #
         startTime = time.time()
-        textList = []
         #
         cvsProjectName = self.__pI.assignCvsProjectName(repType="CC")
-        dataS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+        dataS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         dataList = [(cvsProjectName, a, True) for a in dataS]
         #
         mpu = MultiProcUtil(verbose=self.__debug)
         mpu.set(workerObj=self.__vc, workerMethod="updateList")
-        ok, failList, resultList, diagList = mpu.runMulti(dataList=dataList, numProc=numProc)
+        ok, failList, _resultList, diagList = mpu.runMulti(dataList=dataList, numProc=numProc)
         endTime = time.time()
         if self.__verbose:
-            self.__lfh.write("\n+ChemRefDataCvsUtils(syncChemComp) CVS %s update status is: %r in %.2f seconds\n" %
-                             (cvsProjectName, ok, endTime - startTime))
+            logger.info("+ChemRefDataCvsUtils(syncChemComp) CVS %s update status is: %r in %.2f seconds", cvsProjectName, ok, endTime - startTime)
 
             if len(failList) > 0:
-                self.__lfh.write("\n+ChemRefDataCvsUtils(syncChemComp) diagnostics %r\n" % failList)
+                logger.info("+ChemRefDataCvsUtils(syncChemComp) diagnostics %r", failList)
         return (ok, diagList)
 
     def updateFile(self, filePath):
-        """  Update the input file within the appropriate repository.  File names must obey repository
-             naming conventions.
+        """Update the input file within the appropriate repository.  File names must obey repository
+        naming conventions.
 
         """
         #
@@ -226,10 +221,10 @@ class ChemRefDataCvsUtils(object):
         projName, relPath = self.__pI.getCvsProjectInfo(self.__pI.assignIdCodeFromFileName(filePath))
 
         dstPath = os.path.join(self.__vc.getSandBoxTopPath(), projName, relPath)
-        (pth, fn) = os.path.split(dstPath)
+        # (pth, fn) = os.path.split(dstPath)
 
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(updateFile) CVS update %s %s working repository path is %s\n" % (projName, relPath, dstPath))
+            logger.info("+ChemRefDataCvsUtils(updateFile) CVS update %s %s working repository path is %s", projName, relPath, dstPath)
 
         #
         try:
@@ -238,22 +233,22 @@ class ChemRefDataCvsUtils(object):
             shutil.copy2(filePath, dstPath)
             ok, text = self.__vc.commit(projName, relPath)
 
-        except:
+        except:  # noqa: E722 pylint: disable=bare-except
             text = "+ChemRefDataCvsUtils(updateFile) CVS update exception"
             if self.__verbose:
-                self.__lfh.write("+ChemRefDataCvsUtils(updateFile) CVS update %s %s status %r output is:\n%s\n" % (projName, relPath, ok, text))
-                traceback.print_exc(file=self.__lfh)
+                logger.info("+ChemRefDataCvsUtils(updateFile) CVS update %s %s status %r output is: %s", projName, relPath, ok, text)
+                logger.exception("Unknown failued in CVS update")
 
         textList.append(text)
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(updateFile) CVS update %s %s status %r output is:\n%s\n" % (projName, relPath, ok, text))
+            logger.info("+ChemRefDataCvsUtils(updateFile) CVS update %s %s status %r output is: %s", projName, relPath, ok, text)
         self.__vc.cleanup()
         #
         return ok, textList
 
     def addFile(self, filePath):
-        """  Add the input file to the appropriate repository.  File names must obey repository
-             naming conventions.
+        """Add the input file to the appropriate repository.  File names must obey repository
+        naming conventions.
 
         """
         #
@@ -272,38 +267,38 @@ class ChemRefDataCvsUtils(object):
         projName, relPath = self.__pI.getCvsProjectInfo(self.__pI.assignIdCodeFromFileName(filePath))
 
         dstPath = os.path.join(self.__vc.getSandBoxTopPath(), projName, relPath)
-        (pth, fn) = os.path.split(dstPath)
+        (pth, _fn) = os.path.split(dstPath)
 
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(addFile) CVS add %s %s working repository path is %s\n" % (projName, relPath, dstPath))
+            logger.info("+ChemRefDataCvsUtils(addFile) CVS add %s %s working repository path is %s", projName, relPath, dstPath)
 
         # add any missing containing directories for the destination file.
         try:
-            if (not os.access(pth, os.F_OK)):
+            if not os.access(pth, os.F_OK):
                 os.makedirs(pth)
-                head, tail = os.path.split(relPath)
+                head, _tail = os.path.split(relPath)
                 self.__vc.add(projName, head)
             shutil.copy2(filePath, dstPath)
             self.__vc.add(projName, relPath)
             ok, text = self.__vc.commit(projName, relPath)
 
-        except:
+        except:  # noqa: E722 pylint: disable=bare-except
             text = "+ChemRefDataCvsUtils(addFile) CVS add exception"
             if self.__verbose:
-                self.__lfh.write("+ChemRefDataCvsUtils(addFile) CVS add %s %s status %r output is:\n%s\n" % (projName, relPath, ok, text))
-                traceback.print_exc(file=self.__lfh)
+                logger.info("+ChemRefDataCvsUtils(addFile) CVS add %s %s status %r output is: %s", projName, relPath, ok, text)
+                logger.exception("Failure in CVS add")
 
         textList.append(text)
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(addFile) CVS add %s %s status %r output is:\n%s\n" % (projName, relPath, ok, text))
+            logger.info("+ChemRefDataCvsUtils(addFile) CVS add %s %s status %r output is: %s", projName, relPath, ok, text)
         self.__vc.cleanup()
         #
         return ok, textList
 
     def history(self, idCode):
-        """  Return the version history for the input id code from the appropriate repository.
+        """Return the version history for the input id code from the appropriate repository.
 
-             Id codes must obey repository naming conventions.
+        Id codes must obey repository naming conventions.
 
         """
         #
@@ -315,28 +310,28 @@ class ChemRefDataCvsUtils(object):
             return ok, textList
 
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(history) CVS history id %s project %s  path %s\n" % (idCode, projName, relPath))
+            logger.info("+ChemRefDataCvsUtils(history) CVS history id %s project %s  path %s", idCode, projName, relPath)
         #
         try:
             cvsPath = os.path.join(projName, relPath)
             ok, text = self.__vcAd.getHistory(cvsPath)
             textList.append(text)
-        except:
+        except:  # noqa: E722 pylint: disable=bare-except
             textList.append("CVS history exception")
             if self.__verbose:
-                self.__lfh.write("+ChemRefDataCvsUtils(history) CVS history exception %s %s status %r output is:\n%s\n" % (projName, relPath, ok, textList))
-                traceback.print_exc(file=self.__lfh)
+                logger.info("+ChemRefDataCvsUtils(history) CVS history exception %s %s status %r output is: %s", projName, relPath, ok, textList)
+                logger.exception("Failure in CVS history")
 
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(remove) CVS history %s %s status %r output is:\n%s\n" % (projName, relPath, ok, textList))
+            logger.info("+ChemRefDataCvsUtils(remove) CVS history %s %s status %r output is: %s", projName, relPath, ok, textList)
         self.__vcAd.cleanup()
         #
         return ok, textList
 
     def checkoutRevisions(self, idCode):
-        """  Return the pathlist of checked out revisions for the input id code from the appropriate repository.
+        """Return the pathlist of checked out revisions for the input id code from the appropriate repository.
 
-             Id codes must obey repository naming conventions.
+        Id codes must obey repository naming conventions.
 
         """
         #
@@ -349,14 +344,14 @@ class ChemRefDataCvsUtils(object):
             return ok, pathList
 
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(checkoutRevisions) id %s project %s  path %s\n" % (idCode, projName, relPath))
+            logger.info("+ChemRefDataCvsUtils(checkoutRevisions) id %s project %s  path %s", idCode, projName, relPath)
         #
         try:
             cvsPath = os.path.join(projName, relPath)
             ok, revList = self.__vcAd.getRevisionList(cvsPath)
 
-            (pth, fn) = os.path.split(cvsPath)
-            (base, ext) = os.path.splitext(fn)
+            (_pth, fn) = os.path.split(cvsPath)
+            (_base, ext) = os.path.splitext(fn)
 
             for revId in revList:
                 rId = revId[0]
@@ -364,26 +359,26 @@ class ChemRefDataCvsUtils(object):
                 ok, text = self.__vcAd.checkOutFile(cvsPath=cvsPath, outPath=outPath, revId=rId)
                 if ok:
                     pathList.append(outPath)
-                    self.__lfh.write("CVS checkout status %r output %s is:\n%s\n" % (ok, outPath, text))
-        except:
+                    logger.info("CVS checkout status %r output %s is: %s", ok, outPath, text)
+        except:  # noqa: E722 pylint: disable=bare-except
             pathList.append("Revision checkout exception")
             if self.__verbose:
-                self.__lfh.write("+ChemRefDataCvsUtils(checkoutRevisions) exception %s %s status %r output is:\n%s\n" % (projName, relPath, ok, pathList))
-                traceback.print_exc(file=self.__lfh)
+                logger.info("+ChemRefDataCvsUtils(checkoutRevisions) exception %s %s status %r output is: %s", projName, relPath, ok, pathList)
+                logger.exception("Failure in CVS revision checkout")
 
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(checkoutRevisions) done %s %s status %r output is:\n%s\n" % (projName, relPath, ok, pathList))
+            logger.info("+ChemRefDataCvsUtils(checkoutRevisions) done %s %s status %r output is: %s", projName, relPath, ok, pathList)
         self.__vcAd.cleanup()
         #
         return ok, pathList
 
     def remove(self, idCode):
-        """  Remove the reference file associated with the input id code from the appropriate repository.
-             Id codes must obey repository naming conventions.
+        """Remove the reference file associated with the input id code from the appropriate repository.
+        Id codes must obey repository naming conventions.
 
         """
         #
-        text = ''
+        text = ""
         textList = []
         ok = False
         #
@@ -392,7 +387,7 @@ class ChemRefDataCvsUtils(object):
             return ok, textList
 
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(remove) CVS remove id %s project %s  path %s\n" % (idCode, projName, relPath))
+            logger.info("+ChemRefDataCvsUtils(remove) CVS remove id %s project %s  path %s", idCode, projName, relPath)
         #
         try:
             ok1, text = self.__vc.remove(projName, relPath, saveCopy=True)
@@ -401,31 +396,31 @@ class ChemRefDataCvsUtils(object):
             # Remove the containing directory if required.
             repType = self.__pI.getIdType(idCode)
             if repType == "CC":
-                (pth, fn) = os.path.split(relPath)
+                (pth, _fn) = os.path.split(relPath)
                 ok2, text = self.__vc.removeDir(projName, pth)
                 textList.append(text)
                 ok = ok1 and ok2
             else:
                 ok = ok1
-        except:
+        except:  # noqa: E722 pylint: disable=bare-except
             textList.append("+ChemRefDataCvsUtils(remove) CVS remove exception")
             if self.__verbose:
-                self.__lfh.write("+ChemRefDataCvsUtils(remove) CVS remove %s %s status %r output is:\n%s\n" % (projName, relPath, ok, text))
-                traceback.print_exc(file=self.__lfh)
+                logger.info("+ChemRefDataCvsUtils(remove) CVS remove %s %s status %r output is: %s", projName, relPath, ok, text)
+                logger.exception("Failure in CVS remove")
 
         if self.__verbose:
-            self.__lfh.write("+ChemRefDataCvsUtils(remove) CVS remove %s %s status %r output is:\n%s\n" % (projName, relPath, ok, textList))
+            logger.info("+ChemRefDataCvsUtils(remove) CVS remove %s %s status %r output is: %s", projName, relPath, ok, textList)
         self.__vc.cleanup()
         #
         return ok, textList
 
     def exists(self, filePath):
-        """ Test if the input 'filePath' corresponds to an existing entry in one of
-            CVS repositories.
+        """Test if the input 'filePath' corresponds to an existing entry in one of
+        CVS repositories.
 
-            Return True if an existing entry is found or False otherwise
+        Return True if an existing entry is found or False otherwise
         """
-        if ((filePath is None) or (len(filePath) < 7)):
+        if (filePath is None) or (len(filePath) < 7):
             return False
 
         projName, relPath = self.__pI.getCvsProjectInfo(self.__pI.assignIdCodeFromFileName(filePath))
@@ -440,12 +435,12 @@ class ChemRefDataCvsUtils(object):
         return False
 
     def checkFileName(self, filePath):
-        """ Test if the input 'filePath' corresponds to the naming conventions of on of the
-            CVS repositories.
+        """Test if the input 'filePath' corresponds to the naming conventions of on of the
+        CVS repositories.
 
-            Return True for success or False otherwise
+        Return True for success or False otherwise
         """
-        if ((filePath is None) or (len(filePath) < 7)):
+        if (filePath is None) or (len(filePath) < 7):
             return False
-        projName, relPath = self.__pI.getCvsProjectInfo(self.__pI.assignIdCodeFromFileName(filePath))
-        return (projName is not None)
+        projName, _relPath = self.__pI.getCvsProjectInfo(self.__pI.assignIdCodeFromFileName(filePath))
+        return projName is not None
