@@ -51,7 +51,7 @@ class ChemRefDataDbExec(object):
     def __setup(self, defSiteId=None, sessionId=None):
         """Simulate the web application environment for managing session storage of  temporaty data files."""
         self.__siteId = getSiteId(defaultSiteId=defSiteId)
-        print(self.__siteId)
+        # print(self.__siteId)
         #
         self.__cI = ConfigInfo(self.__siteId)
         self.__topPath = self.__cI.get("SITE_WEB_APPS_TOP_PATH")
@@ -72,6 +72,8 @@ class ChemRefDataDbExec(object):
         if sessionId is not None:
             self.__reqObj.setValue("sessionid", sessionId)
 
+        # We need to create a session obj (with subdir). Do not remove
+        _sessionObj = self.__reqObj.newSessionObj()  # noqa: F841
         # self.__reqObj.printIt(ofh=self.__lfh)
         #
 
@@ -228,6 +230,10 @@ class ChemRefDataDbExec(object):
 
 
 def main():
+    FORMAT = '[%(levelname)s]-%(module)s.%(funcName)s: %(message)s'
+    logging.basicConfig(format=FORMAT)
+    logger.setLevel(logging.INFO)
+
     usage = "usage: %prog [options]"
     parser = OptionParser(usage)
 
