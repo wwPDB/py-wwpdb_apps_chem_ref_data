@@ -230,7 +230,7 @@ class ChemRefDataDbExec(object):
 
 
 def main():
-    FORMAT = '[%(levelname)s]-%(module)s.%(funcName)s: %(message)s'
+    FORMAT = "[%(levelname)s]-%(module)s.%(funcName)s: %(message)s"
     logging.basicConfig(format=FORMAT)
     logger.setLevel(logging.INFO)
 
