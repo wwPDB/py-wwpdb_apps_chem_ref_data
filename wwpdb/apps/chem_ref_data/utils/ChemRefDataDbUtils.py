@@ -44,6 +44,7 @@ from wwpdb.utils.db.BirdSchemaDef import BirdSchemaDef
 from wwpdb.utils.db.ChemCompSchemaDef import ChemCompSchemaDef
 
 from mmcif_utils.bird.PdbxPrdIo import PdbxPrdIo
+from mmcif_utils.bird.PdbxPrdCcIo import PdbxPrdCcIo
 from mmcif_utils.bird.PdbxFamilyIo import PdbxFamilyIo
 from mmcif_utils.bird.PdbxPrdUtils import PdbxPrdUtils
 
@@ -101,6 +102,7 @@ class ChemRefDataDbUtils(MyConnectionBase):
         logger.info("+ChemRefDataLoad(loadBird) Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             birdCachePath = self.__cICommon.get_site_prd_cvs_path()
+            birdCcCachePath = self.__cICommon.get_site_prdcc_cvs_path()
             birdFamilyCachePath = self.__cICommon.get_site_family_cvs_path()
             #
             #
@@ -117,6 +119,7 @@ class ChemRefDataDbUtils(MyConnectionBase):
             _rD = prdU.getComponentSequences(addCategory=True)  # noqa: F841  might have side effects
             #
             #
+            # Load family files
             prdFam = PdbxFamilyIo(verbose=self.__verbose, log=self.__lfh)
             prdFam.setCachePath(birdFamilyCachePath)
             familyPathList = prdFam.makeDefinitionPathList()
@@ -129,6 +132,20 @@ class ChemRefDataDbUtils(MyConnectionBase):
             # Combine containers -
             containerList = prd.getCurrentContainerList()
             containerList.extend(prdFam.getCurrentContainerList())
+
+            # Load prdcc files
+            prdCc = PdbxPrdCcIo(verbose=self.__verbose, log=self.__lfh)
+            prdCc.setCachePath(birdCcCachePath)
+            prdccPathList = prdCc.makeDefinitionPathList()
+            #
+            for pth in prdccPathList:
+                prdCc.setFilePath(pth)
+            if self.__verbose:
+                logger.info("+ChemRefDataLoad(loadBird) Prdcc repository read completed")
+            #
+            # Combine containers -
+            containerList.extend(prdCc.getCurrentContainerList())
+
             #
             # Run loader on container list --
             #
