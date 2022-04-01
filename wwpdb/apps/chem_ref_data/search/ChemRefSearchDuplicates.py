@@ -105,6 +105,7 @@ class ChemRefSearchDuplicates(MyConnectionBase):
             "1CR,0CR": "Enantiomers",
             "C7S,C7R": "thiophospho connection isoforms",
             "RKP,0TN": "Metallo compound different arrangements",
+            "OY8,OY5": "Diastereomer carboranes",
         }
 
         key = "%s,%s" % (row["cid1"], row["cid2"])
