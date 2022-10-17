@@ -387,7 +387,7 @@ class ChemRefDataMiscUtils(object):
                 if "REMOVE" in root:
                     continue
                 for name in files:
-                    if name.endswith(".cif") and len(name) <= 9:   # Extends to support 5 character CCD
+                    if name.endswith(".cif") and len(name) <= 9:  # Extends to support 5 character CCD
                         pathList.append(os.path.join(root, name))
 
         return dataList, pathList, []
