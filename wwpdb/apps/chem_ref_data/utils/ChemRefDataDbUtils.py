@@ -264,7 +264,7 @@ class ChemRefDataDbUtils(MyConnectionBase):
                 if "REMOVE" in root:
                     continue
                 for name in files:
-                    if name.endswith(".cif") and len(name) <= 7:
+                    if name.endswith(".cif") and len(name) <= 9:  # support five character CCID
                         pathList.append(os.path.join(root, name))
 
         return dataList, pathList, []
@@ -272,7 +272,7 @@ class ChemRefDataDbUtils(MyConnectionBase):
     def loadChemCompMulti(self, numProc=8):
         """Create batch load files for all chemical component definition data files - (multiprocessing for file generation only)"""
         if self.__verbose:
-            logger.info("Startin")
+            logger.info("Starting")
         startTime = time.time()
         try:
             dataS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
