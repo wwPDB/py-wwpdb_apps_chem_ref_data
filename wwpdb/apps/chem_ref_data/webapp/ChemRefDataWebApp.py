@@ -1110,7 +1110,7 @@ class ChemRefDataWebAppWorker(object):
             rC.setError(errMsg="Please input CC ID")
             return rC
         #
-        if len(idCode) > 3:
+        if len(idCode) > 5:
             rC.setError(errMsg="Invalid CC ID")
             return rC
         #
