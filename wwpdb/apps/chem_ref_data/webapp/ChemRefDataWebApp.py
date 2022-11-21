@@ -101,7 +101,6 @@ class ChemRefDataWebApp(object):
         self.__debug = False
         self.__siteId = siteId
         #
-        self.__cI = ConfigInfo(self.__siteId)
         self.__cICommon = ConfigInfoAppCommon(self.__siteId)
         self.__topPath = self.__cICommon.get_site_web_apps_top_path()
         self.__topSessionPath = self.__cICommon.get_site_web_apps_top_sessions_path()

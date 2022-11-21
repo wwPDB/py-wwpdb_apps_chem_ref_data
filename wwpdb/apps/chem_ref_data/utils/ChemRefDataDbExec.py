@@ -28,7 +28,7 @@ from enum import Enum
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataDbUtils import ChemRefDataDbUtils
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataCvsUtils import ChemRefDataCvsUtils
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataMiscUtils import ChemRefDataMiscUtils
-from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
+from wwpdb.utils.config.ConfigInfo import getSiteId
 from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from wwpdb.utils.session.WebRequest import InputRequest
 
@@ -54,7 +54,6 @@ class ChemRefDataDbExec(object):
         self.__siteId = getSiteId(defaultSiteId=defSiteId)
         # print(self.__siteId)
         #
-        self.__cI = ConfigInfo(self.__siteId)
         self.__cICommon = ConfigInfoAppCommon(self.__siteId)
         self.__topPath = self.__cICommon.get_site_web_apps_top_path()
         self.__topSessionPath = self.__cICommon.get_site_web_apps_top_sessions_path()
