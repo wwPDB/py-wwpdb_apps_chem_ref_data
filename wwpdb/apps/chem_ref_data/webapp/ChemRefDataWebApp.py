@@ -102,8 +102,9 @@ class ChemRefDataWebApp(object):
         self.__siteId = siteId
         #
         self.__cI = ConfigInfo(self.__siteId)
-        self.__topPath = self.__cI.get("SITE_WEB_APPS_TOP_PATH")
-        self.__topSessionPath = self.__cI.get("SITE_WEB_APPS_TOP_SESSIONS_PATH")
+        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
+        self.__topPath = self.__cICommon.get_site_web_apps_top_path()
+        self.__topSessionPath = self.__cICommon.get_site_web_apps_top_sessions_path()
         #
 
         if isinstance(parameterDict, dict):
