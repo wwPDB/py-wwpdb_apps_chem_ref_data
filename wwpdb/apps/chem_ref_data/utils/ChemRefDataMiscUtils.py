@@ -187,7 +187,7 @@ class ChemRefDataMiscUtils(object):
             logger.exception("In concatPathListExt")
             return (False, False)
 
-    def updateChemCompSupportFiles(self, idMaxLen=3, numProc=4, skipIndex=False):
+    def updateChemCompSupportFiles(self, idMaxLen=5, numProc=4, skipIndex=False):
         """Create full idlist, pathlist, concatenated chemical component dictionary file,
         serialized dictionary, and dictionary index.
         If skipIndex is set, will avoid serialization and indexing operations for testing
