@@ -51,7 +51,7 @@ class ChemCompReport(object):
         self.__sessionId = self.__sObj.getId()
         #
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
-        self.__crPI = ChemRefPathInfo(siteId = self.__siteId, verbose=self.__verbose, log=self.__lfh)
+        self.__crPI = ChemRefPathInfo(siteId=self.__siteId, verbose=self.__verbose, log=self.__lfh)
 
         #
         self.__ccId = None
