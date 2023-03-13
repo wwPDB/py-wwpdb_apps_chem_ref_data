@@ -22,8 +22,6 @@ import os.path
 import shutil
 import logging
 
-from wwpdb.utils.config.ConfigInfo import ConfigInfo
-from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
 from wwpdb.io.locator.ChemRefPathInfo import ChemRefPathInfo
 
 logger = logging.getLogger(__name__)
@@ -43,9 +41,7 @@ class DownloadUtils(object):
         self.__reqObj = reqObj
         #
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
-        self.__cI = ConfigInfo(self.__siteId)
-        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
-        self.__crPI = ChemRefPathInfo(configObj=self.__cI, configCommonObj=self.__cICommon, verbose=self.__verbose, log=self.__lfh)
+        self.__crPI = ChemRefPathInfo(siteId=self.__siteId, verbose=self.__verbose, log=self.__lfh)
         #
         self.__sessionId = self.__reqObj.getSessionId()
         self.__sessionPath = self.__reqObj.getSessionPath()

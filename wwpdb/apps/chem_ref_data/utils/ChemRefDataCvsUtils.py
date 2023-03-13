@@ -26,7 +26,7 @@ import time
 import logging
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCc
 from wwpdb.io.cvs.CvsAdmin import CvsAdmin, CvsSandBoxAdmin
 from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
 from wwpdb.io.locator.ChemRefPathInfo import ChemRefPathInfo
@@ -59,9 +59,9 @@ class ChemRefDataCvsUtils(object):
         #
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         self.__cI = ConfigInfo(self.__siteId)
-        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
-        self.__sbTopPath = self.__cICommon.get_site_refdata_top_cvs_sb_path()
-        self.__pI = ChemRefPathInfo(configObj=self.__cI, configCommonObj=self.__cICommon, verbose=self.__verbose, log=self.__lfh)
+        self.__cICommonCc = ConfigInfoAppCc(self.__siteId)
+        self.__sbTopPath = self.__cICommonCc.get_site_refdata_top_cvs_sb_path()
+        self.__pI = ChemRefPathInfo(siteId=self.__siteId, verbose=self.__verbose, log=self.__lfh)
         #
         self.__vc, self.__vcAd = self.__setupCvs()
         #

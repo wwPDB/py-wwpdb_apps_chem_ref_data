@@ -150,6 +150,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         oL.append('<ul class="nav nav-tabs">')
         oL.append('<li><a  class="active" data-target="#%s-tabs-id" data-toggle="tab">%s' % (idPrefix, idCode))
         oL.append('   <span aria-hidden="true"> <i class="fa fa-compress"></i></span><span class="sr-only">Close</span></a></li>')
+        iSection = 0
         for ii, (catName, catNameAbbrev, catStyle) in enumerate(catList):
             # For only popuated categories
             if catName in cD and (len(cD[catName]) > 0):
