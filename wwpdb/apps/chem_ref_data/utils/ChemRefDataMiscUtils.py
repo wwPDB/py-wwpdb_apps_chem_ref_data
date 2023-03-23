@@ -28,7 +28,7 @@ import fnmatch
 import logging
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCc
 
 from rcsb.utils.multiproc.MultiProcUtil import MultiProcUtil
 
@@ -68,33 +68,33 @@ class ChemRefDataMiscUtils(object):
 
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         self.__cI = ConfigInfo(self.__siteId)
-        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
-        self.__sbTopPath = self.__cICommon.get_site_refdata_top_cvs_sb_path()
+        self.__cIConfigInfoCc = ConfigInfoAppCc(self.__siteId)
+        self.__sbTopPath = self.__cIConfigInfoCc.get_site_refdata_top_cvs_sb_path()
         self.__projName = self.__cI.get("SITE_REFDATA_PROJ_NAME_CC")
-        self.__ccDictPath = self.__cICommon.get_site_cc_dict_path()
+        self.__ccDictPath = self.__cIConfigInfoCc.get_site_cc_dict_path()
         #
-        self.__pathCCDict = self.__cICommon.get_cc_dict()
-        self.__pathCCPathList = self.__cICommon.get_cc_path_list()
-        self.__pathCCIdList = self.__cICommon.get_cc_id_list()
-        self.__pathCCDictSerial = self.__cICommon.get_cc_dict_serial()
-        self.__pathCCDictIdx = self.__cICommon.get_cc_dict_idx()
+        self.__pathCCDict = self.__cIConfigInfoCc.get_cc_dict()
+        self.__pathCCPathList = self.__cIConfigInfoCc.get_cc_path_list()
+        self.__pathCCIdList = self.__cIConfigInfoCc.get_cc_id_list()
+        self.__pathCCDictSerial = self.__cIConfigInfoCc.get_cc_dict_serial()
+        self.__pathCCDictIdx = self.__cIConfigInfoCc.get_cc_dict_idx()
         #
         if sys.version_info[0] > 2:
-            self.__pathCCDb = self.__cICommon.get_cc_db()
+            self.__pathCCDb = self.__cIConfigInfoCc.get_cc_db()
         else:
             self.__pathCCDb = os.path.join(self.__ccDictPath, "chemcomp.db")
-        self.__pathCCIndex = self.__cICommon.get_cc_index()
-        self.__pathCCParentIndex = self.__cICommon.get_cc_parent_index()
+        self.__pathCCIndex = self.__cIConfigInfoCc.get_cc_index()
+        self.__pathCCParentIndex = self.__cIConfigInfoCc.get_cc_parent_index()
 
-        self.__pathPrdChemCompCVS = self.__cICommon.get_site_prdcc_cvs_path()
-        self.__pathPrdDictRef = self.__cICommon.get_site_prd_dict_path()
-        self.__pathPrdDictFile = self.__cICommon.get_prd_dict_file()
-        self.__pathPrdDictSerial = self.__cICommon.get_prd_dict_serial()
-        self.__pathPrdCcFile = self.__cICommon.get_prd_cc_file()
-        self.__pathPrdCcSerial = self.__cICommon.get_prd_cc_serial()
-        self.__pathPrdSummary = self.__cICommon.get_prd_summary_cif()
-        self.__pathPrdSummarySerial = self.__cICommon.get_prd_summary_sdb()
-        self.__pathPrdFamilyMapping = self.__cICommon.get_prd_family_mapping()
+        self.__pathPrdChemCompCVS = self.__cIConfigInfoCc.get_site_prdcc_cvs_path()
+        self.__pathPrdDictRef = self.__cIConfigInfoCc.get_site_prd_dict_path()
+        self.__pathPrdDictFile = self.__cIConfigInfoCc.get_prd_dict_file()
+        self.__pathPrdDictSerial = self.__cIConfigInfoCc.get_prd_dict_serial()
+        self.__pathPrdCcFile = self.__cIConfigInfoCc.get_prd_cc_file()
+        self.__pathPrdCcSerial = self.__cIConfigInfoCc.get_prd_cc_serial()
+        self.__pathPrdSummary = self.__cIConfigInfoCc.get_prd_summary_cif()
+        self.__pathPrdSummarySerial = self.__cIConfigInfoCc.get_prd_summary_sdb()
+        self.__pathPrdFamilyMapping = self.__cIConfigInfoCc.get_prd_family_mapping()
         #
         self.__makeTopPaths()
 
@@ -108,9 +108,9 @@ class ChemRefDataMiscUtils(object):
         logger.info("+ChemRefDataLoad(getBirdPathList) Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             #
-            birdCachePath = self.__cICommon.get_site_prd_cvs_path()
-            birdFamilyCachePath = self.__cICommon.get_site_family_cvs_path()
-            birdCcCachePath = self.__cICommon.get_site_prdcc_cvs_path()
+            birdCachePath = self.__cIConfigInfoCc.get_site_prd_cvs_path()
+            birdFamilyCachePath = self.__cIConfigInfoCc.get_site_family_cvs_path()
+            birdCcCachePath = self.__cIConfigInfoCc.get_site_prdcc_cvs_path()
             #
             #
             prd = PdbxPrdIo(verbose=self.__verbose, log=self.__lfh)
@@ -326,7 +326,7 @@ class ChemRefDataMiscUtils(object):
 
     def __serializeDictOp(self, minSize=10):
         """Serialize chemical component dictionary from concatenated dictionary text."""
-        logger.info("Starting %s %s")
+        logger.info("Starting")
         startTime = time.time()
         try:
             outPathTmp = self.__makeTempPath(self.__pathCCDictSerial)
@@ -361,7 +361,7 @@ class ChemRefDataMiscUtils(object):
         startTime = time.time()
         logger.info("+ChemRefDataDbUtils(getChemCompPathList) Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
-            chemCompCachePath = self.__cICommon.get_site_cc_cvs_path()
+            chemCompCachePath = self.__cIConfigInfoCc.get_site_cc_cvs_path()
             #
             #
             cc = PdbxChemCompIo(verbose=self.__verbose, log=self.__lfh)
@@ -400,6 +400,12 @@ class ChemRefDataMiscUtils(object):
         try:
             dataS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
             dataList = [a for a in dataS]
+
+            # Extended CCD support
+            ext_ccd = self.__cIConfigInfoCc.get_extended_ccd_supp()
+            if ext_ccd:
+                dataList += [(a + b) for a in dataS for b in dataS]
+
             mpu = MultiProcUtil(verbose=True)
             mpu.set(workerObj=self, workerMethod="_makeComponentPathListMulti")
             _ok, _failList, retLists, _diagList = mpu.runMulti(dataList=dataList, numProc=numProc, numResults=1)

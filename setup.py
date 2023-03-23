@@ -42,7 +42,7 @@ setup(
     ],
     #
     install_requires=[
-        "wwpdb.utils.config ~= 0.24",
+        "wwpdb.utils.config ~= 0.34",
         "wwpdb.utils.db ~= 0.26",
         "wwpdb.utils.session ~= 0.4",
         "wwpdb.io ~= 0.25",

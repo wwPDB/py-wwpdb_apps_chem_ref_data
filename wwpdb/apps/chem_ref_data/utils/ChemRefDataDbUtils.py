@@ -32,7 +32,7 @@ import logging
 #    from itertools import izip_longest as zip_longest
 
 from wwpdb.utils.config.ConfigInfo import ConfigInfo
-from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCc
 from wwpdb.utils.db.MyDbSqlGen import MyDbAdminSqlGen
 from wwpdb.utils.db.SchemaDefLoader import SchemaDefLoader
 from wwpdb.utils.db.MyDbUtil import MyDbQuery
@@ -90,8 +90,8 @@ class ChemRefDataDbUtils(MyConnectionBase):
         #
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         self.__cI = ConfigInfo(self.__siteId)
-        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
-        self.__sbTopPath = self.__cICommon.get_site_refdata_top_cvs_sb_path()
+        self.__cIAppCc = ConfigInfoAppCc(self.__siteId)
+        self.__sbTopPath = self.__cIAppCc.get_site_refdata_top_cvs_sb_path()
         self.__projName = self.__cI.get("SITE_REFDATA_PROJ_NAME_CC")
 
     def loadBird(self):
@@ -101,9 +101,9 @@ class ChemRefDataDbUtils(MyConnectionBase):
         startTime = time.time()
         logger.info("+ChemRefDataLoad(loadBird) Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
-            birdCachePath = self.__cICommon.get_site_prd_cvs_path()
-            birdCcCachePath = self.__cICommon.get_site_prdcc_cvs_path()
-            birdFamilyCachePath = self.__cICommon.get_site_family_cvs_path()
+            birdCachePath = self.__cIAppCc.get_site_prd_cvs_path()
+            birdCcCachePath = self.__cIAppCc.get_site_prdcc_cvs_path()
+            birdFamilyCachePath = self.__cIAppCc.get_site_family_cvs_path()
             #
             #
             prd = PdbxPrdIo(verbose=self.__verbose, log=self.__lfh)
@@ -178,7 +178,7 @@ class ChemRefDataDbUtils(MyConnectionBase):
         startTime = time.time()
         logger.info("+ChemRefDataDbUtils(loadChemComp) Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
-            chemCompCachePath = self.__cICommon.get_site_cc_cvs_path()
+            chemCompCachePath = self.__cIAppCc.get_site_cc_cvs_path()
             #
             cc = PdbxChemCompIo(verbose=self.__verbose, log=self.__lfh)
             cc.setCachePath(chemCompCachePath)
@@ -277,6 +277,14 @@ class ChemRefDataDbUtils(MyConnectionBase):
         try:
             dataS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
             dataList = [a for a in dataS]
+
+            # Extended CCD support
+            ext_ccd = self.__cIAppCc.get_extended_ccd_supp()
+            if ext_ccd:
+                dataList += [a + b for a in dataS for b in dataS]
+
+            print(dataList)
+
             if OSVersion().IsRhel8Like() is False:
                 mpu = MultiProcUtil(verbose=True)
                 mpu.set(workerObj=self, workerMethod="makeComponentPathListMulti")

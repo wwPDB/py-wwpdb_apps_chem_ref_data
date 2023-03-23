@@ -59,8 +59,8 @@ class ChemRefDataCvsUtils(object):
         #
         self.__siteId = self.__reqObj.getValue("WWPDB_SITE_ID")
         self.__cI = ConfigInfo(self.__siteId)
-        self.__cICommonCc = ConfigInfoAppCc(self.__siteId)
-        self.__sbTopPath = self.__cICommonCc.get_site_refdata_top_cvs_sb_path()
+        self.__cIAppCc = ConfigInfoAppCc(self.__siteId)
+        self.__sbTopPath = self.__cIAppCc.get_site_refdata_top_cvs_sb_path()
         self.__pI = ChemRefPathInfo(siteId=self.__siteId, verbose=self.__verbose, log=self.__lfh)
         #
         self.__vc, self.__vcAd = self.__setupCvs()
@@ -188,6 +188,13 @@ class ChemRefDataCvsUtils(object):
         cvsProjectName = self.__pI.assignCvsProjectName(repType="CC")
         dataS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
         dataList = [(cvsProjectName, a, True) for a in dataS]
+
+        # Extended CCD support
+        ext_ccd = self.__cIAppCc.get_extended_ccd_supp()
+        if ext_ccd:
+            dataList += [("cvsProjectName", a + b, True) for a in dataS for b in dataS]
+
+
         #
         mpu = MultiProcUtil(verbose=self.__debug)
         mpu.set(workerObj=self.__vc, workerMethod="updateList")

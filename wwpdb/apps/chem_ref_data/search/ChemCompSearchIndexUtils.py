@@ -19,7 +19,7 @@ import jellyfish
 from operator import itemgetter
 
 from wwpdb.utils.cc_dict_util.persist.PdbxChemCompDictIndex import PdbxChemCompDictIndex
-from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCc
 
 import logging
 
@@ -32,8 +32,8 @@ class ChemCompSearchIndexUtils(object):
         self.__debug = False
         self.__lfh = log
         self.__siteId = siteId
-        self.__cICommon = ConfigInfoAppCommon(self.__siteId)
-        self.__pathCCIndex = self.__cICommon.get_cc_index()
+        self.__cIAppCc = ConfigInfoAppCc(self.__siteId)
+        self.__pathCCIndex = self.__cIAppCc.get_cc_index()
         logger.debug("ChemCompSearchIndexUtils index path %r", self.__pathCCIndex)
         #
         dIndx = PdbxChemCompDictIndex(verbose=self.__verbose, log=self.__lfh)
