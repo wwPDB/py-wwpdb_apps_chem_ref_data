@@ -49,7 +49,7 @@ setup(
         "mmcif.utils ~= 0.18",
         "wwpdb.utils.oe_util",
         "jellyfish ~= 0.6.1; python_version < '3'",
-        "jellyfish ~= 0.10.0; python_version >= '3'",
+        "jellyfish; python_version >= '3'",
         "wwpdb.utils.cc_dict_util",
         "wwpdb.utils.dp ~= 0.19",
         "rcsb.utils.multiproc",

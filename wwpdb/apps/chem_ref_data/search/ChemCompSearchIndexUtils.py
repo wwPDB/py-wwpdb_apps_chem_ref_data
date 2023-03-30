@@ -455,7 +455,7 @@ class ChemCompSearchIndexUtils(object):
         """
         try:
             maxLen = max(len(s1), len(s2))
-            ed = jellyfish.damerau_levenshtein_distance(s1, s2)
+            ed = jellyfish.damerau_levenshtein_distance(s1, s2)  # pylint: disable=no-member
             edN = float(maxLen - ed) / float(maxLen)
             # logging.debug("s1 %r s2 %r maxLen %r ed %f edN %f " % (s1, s2, maxLen, ed, edN))
             return edN
