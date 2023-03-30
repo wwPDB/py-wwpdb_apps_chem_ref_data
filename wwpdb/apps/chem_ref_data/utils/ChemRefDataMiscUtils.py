@@ -219,8 +219,15 @@ class ChemRefDataMiscUtils(object):
         logger.info("Starting at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         try:
             dU = PdbxChemCompDictUtil(verbose=self.__verbose, log=self.__lfh)
+            logger.info("Starting full load at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+
             ok = dU.makeStoreFromFile(dictPath=self.__pathCCDict, storePath=self.__pathCCDb)
-            ok = self.updatePrdCCFiles()
+            logger.info("Finished full load at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
+
+            # We skip the next - as it incrementally loads the CC definitions into database which is good for low memory machines
+            # but terribly slow
+            # ok = self.updatePrdCCFiles()
+            ok = True
             if ok:
                 dIndx = PdbxChemCompDictIndex(verbose=self.__verbose, log=self.__lfh)
                 dIndx.makeIndex(storePath=self.__pathCCDb, indexPath=self.__pathCCIndex)
@@ -281,7 +288,9 @@ class ChemRefDataMiscUtils(object):
                 logger.info("PRD CC pathlist length is %d", len(ccPathList))
             #
             dUtil = PdbxChemCompDictUtil(verbose=self.__verbose, log=self.__lfh)
+            logger.info("Starting incremental load at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             dUtil.updateStoreByFile(pathList=ccPathList, storePath=self.__pathCCDb)
+            logger.info("Finished incremental load at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
             ok = True
             #
         except:  # noqa: E722 pylint: disable=bare-except
