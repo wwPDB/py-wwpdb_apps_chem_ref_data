@@ -194,7 +194,6 @@ class ChemRefDataCvsUtils(object):
         if ext_ccd:
             dataList += [("cvsProjectName", a + b, True) for a in dataS for b in dataS]
 
-
         #
         mpu = MultiProcUtil(verbose=self.__debug)
         mpu.set(workerObj=self.__vc, workerMethod="updateList")

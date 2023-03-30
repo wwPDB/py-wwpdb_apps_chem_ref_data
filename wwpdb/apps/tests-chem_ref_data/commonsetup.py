@@ -36,10 +36,13 @@ def getSiteIdReplace(defaultSiteId=None):  # pylint: disable=unused-argument
 sys.modules["wwpdb.utils.config.ConfigInfo"] = Mock(ConfigInfo=configMock, getSiteId=getSiteIdReplace)
 
 
-# ConfigInfoAppCommon
-class ConfigInfoAppReplace(object):
-    def __init__(self, siteId=None):
+# ConfigInfoAppCc
+class ConfigInfoAppCcReplace(object):
+    def __init__(self, siteId=None, verbose=True, log=None):
         pass
+
+    def get_extended_ccd_supp(self):
+        return True
 
     def get_site_cc_dict_path(self):
         return os.path.join(TESTOUTPUT, "cc-dict")
@@ -102,4 +105,4 @@ class ConfigInfoAppReplace(object):
         return os.path.join(self.get_site_prd_dict_path(), "PrdFamilyIDMapping.lst")
 
 
-sys.modules["wwpdb.utils.config.ConfigInfoApp"] = Mock(ConfigInfoAppCommon=ConfigInfoAppReplace)
+sys.modules["wwpdb.utils.config.ConfigInfoApp"] = Mock(ConfigInfoAppCc=ConfigInfoAppCcReplace)

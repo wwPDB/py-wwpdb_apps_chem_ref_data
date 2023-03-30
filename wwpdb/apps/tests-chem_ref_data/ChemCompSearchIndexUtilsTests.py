@@ -31,7 +31,7 @@ else:
     from .commonsetup import HERE  # noqa: F401 pylint: disable=relative-beyond-top-level
 
 from wwpdb.apps.chem_ref_data.search.ChemCompSearchIndexUtils import ChemCompSearchIndexUtils
-from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCommon
+from wwpdb.utils.config.ConfigInfoApp import ConfigInfoAppCc
 from wwpdb.utils.config.ConfigInfo import ConfigInfo, getSiteId
 from wwpdb.apps.chem_ref_data.utils.ChemRefDataMiscUtils import ChemRefDataMiscUtils
 from wwpdb.utils.session.WebRequest import InputRequest
@@ -47,7 +47,7 @@ class ChemCompSearchIndexUtilsTests(unittest.TestCase):
         self.__siteId = None
         self.__verbose = True
         #
-        self.__cc_index = ConfigInfoAppCommon().get_cc_index()
+        self.__cc_index = ConfigInfoAppCc().get_cc_index()
 
         #
         # Create a request object and session directories for test cases
