@@ -283,8 +283,6 @@ class ChemRefDataDbUtils(MyConnectionBase):
             if ext_ccd:
                 dataList += [a + b for a in dataS for b in dataS]
 
-            print(dataList)
-
             if OSVersion().IsRhel8Like() is False:
                 mpu = MultiProcUtil(verbose=True)
                 mpu.set(workerObj=self, workerMethod="makeComponentPathListMulti")
