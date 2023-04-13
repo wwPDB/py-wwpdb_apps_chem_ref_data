@@ -199,12 +199,12 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             #             # h5 is ~15px + 20 vert margin
             if hasExpt:
                 oL.append('  <div style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">')
-                oL.append('     <table style="position:relative;width:100%;"><tr><td style="text-align:center;"><label>Experimental Coordinate Data</label></td><td style="text-align:right;padding-right:5px;"><label>labels <input type="checkbox" onchange="return toggleReportLabels();"></label></td></tr></table>')
+                oL.append('     <table style="position:relative;width:100%;"><tr><td style="padding:5px;"><label>Experimental Coordinate Data</label><span style="float:right"><label>labels <input type="checkbox" class="nglReportLabelsCheckbox"></label>&nbsp;<label>hydrogens <input type="checkbox" class="nglReportHydrogensCheckbox"></label></span></td></tr></table>')
                 oL.append('     <div id="%s_ngl_expt"  style="width:600px; height:600px;"></div>' % idCode)
                 oL.append("  </div>")
             if hasIdeal:
                 oL.append('  <div style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">')
-                oL.append('    <table style="position:relative;width:100%;"><tr><td style="text-align:center;"><label>Ideal Coordinate Data</label></td><td style="text-align:right;padding-right:5px;"><label>labels <input type="checkbox" onchange="return toggleReportLabels();"></label></td></tr></table>')
+                oL.append('    <table style="position:relative;width:100%;"><tr><td style="padding:5px"><label>Ideal Coordinate Data</label><span style="float:right;"><label>labels <input type="checkbox" class="nglReportLabelsCheckbox"></label>&nbsp;<label>hydrogens <input type="checkbox" class="nglReportHydrogensCheckbox"></label></span></td></tr></table>')
                 oL.append('    <div id="%s_ngl_ideal" style=" width:600px; height:600px;"></div>' % idCode)
                 oL.append("  </div>")
 
