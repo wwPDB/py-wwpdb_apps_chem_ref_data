@@ -134,7 +134,7 @@ class ChemRefDataMiscUtils(object):
 
     def __atomicRename(self, srcPath, dstPath, suffix=".old"):
         """Performs an atomic rename - while keeping the old file open to handle race conditions.
-        On NFS, if you have a file open on server B, and server A moves (atomically) a new file onto another, the 
+        On NFS, if you have a file open on server B, and server A moves (atomically) a new file onto another, the
         old file is unlinked by server.  Server B wlll then have a stale file handle for the already open file.
 
         The solution here is to hardlink the old file to a tempoerary, and then atomically move new to old -- the old
@@ -153,14 +153,12 @@ class ChemRefDataMiscUtils(object):
 
         os.rename(srcPath, dstPath)
 
-
     def __makeTempPath(self, inpPath):
         try:
             pid = str(os.getpid())
             return inpPath + pid
         except:  # noqa: E722 pylint: disable=bare-except
             return inpPath
-
 
     def writeList(self, myList, outPath, mode=0o664):  # pylint: disable=unused-argument
         """ """
