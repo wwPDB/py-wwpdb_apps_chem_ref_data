@@ -132,6 +132,27 @@ class ChemRefDataMiscUtils(object):
         logger.info("+ChemRefDataLoad(getBirdPathList) Completed at %s", time.strftime("%Y %m %d %H:%M:%S", time.localtime()))
         return [], [], []
 
+    def __atomicRename(self, srcPath, dstPath, suffix=".old"):
+        """Performs an atomic rename - while keeping the old file open to handle race conditions.
+        On NFS, if you have a file open on server B, and server A moves (atomically) a new file onto another, the
+        old file is unlinked by server.  Server B wlll then have a stale file handle for the already open file.
+
+        The solution here is to hardlink the old file to a tempoerary, and then atomically move new to old -- the old
+        inode is still valid until removed
+
+        srcPath and dstPath must be on the same filesyetem.
+        """
+
+        tempPath = dstPath + suffix
+
+        # Remove from previous round
+        if os.path.exists(tempPath):
+            os.remove(tempPath)
+
+        os.link(dstPath, tempPath)
+
+        os.rename(srcPath, dstPath)
+
     def __makeTempPath(self, inpPath):
         try:
             pid = str(os.getpid())
@@ -318,7 +339,7 @@ class ChemRefDataMiscUtils(object):
             fSize = dp.expSize()
             if fSize > minSize:
                 os.chmod(outPathTmp, 0o664)
-                shutil.move(outPathTmp, self.__pathCCDictIdx)
+                self.__atomicRename(outPathTmp, self.__pathCCDictIdx)
                 os.chmod(self.__pathCCDictIdx, 0o664)
                 ok = True
             else:
@@ -351,7 +372,7 @@ class ChemRefDataMiscUtils(object):
             fSize = dp.expSize()
             if fSize > minSize:
                 os.chmod(outPathTmp, 0o664)
-                shutil.move(outPathTmp, self.__pathCCDictSerial)
+                self.__atomicRename(outPathTmp, self.__pathCCDictSerial)
                 os.chmod(self.__pathCCDictSerial, 0o664)
                 ok = True
             else:
