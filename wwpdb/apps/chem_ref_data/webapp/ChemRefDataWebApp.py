@@ -298,7 +298,6 @@ class ChemRefDataWebAppWorker(object):
                 rC.setError(errMsg="Report preparation failed")
 
         elif operation in ["check", "cvsupdate", "cvsadd"]:
-
             logPath = os.path.join(self.__sessionPath, rootName + "-cif-check.log")
             self.__removeFile(logPath)
             hasDiags = self.__makeCifCheckReport(filePath, logPath)
@@ -853,7 +852,6 @@ class ChemRefDataWebAppWorker(object):
             return self.__chemRefSyncCvsOp(repositoryType=None)
 
     def __chemRefSupportFileUpdateOp(self):
-
         self.__getSession()
         logger.info("+ChemRefDataWebAppWorker._chemRefSupportFileUpdateOp() starting with session %s", self.__sessionPath)
 
@@ -886,7 +884,6 @@ class ChemRefDataWebAppWorker(object):
         return ok
 
     def __chemRefIndexFileUpdateOp(self):
-
         self.__getSession()
         logger.info("+ChemRefDataWebAppWorker._chemRefIndexFileUpdateOp() starting with session %s", self.__sessionPath)
 
@@ -948,7 +945,6 @@ class ChemRefDataWebAppWorker(object):
         return rC
 
     def __chemRefDatabaseUpdateOp(self, referenceDatabase="CC"):
-
         self.__getSession()
         logger.info("+ChemRefDataWebAppWorker._chemRefDatabaseUpdateOp() starting with session %s", self.__sessionPath)
 

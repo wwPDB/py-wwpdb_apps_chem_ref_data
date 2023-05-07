@@ -313,7 +313,6 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
 
         for catName in ["chem_comp"]:
             if catName in cD and (len(cD[catName]) > 0):
-
                 oL.append('<div class="sectionbar1">')
                 oL.append('  <a class="sectionbar1" href="" id="toggle_section_%s">Show</a> Category: %s' % (catName, catName))
                 oL.append("</div>")
@@ -328,7 +327,6 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         #
         for catName in tableList:
             if catName in cD and (len(cD[catName]) > 0):
-
                 oL.append('<div class="sb0">')
                 oL.append('  <a class="sb0" href="" id="toggle_section_%s">Show</a>' % catName)
                 oL.append("</div>")
@@ -359,8 +357,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         iCol = 0
         self.__markupRow(catName, rD)
         #
-        for (itemName, itemDefault) in self.__st.getItemNameAndDefaultList(catName):
-
+        for itemName, itemDefault in self.__st.getItemNameAndDefaultList(catName):
             if itemName in rD:
                 itemValue = rD[itemName]
             else:
@@ -395,7 +392,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         """Render a row in a multirow table."""
         oL.append("<tr>")
         #
-        for (itemName, itemDefault) in self.__st.getItemNameAndDefaultList(catName):
+        for itemName, itemDefault in self.__st.getItemNameAndDefaultList(catName):
             if insertDefault:
                 itemValue = itemDefault
             elif itemName in row:
@@ -530,7 +527,6 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
     # ------
 
     def __jQueryReportScript1(self, tableList, eD, oL):
-
         # Context that will get encoded for call back --
         filePath = eD["filePath"]
         localPath = eD["localPath"]
