@@ -199,13 +199,9 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             #             # h5 is ~15px + 20 vert margin
             if hasExpt:
                 oL.append('  <div id="%s_ngl_expt" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">' % idCode)
-                #oL.append('     <table style="position:relative;width:100%;"><tr><td style="padding:5px;"><label>Experimental Coordinate Data</label><span style="float:right"><label>labels <input type="checkbox" class="nglReportLabelsCheckbox"></label>&nbsp;<label>hydrogens <input type="checkbox" class="nglReportHydrogensCheckbox"></label></span></td></tr></table>')
-                #oL.append('     <div id="%s_ngl_expt"  style="width:600px; height:600px;"></div>' % idCode)
                 oL.append("  </div>")
             if hasIdeal:
                 oL.append('  <div id="%s_ngl_ideal" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">' % idCode)
-                #oL.append('    <table style="position:relative;width:100%;"><tr><td style="padding:5px"><label>Ideal Coordinate Data</label><span style="float:right;"><label>labels <input type="checkbox" class="nglReportLabelsCheckbox"></label>&nbsp;<label>hydrogens <input type="checkbox" class="nglReportHydrogensCheckbox"></label></span></td></tr></table>')
-                #oL.append('    <div id="%s_ngl_ideal" style=" width:600px; height:600px;"></div>' % idCode)
                 oL.append("  </div>")
 
             oL.append("</div>")
