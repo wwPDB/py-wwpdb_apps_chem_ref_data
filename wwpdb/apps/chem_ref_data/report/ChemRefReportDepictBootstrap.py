@@ -161,6 +161,9 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             oL.append('<li><a data-target="#%s-tabs-%d" data-toggle="tab">%s</a></li>' % (idPrefix, iSection + 1, "2D"))
         if eD["xyzRelativePath"] is not None:
             oL.append('<li><a data-target="#%s-tabs-%d" data-toggle="tab" class="ngl-section-%s">%s</a></li>' % (idPrefix, iSection + 2, idCode, "3D"))
+        if eD["imageRelativePath"] is not None and eD["xyzRelativePath"] is not None:
+            oL.append('<li><a data-target="#%s-tabs-%d" data-toggle="tab" class="ataglance-section-%s">%s</a></li>' % (idPrefix, iSection + 3, idCode, "at-a-glance"))
+
         oL.append("</ul>")
         #
         # Write the tables --
@@ -207,7 +210,18 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             oL.append("</div>")
 
             oL.append("</div>")
-        #
+
+        # At a glance
+        if eD["imageRelativePath"] is not None and eD["xyzRelativePath"] is not None:
+            oL.append('<div style="padding:10px;background-color:white;overflow:scroll;" class="tab-pane tab-flex" id="%s-tabs-%d">' % (idPrefix, iSection + 3))
+            oL.append('<table style="margin-right:20px;position:relative;display:inline-table;width:200px;" id="%s-%s">' % (idPrefix, "chem_comp"))
+            self.__renderTableAtAGlance("chem_comp", cD["chem_comp"][0], oL)
+            oL.append("</table>")
+            oL.append('<img style="position:relative;display:inline-table;border:1px solid gray;" src="%s" alt="%s" height="%d" width="%d">' % (eD["imageRelativePath"], idCode, 500, 500))
+            oL.append('<div id="%s_ataglance_ideal" style="position:relative;display:inline-table;border:2px solid lightgray;width:500px;height:500px;">' % idCode)
+            oL.append("</div>")
+            oL.append("</div>")
+	#
         oL.append("</div>")
         oL.append("</div>")
         #
@@ -386,6 +400,25 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             iRow += 1
         #
         #
+
+    def __renderTableAtAGlance(self, catName, rD, oL):
+        """One-column rendering
+        """
+        #
+        iCol = 0
+        self.__markupRow(catName, rD)
+        #
+        for (itemName, itemDefault) in self.__st.getItemNameAndDefaultList(catName):
+
+            if itemName in rD:
+                itemValue = rD[itemName]
+            else:
+                itemValue = itemDefault
+
+            oL.append("<tr>")
+            oL.append("<td>%s:&nbsp%s</td>" % (self.__attributePart(itemName), itemValue))
+            oL.append("</tr>")
+            iCol += 1
 
     def __renderRow(self, catName, row, iRow, oL, insertDefault=False):  # pylint: disable=unused-argument
         """Render a row in a multirow table."""
