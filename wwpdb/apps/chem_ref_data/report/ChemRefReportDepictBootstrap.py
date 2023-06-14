@@ -144,7 +144,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         #
         oL.append('<div id="%s_report_section" class="tabbable results-section">' % idCode)
         # add close/dismiss --
-        oL.append('<button type="button" class="close" data-target="#%s_report_section" data-dismiss="alert" style="margin:7px; padding:1px;> ' % idCode)
+        oL.append('<button type="button" class="close" data-target="#%s_report_section" data-dismiss="alert" style="margin:7px; padding:1px;" onclick="return closeReportSection();"> ' % idCode)
         oL.append('   <span aria-hidden="true"> <i class="fa fa-times"></i></span><span class="sr-only">Close</span></button>')
 
         oL.append('<ul class="nav nav-tabs">')
@@ -214,7 +214,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         # At a glance
         if eD["imageRelativePath"] is not None and eD["xyzRelativePath"] is not None:
             oL.append('<div style="padding:10px;background-color:white;overflow:scroll;" class="tab-pane tab-flex" id="%s-tabs-%d">' % (idPrefix, iSection + 3))
-            oL.append('<table style="margin-right:20px;position:relative;display:inline-table;width:200px;" id="%s-%s">' % (idPrefix, "chem_comp"))
+            oL.append('<table style="margin-right:20px;position:relative;display:inline-table;width:100ch;" id="%s-%s">' % (idPrefix, "chem_comp"))
             self.__renderTableAtAGlance("chem_comp", cD["chem_comp"][0], oL)
             oL.append("</table>")
             oL.append('<img style="position:relative;display:inline-table;border:1px solid gray;" src="%s" alt="%s" height="%d" width="%d">' % (eD["imageRelativePath"], idCode, 500, 500))
