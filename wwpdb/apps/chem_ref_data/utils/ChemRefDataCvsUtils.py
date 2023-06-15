@@ -192,7 +192,7 @@ class ChemRefDataCvsUtils(object):
         # Extended CCD support
         ext_ccd = self.__cIAppCc.get_extended_ccd_supp()
         if ext_ccd:
-            dataList += [("cvsProjectName", a + b, True) for a in dataS for b in dataS]
+            dataList += [(cvsProjectName, a + b, True) for a in dataS for b in dataS]
 
         #
         mpu = MultiProcUtil(verbose=self.__debug)
