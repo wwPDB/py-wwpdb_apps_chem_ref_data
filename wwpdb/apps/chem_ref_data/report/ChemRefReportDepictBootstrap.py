@@ -196,7 +196,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         if eD["xyzRelativePath"] is not None:
             hasExpt = eD["hasExpt"]
             hasIdeal = eD["hasIdeal"]
-            oL.append('<div class="tab-pane ngl-class-expt-%s ngl-class-ideal-%s" data-payload="%s" id="%s-tabs-%d">' % (idCode, idCode, idCode, idPrefix, iSection + 2))
+            oL.append('<div style="overflow:visible;" class="tab-pane ngl-class-expt-%s ngl-class-ideal-%s" data-payload="%s" id="%s-tabs-%d">' % (idCode, idCode, idCode, idPrefix, iSection + 2))
 
             oL.append('<div style="display:flex;">')
             #             # h5 is ~15px + 20 vert margin
@@ -213,7 +213,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
 
         # At a glance
         if eD["imageRelativePath"] is not None and eD["xyzRelativePath"] is not None:
-            oL.append('<div style="padding:10px;background-color:white;overflow:scroll;" class="tab-pane tab-flex" id="%s-tabs-%d">' % (idPrefix, iSection + 3))
+            oL.append('<div style="padding:10px;background-color:white;overflow:visible;" class="tab-pane tab-flex" id="%s-tabs-%d">' % (idPrefix, iSection + 3))
             oL.append('<table style="margin-right:20px;position:relative;display:inline-table;width:100ch;" id="%s-%s">' % (idPrefix, "chem_comp"))
             self.__renderTableAtAGlance("chem_comp", cD["chem_comp"][0], oL)
             oL.append("</table>")
