@@ -7,6 +7,7 @@
 #   3-Jun-2017 jdw fix CSS for NGL panes & missing
 #  14-Jun-3017 jdw generalize the handling of coordinate files -
 #                  change markup of tabbable section to toggle and resist jump scrolling -
+#   Jun-2023 james smith add at-a-glance tab
 ##
 """
 Create tabular HTML reports from chemical reference definitions.
@@ -144,7 +145,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         #
         oL.append('<div id="%s_report_section" class="tabbable results-section">' % idCode)
         # add close/dismiss --
-        oL.append('<button type="button" class="close" data-target="#%s_report_section" data-dismiss="alert" style="margin:7px; padding:1px;" onclick="return closeReportSection();"> ' % idCode)
+        oL.append('<button type="button" class="close" data-target="#%s_report_section" data-dismiss="alert" style="margin:7px; padding:1px;"> ' % idCode)
         oL.append('   <span aria-hidden="true"> <i class="fa fa-times"></i></span><span class="sr-only">Close</span></button>')
 
         oL.append('<ul class="nav nav-tabs">')
@@ -160,7 +161,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         if eD["imageRelativePath"] is not None:
             oL.append('<li><a data-target="#%s-tabs-%d" data-toggle="tab">%s</a></li>' % (idPrefix, iSection + 1, "2D"))
         if eD["xyzRelativePath"] is not None:
-            oL.append('<li><a data-target="#%s-tabs-%d" data-toggle="tab" class="ngl-section-%s">%s</a></li>' % (idPrefix, iSection + 2, idCode, "3D"))
+            oL.append('<li><a data-target="#%s-tabs-%d" data-toggle="tab" class="jsmol-section-%s">%s</a></li>' % (idPrefix, iSection + 2, idCode, "3D"))
         if eD["imageRelativePath"] is not None and eD["xyzRelativePath"] is not None:
             oL.append('<li><a data-target="#%s-tabs-%d" data-toggle="tab" class="ataglance-section-%s">%s</a></li>' % (idPrefix, iSection + 3, idCode, "at-a-glance"))
 
@@ -196,15 +197,15 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         if eD["xyzRelativePath"] is not None:
             hasExpt = eD["hasExpt"]
             hasIdeal = eD["hasIdeal"]
-            oL.append('<div style="overflow:visible;" class="tab-pane ngl-class-expt-%s ngl-class-ideal-%s" data-payload="%s" id="%s-tabs-%d">' % (idCode, idCode, idCode, idPrefix, iSection + 2))
+            oL.append('<div style="overflow:visible;" class="tab-pane jsmol-class-expt-%s jsmol-class-ideal-%s" data-payload="%s" id="%s-tabs-%d">' % (idCode, idCode, idCode, idPrefix, iSection + 2))
 
             oL.append('<div style="display:flex;">')
             #             # h5 is ~15px + 20 vert margin
             if hasExpt:
-                oL.append('  <div id="%s_ngl_expt" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">' % idCode)
+                oL.append('  <div id="%s_jsmol_expt" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">' % idCode)
                 oL.append("  </div>")
             if hasIdeal:
-                oL.append('  <div id="%s_ngl_ideal" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">' % idCode)
+                oL.append('  <div id="%s_jsmol_ideal" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">' % idCode)
                 oL.append("  </div>")
 
             oL.append("</div>")
@@ -218,7 +219,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             self.__renderTableAtAGlance("chem_comp", cD["chem_comp"][0], oL)
             oL.append("</table>")
             oL.append('<img style="position:relative;display:inline-table;border:1px solid gray;" src="%s" alt="%s" height="%d" width="%d">' % (eD["imageRelativePath"], idCode, 500, 500))
-            oL.append('<div id="%s_ataglance_ideal" style="position:relative;display:inline-table;border:2px solid lightgray;width:500px;height:500px;">' % idCode)
+            oL.append('<div id="%s_ataglance_ideal" style="position:relative;display:inline-table;border:1px solid lightgray;width:500px;height:500px;">' % idCode)
             oL.append("</div>")
             oL.append("</div>")
 	#
