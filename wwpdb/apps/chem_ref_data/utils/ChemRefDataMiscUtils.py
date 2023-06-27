@@ -149,7 +149,8 @@ class ChemRefDataMiscUtils(object):
         if os.path.exists(tempPath):
             os.remove(tempPath)
 
-        os.link(dstPath, tempPath)
+        if os.path.exists(dstPath):
+            os.link(dstPath, tempPath)
 
         os.rename(srcPath, dstPath)
 
