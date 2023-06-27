@@ -505,18 +505,15 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         iCol = 0
         self.__markupRow(catName, rD)
         #
-        for itemName, itemDefault in self.__st.getItemNameAndDefaultList(catName):
-            if itemName in rD:
-                itemValue = rD[itemName]
-            else:
-                itemValue = itemDefault
-
-            oL.append("<tr>")
-            oL.append(
-                "<td>%s:&nbsp%s</td>" % (self.__attributePart(itemName), itemValue)
-            )
-            oL.append("</tr>")
-            iCol += 1
+        lst = self.__st.getItemNameAndDefaultList(catName)
+        d = {k:v for k,v in lst}
+        keys = ["_chem_comp.id", "_chem_comp.pdbx_release_status", "_chem_comp.name", "_chem_comp.pdbx_synonyms", "_chem_comp.formula", "_chem_comp.formula_weight", "_chem_comp.pdbx_formal_charge", "_chem_comp.type", "_chem_comp.pdbx_type", "_chem_comp.mon_nstd_parent_comp_id", "_chem_comp.pdbx_subcomponent_list", "_chem_comp.pdbx_replaces", "_chem_comp.pdbx_replaced_by", "_chem_comp.pdbx_model_coordinates_missing_flag", "_chem_comp.pdbx_model_coordinates_db_code", "_chem_comp.pdbx_initial_date", "_chem_comp.pdbx_modified_date", "_chem_comp.pdbx_processing_site"]
+        for k in keys:
+           oL.append("<tr>")
+           oL.append(
+               "<td>%s:&nbsp%s</td>" % (self.__attributePart(k), rD[k] if k in rD else d[k])
+           )
+           oL.append("</tr>")
 
     def __renderRow(
         self, catName, row, iRow, oL, insertDefault=False
