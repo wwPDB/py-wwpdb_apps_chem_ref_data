@@ -507,11 +507,12 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
         #
         lst = self.__st.getItemNameAndDefaultList(catName)
         d = {k:v for k,v in lst}
-        keys = ["_chem_comp.id", "_chem_comp.pdbx_release_status", "_chem_comp.name", "_chem_comp.pdbx_synonyms", "_chem_comp.formula", "_chem_comp.formula_weight", "_chem_comp.pdbx_formal_charge", "_chem_comp.type", "_chem_comp.pdbx_type", "_chem_comp.mon_nstd_parent_comp_id", "_chem_comp.pdbx_subcomponent_list", "_chem_comp.pdbx_replaces", "_chem_comp.pdbx_replaced_by", "_chem_comp.pdbx_model_coordinates_missing_flag", "_chem_comp.pdbx_model_coordinates_db_code", "_chem_comp.pdbx_initial_date", "_chem_comp.pdbx_modified_date", "_chem_comp.pdbx_processing_site"]
-        for k in keys:
+        # reorder keys for at-a-glance
+        keys = [("_chem_comp.id", "ID"), ("_chem_comp.pdbx_release_status", "Status"), ("_chem_comp.name", "Name"), ("_chem_comp.pdbx_synonyms", "Synonyms"), ("_chem_comp.formula", "Formula"), ("_chem_comp.formula_weight", "Formula weight"), ("_chem_comp.pdbx_formal_charge", "Formal charge"), ("_chem_comp.type", "Type"), ("_chem_comp.pdbx_type", "Pdbx_type"), ("_chem_comp.mon_nstd_parent_comp_id", "Parent"), ("_chem_comp.pdbx_subcomponent_list", "Subcomponents"), ("_chem_comp.pdbx_replaces", "Replace"), ("_chem_comp.pdbx_replaced_by", "Replace by"), ("_chem_comp.pdbx_model_coordinates_missing_flag", "Model coordinates missing"), ("_chem_comp.pdbx_model_coordinates_db_code", "Model PDB code"), ("_chem_comp.pdbx_initial_date", "Initial date"), ("_chem_comp.pdbx_modified_date", "Modified date"), ("_chem_comp.pdbx_processing_site", "Site")]
+        for k,v in keys:
            oL.append("<tr>")
            oL.append(
-               "<td>%s:&nbsp%s</td>" % (self.__attributePart(k), rD[k] if k in rD else d[k])
+               "<td>%s:&nbsp%s</td>" % (v, rD[k] if k in rD else d[k])
            )
            oL.append("</tr>")
 
