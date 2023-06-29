@@ -211,7 +211,8 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                 '<li><a data-target="#%s-tabs-%d" data-toggle="tab" class="jsmol-section-%s">%s</a></li>'
                 % (idPrefix, iSection + 2, idCode, "3D")
             )
-        if eD["imageRelativePath"] is not None and eD["xyzRelativePath"] is not None:
+        # at-a-glance for 3-letter cc id
+        if eD["imageRelativePath"] is not None and eD["xyzRelativePath"] is not None and len(idCode)==3:
             oL.append(
                 '<li><a data-target="#%s-tabs-%d" data-toggle="tab" class="ataglance-section-%s">%s</a></li>'
                 % (idPrefix, iSection + 3, idCode, "at-a-glance")
@@ -281,8 +282,8 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
 
             oL.append("</div>")
 
-        # At a glance
-        if eD["imageRelativePath"] is not None and eD["xyzRelativePath"] is not None:
+        # At-a-glance for 3-letter cc id
+        if eD["imageRelativePath"] is not None and eD["xyzRelativePath"] is not None and len(idCode)==3: 
             oL.append(
                 '<div style="padding:10px;background-color:white;overflow:visible;" class="tab-pane tab-flex" id="%s-tabs-%d">'
                 % (idPrefix, iSection + 3)
