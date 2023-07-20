@@ -212,7 +212,11 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                 % (idPrefix, iSection + 2, idCode, "3D")
             )
         # at-a-glance for 3-or-5-letter cc id
-        if eD["imageRelativePath"] is not None and eD["xyzRelativePath"] is not None and (len(idCode) == 3 or len(idCode) == 5):
+        if (
+            eD["imageRelativePath"] is not None
+            and eD["xyzRelativePath"] is not None
+            and (len(idCode) == 3 or len(idCode) == 5)
+        ):
             oL.append(
                 '<li><a data-target="#%s-tabs-%d" data-toggle="tab" class="ataglance-section-%s">%s</a></li>'
                 % (idPrefix, iSection + 3, idCode, "at-a-glance")
@@ -283,7 +287,11 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             oL.append("</div>")
 
         # At-a-glance for 3-or-5-letter cc id
-        if eD["imageRelativePath"] is not None and eD["xyzRelativePath"] is not None and (len(idCode) == 3 or len(idCode) == 5): 
+        if (
+            eD["imageRelativePath"] is not None
+            and eD["xyzRelativePath"] is not None
+            and (len(idCode) == 3 or len(idCode) == 5)
+        ):
             oL.append(
                 '<div style="padding:10px;background-color:white;overflow:visible;" class="tab-pane tab-flex" id="%s-tabs-%d">'
                 % (idPrefix, iSection + 3)
@@ -503,19 +511,39 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
     def __renderTableAtAGlance(self, catName, rD, oL):
         """One-column rendering"""
         #
-        iCol = 0
+        # iCol = 0
         self.__markupRow(catName, rD)
         #
         lst = self.__st.getItemNameAndDefaultList(catName)
-        d = {k:v for k,v in lst}
+        d = {k: v for k, v in lst}
         # reorder keys for at-a-glance
-        keys = [("_chem_comp.id", "ID"), ("_chem_comp.pdbx_release_status", "Status"), ("_chem_comp.name", "Name"), ("_chem_comp.pdbx_synonyms", "Synonyms"), ("_chem_comp.formula", "Formula"), ("_chem_comp.formula_weight", "Formula weight"), ("_chem_comp.pdbx_formal_charge", "Formal charge"), ("_chem_comp.type", "Type"), ("_chem_comp.pdbx_type", "Pdbx_type"), ("_chem_comp.mon_nstd_parent_comp_id", "Parent"), ("_chem_comp.pdbx_subcomponent_list", "Subcomponents"), ("_chem_comp.pdbx_replaces", "Replace"), ("_chem_comp.pdbx_replaced_by", "Replace by"), ("_chem_comp.pdbx_model_coordinates_missing_flag", "Model coordinates missing"), ("_chem_comp.pdbx_model_coordinates_db_code", "Model PDB code"), ("_chem_comp.pdbx_initial_date", "Initial date"), ("_chem_comp.pdbx_modified_date", "Modified date"), ("_chem_comp.pdbx_processing_site", "Site")]
-        for k,v in keys:
-           oL.append("<tr>")
-           oL.append(
-               "<td>%s:&nbsp%s</td>" % (v, rD[k] if k in rD else d[k])
-           )
-           oL.append("</tr>")
+        keys = [
+            ("_chem_comp.id", "ID"),
+            ("_chem_comp.pdbx_release_status", "Status"),
+            ("_chem_comp.name", "Name"),
+            ("_chem_comp.pdbx_synonyms", "Synonyms"),
+            ("_chem_comp.formula", "Formula"),
+            ("_chem_comp.formula_weight", "Formula weight"),
+            ("_chem_comp.pdbx_formal_charge", "Formal charge"),
+            ("_chem_comp.type", "Type"),
+            ("_chem_comp.pdbx_type", "Pdbx_type"),
+            ("_chem_comp.mon_nstd_parent_comp_id", "Parent"),
+            ("_chem_comp.pdbx_subcomponent_list", "Subcomponents"),
+            ("_chem_comp.pdbx_replaces", "Replace"),
+            ("_chem_comp.pdbx_replaced_by", "Replace by"),
+            (
+                "_chem_comp.pdbx_model_coordinates_missing_flag",
+                "Model coordinates missing",
+            ),
+            ("_chem_comp.pdbx_model_coordinates_db_code", "Model PDB code"),
+            ("_chem_comp.pdbx_initial_date", "Initial date"),
+            ("_chem_comp.pdbx_modified_date", "Modified date"),
+            ("_chem_comp.pdbx_processing_site", "Site"),
+        ]
+        for k, v in keys:
+            oL.append("<tr>")
+            oL.append("<td>%s:&nbsp%s</td>" % (v, rD[k] if k in rD else d[k]))
+            oL.append("</tr>")
 
     def __renderRow(
         self, catName, row, iRow, oL, insertDefault=False
