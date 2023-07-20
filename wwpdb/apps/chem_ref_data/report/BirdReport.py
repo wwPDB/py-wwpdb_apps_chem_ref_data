@@ -204,10 +204,10 @@ class BirdReport(object):
                 oD["hasIdeal"] = hasIdeal
                 oD["xyzRelativePath"] = localPrdCcRelativePath
                 # if prd does not have corresponding cc id, enable 3d model from prdcc file coordinates
-                if not hasExpt and not hasIdeal and tId.startswith("PRDCC"):
-                    oD["hasExpt"] = True
-                    oD["hasIdeal"] = True
-                    oD["xyzRelativePath"] = "https://files.rcsb.org/birds/view/%s.cif" % tId
+                # if not hasExpt and not hasIdeal and tId.startswith("PRDCC"):
+                    #oD["hasExpt"] = True
+                    #oD["hasIdeal"] = True
+                    #oD["xyzRelativePath"] = "https://files.rcsb.org/birds/view/%s.cif" % tId
             except:  # noqa: E722 pylint: disable=bare-except
                 logger.exception("Failing with fileName %r", fileName)
 
