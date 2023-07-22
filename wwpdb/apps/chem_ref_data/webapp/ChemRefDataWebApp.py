@@ -708,6 +708,12 @@ class ChemRefDataWebAppWorker(object):
         logger.info(
             "searchType %r queryType %r searchTarget %r inputType %r compareType %r appsHtdocsPath %r", searchType, queryType, searchTarget, inputType, compareType, appsHtdocsPath
         )
+        # enable comma-separated lists or hyphen-separated ranges in search box
+        if searchType.startswith("CCD_CC_ID") or searchType.startswith("BIRD_PRD_ID"):
+            searchTarget = searchTarget.replace(",", " ")
+        elif searchType == "CCD_FORMULA_WEIGHT" or searchType == "CCDIDX_FORMULA_WEIGHT_RANGE":
+            searchTarget = searchTarget.replace("-", " ")
+        #
         self.__getSession()
         self.__reqObj.setReturnFormat(return_format="json")
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)

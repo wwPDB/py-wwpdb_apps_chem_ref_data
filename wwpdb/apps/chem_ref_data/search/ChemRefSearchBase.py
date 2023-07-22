@@ -596,7 +596,7 @@ class ChemRefSearchBase(MyConnectionBase):
             else:
                 searchNameD = searchName
             #
-            displayTitle = "Results for: %s <i>%s</i> %s &nbsp;&nbsp; (%d)" % (searchNameD, cTypeD, ",".join(stdSearchTargetList), len(rList))
+            displayTitle = "Results for: %s <i>%s</i> <span class='stdSearchTargetList'>%s</span> &nbsp;&nbsp; (%d)" % (searchNameD, cTypeD, ",".join(stdSearchTargetList), len(rList))
             # oL = []
             sD[rId]["resultlist"] = rList
             sD[rId]["columnList"] = cList
