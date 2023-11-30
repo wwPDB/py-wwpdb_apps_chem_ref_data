@@ -402,12 +402,12 @@ class ChemCompSearchIndexUtils(object):
                 refV = d[key]
                 if isinstance(refV, (list, tuple, set)):
                     for tt in refV:
-                        ed = jellyfish.jaro_winkler_similarity(target.decode("unicode-escape"), tt.decode("unicode-escape"))
+                        ed = jellyfish.jaro_winkler_similarity(target, tt)
                         if ed > cutOff:
                             idList.append((ccId, ed))
                             break
                 else:
-                    ed = jellyfish.jaro_winkler_similarity(target.decode("unicode-escape"), refV.decode("unicode-escape"))
+                    ed = jellyfish.jaro_winkler_similarity(target, refV)
                     if ed > cutOff:
                         idList.append((ccId, ed))
 
