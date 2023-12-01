@@ -103,6 +103,7 @@ class ChemRefSearchDuplicates(MyConnectionBase):
             "UNK,ABA": "Unknown residue",
             "DN,3DR": "Unknown residue",
             "1CR,0CR": "Enantiomers",
+            "V7F,V70": "Enantiomers",
             "C7S,C7R": "thiophospho connection isoforms",
             "RKP,0TN": "Metallo compound different arrangements",
             "OY8,OY5": "Diastereomer carboranes",
