@@ -292,6 +292,9 @@ class ChemRefSearchBase(MyConnectionBase):
                 tId = pc + searchTarget + pc
             elif compareType in ["EXACT", "EQUAL"]:
                 tId = searchTarget + pc
+            else:
+                logger.error("compareType %s unknown", compareType)
+                continue
             queryConditionString = ' WHERE %s LIKE "%s"  ' % (qCol, tId)
 
             tL = qCol.split(".")
@@ -563,6 +566,9 @@ class ChemRefSearchBase(MyConnectionBase):
             # ----
             rList = []
             stdSearchTargetList = []
+            trList = []
+            cList = []
+            wdList = []
             for sTargInp in searchTargetList:
                 sTarg = self.__standardizedSearchTarget(sTargInp, sType)
                 stdSearchTargetList.append(sTarg)

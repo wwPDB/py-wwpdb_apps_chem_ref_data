@@ -253,6 +253,8 @@ class ChemRefDataWebAppWorker(object):
         self.__reqObj.setReturnFormat(return_format="json")
         rC = ResponseContent(reqObj=self.__reqObj, verbose=self.__verbose, log=self.__lfh)
 
+        filePath = None
+        rootName = None
         if self.__isFileUpload():
             # make a copy of the file in the session directory and set 'fileName'
             self.__uploadFile()
@@ -962,6 +964,9 @@ class ChemRefDataWebAppWorker(object):
             ok = crdbu.loadChemCompMulti()
         elif referenceDatabase in ["BIRD", "PRD", "PRD_FAMILY"]:
             ok = crdbu.loadBird()
+        else:
+            logger.error("referenceDatabase %s unknown", referenceDatabase)
+            ok = False
 
         if ok:
             rC.setStatus(statusMsg="%s database load completed" % referenceDatabase)

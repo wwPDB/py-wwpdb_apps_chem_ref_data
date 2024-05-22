@@ -177,6 +177,7 @@ class BirdReport(object):
         oD["hasIdeal"] = False
         if pathToImage is not None:
             try:
+                localPrdCcRelativePath = ""
                 prdCcFilePath = pathToImage
                 if prdCcFilePath is not None:
                     (_pth, prdCcFileName) = os.path.split(prdCcFilePath)
