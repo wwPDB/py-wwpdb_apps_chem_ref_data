@@ -8,6 +8,7 @@
 #  14-Jun-3017 jdw generalize the handling of coordinate files -
 #                  change markup of tabbable section to toggle and resist jump scrolling -
 #   Jun-2023 james smith add at-a-glance tab
+#  27-Aug-2024  zf add "pdbx_chem_comp_pcm" category
 ##
 """
 Create tabular HTML reports from chemical reference definitions.
@@ -64,6 +65,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                 ("chem_comp_bond", "chem_comp_bond", "row-wise"),
                 ("pdbx_chem_comp_descriptor", "descriptor", "row-wise"),
                 ("pdbx_chem_comp_identifier", "identifier", "row-wise"),
+                ("pdbx_chem_comp_pcm", "pdbx_chem_comp_pcm", "row-wise"),
                 ("pdbx_chem_comp_related", "related", "row-wise"),
                 ("pdbx_chem_comp_atom_related", "atom_related", "row-wise"),
                 ("pdbx_chem_comp_audit", "audit", "row-wise"),
