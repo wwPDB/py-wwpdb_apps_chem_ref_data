@@ -144,9 +144,9 @@ class ChemRefSearchDuplicates(MyConnectionBase):
                 blacklist.append("{}   -- {}".format(self._rformat(row), blacklisted))
             else:
                 rep.append(self._rformat(row))
-
-            if self._deltadays(row["cid1mod"], recentdays) or self._deltadays(row["cid2mod"], recentdays):
-                recent.append(self._rformat(row))
+                # Do not add blacklisted to recent updates
+                if self._deltadays(row["cid1mod"], recentdays) or self._deltadays(row["cid2mod"], recentdays):
+                    recent.append(self._rformat(row))
 
         if recent and recentdays:
             recent = ["Duplicate Ligands created in the last {} days".format(recentdays)] + recent
