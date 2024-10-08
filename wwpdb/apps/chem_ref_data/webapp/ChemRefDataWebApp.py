@@ -324,7 +324,7 @@ class ChemRefDataWebAppWorker(object):
                 du = DownloadUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
                 du.fetchFile(logPath)
                 aTagList.append(du.getAnchorTag())
-                rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;nbsp;".join(aTagList))
+                rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;&nbsp;".join(aTagList))
                 rC.setStatus(statusMsg="Update completed")
             else:
                 rC.setStatus(statusMsg="Update failed for %s" % fileName)
@@ -336,7 +336,7 @@ class ChemRefDataWebAppWorker(object):
                 du = DownloadUtils(self.__reqObj, verbose=self.__verbose, log=self.__lfh)
                 du.fetchFile(logPath)
                 aTagList.append(du.getAnchorTag())
-                rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;nbsp;".join(aTagList))
+                rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;&nbsp;".join(aTagList))
                 rC.setStatus(statusMsg="Add completed")
             else:
                 rC.setStatus(statusMsg="Add failed for %s" % fileName)
@@ -356,7 +356,7 @@ class ChemRefDataWebAppWorker(object):
                 if ok1:
                     aTagList.append(du.getAnchorTag())
 
-                rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;nbsp;".join(aTagList))
+                rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;&nbsp;".join(aTagList))
                 rC.setStatus(statusMsg="Operation completed")
             else:
                 rC.setStatus(statusMsg="Operation failed for %s" % fileName)
@@ -530,7 +530,7 @@ class ChemRefDataWebAppWorker(object):
                 aTagList.append(du.getAnchorTag())
 
         if len(aTagList) > 0:
-            rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;nbsp;".join(aTagList))
+            rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;&nbsp;".join(aTagList))
             rC.setStatus(statusMsg="Fetch completed")
         else:
             rC.setError(errMsg="No corresponding reference file(s)")
@@ -558,7 +558,7 @@ class ChemRefDataWebAppWorker(object):
                 aTagList.append(du.getAnchorTag())
 
         if len(aTagList) > 0:
-            rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;nbsp;".join(aTagList))
+            rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;&nbsp;".join(aTagList))
 
         if success:
             rC.setStatus(statusMsg="History operations completed")
@@ -588,7 +588,7 @@ class ChemRefDataWebAppWorker(object):
 
         if len(aTagList) > 0:
             success = True
-            rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;nbsp;".join(aTagList))
+            rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;&nbsp;".join(aTagList))
 
         if success:
             rC.setStatus(statusMsg="Revision checkout completed")
@@ -641,7 +641,7 @@ class ChemRefDataWebAppWorker(object):
                 aTagList.append(du.getAnchorTag())
 
         if len(aTagList) > 0:
-            rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;nbsp;".join(aTagList))
+            rC.setHtmlLinkText('<span class="url-list">View: %s</span>' % ",&nbsp;&nbsp;".join(aTagList))
 
         if success:
             rC.setStatus(statusMsg="Remove operations completed")
