@@ -265,11 +265,11 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             hasExpt = eD["hasExpt"]
             hasIdeal = eD["hasIdeal"]
             oL.append(
-                '<div style="overflow:visible;" class="tab-pane jsmol-class-expt-%s jsmol-class-ideal-%s" data-payload="%s" id="%s-tabs-%d">'
+                '<div style="overflow:visible;" class="tab-pane tab-flex jsmol-class-expt-%s jsmol-class-ideal-%s" data-payload="%s" id="%s-tabs-%d">'
                 % (idCode, idCode, idCode, idPrefix, iSection + 2)
             )
 
-            oL.append('<div style="display:flex;">')
+            #oL.append('<div style="">')
             #             # h5 is ~15px + 20 vert margin
             if hasExpt:
                 oL.append(
@@ -284,7 +284,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                 )
                 oL.append("  </div>")
 
-            oL.append("</div>")
+            #oL.append("</div>")
 
             oL.append("</div>")
 
