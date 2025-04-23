@@ -269,7 +269,6 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                 % (idCode, idCode, idCode, idPrefix, iSection + 2)
             )
 
-            #oL.append('<div style="">')
             #             # h5 is ~15px + 20 vert margin
             if hasExpt:
                 oL.append(
@@ -284,8 +283,6 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                 )
                 oL.append("  </div>")
 
-            #oL.append("</div>")
-
             oL.append("</div>")
 
         # At-a-glance for cc id
@@ -299,7 +296,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                 % (idPrefix, iSection + 3)
             )
             oL.append(
-                '<table style="margin-right:20px;position:relative;display:inline-table;width:100ch;" id="%s-%s">'
+                '<table style="position:relative;display:inline-table;max-width:70ch;" id="%s-%s">'
                 % (idPrefix, "chem_comp")
             )
             self.__renderTableAtAGlance("chem_comp", cD["chem_comp"][0], oL)
