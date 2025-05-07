@@ -272,13 +272,13 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             #             # h5 is ~15px + 20 vert margin
             if hasExpt:
                 oL.append(
-                    '  <div id="%s_jsmol_expt" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">'
+                    '  <div id="%s_jsmol_expt" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px;">'
                     % idCode
                 )
                 oL.append("  </div>")
             if hasIdeal:
                 oL.append(
-                    '  <div id="%s_jsmol_ideal" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">'
+                    '  <div id="%s_jsmol_ideal" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px;">'
                     % idCode
                 )
                 oL.append("  </div>")
