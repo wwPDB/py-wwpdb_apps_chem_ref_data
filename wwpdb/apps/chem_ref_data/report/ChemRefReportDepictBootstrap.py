@@ -265,26 +265,23 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             hasExpt = eD["hasExpt"]
             hasIdeal = eD["hasIdeal"]
             oL.append(
-                '<div style="overflow:visible;" class="tab-pane jsmol-class-expt-%s jsmol-class-ideal-%s" data-payload="%s" id="%s-tabs-%d">'
+                '<div style="overflow:visible;" class="tab-pane tab-flex jsmol-class-expt-%s jsmol-class-ideal-%s" data-payload="%s" id="%s-tabs-%d">'
                 % (idCode, idCode, idCode, idPrefix, iSection + 2)
             )
 
-            oL.append('<div style="display:flex;">')
             #             # h5 is ~15px + 20 vert margin
             if hasExpt:
                 oL.append(
-                    '  <div id="%s_jsmol_expt" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">'
+                    '  <div id="%s_jsmol_expt" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px;">'
                     % idCode
                 )
                 oL.append("  </div>")
             if hasIdeal:
                 oL.append(
-                    '  <div id="%s_jsmol_ideal" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px; ">'
+                    '  <div id="%s_jsmol_ideal" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px;">'
                     % idCode
                 )
                 oL.append("  </div>")
-
-            oL.append("</div>")
 
             oL.append("</div>")
 
@@ -299,7 +296,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                 % (idPrefix, iSection + 3)
             )
             oL.append(
-                '<table style="margin-right:20px;position:relative;display:inline-table;width:100ch;" id="%s-%s">'
+                '<table style="position:relative;display:inline-table;max-width:70ch;" id="%s-%s">'
                 % (idPrefix, "chem_comp")
             )
             self.__renderTableAtAGlance("chem_comp", cD["chem_comp"][0], oL)
