@@ -9,6 +9,7 @@
 #                  change markup of tabbable section to toggle and resist jump scrolling -
 #   Jun-2023 james smith add at-a-glance tab
 #  27-Aug-2024  zf add "pdbx_chem_comp_pcm" category
+#  17-Dec-2025  zf add "pdbx_chem_comp_coordination" and "pdbx_chem_comp_coordination_sphere" categories
 ##
 """
 Create tabular HTML reports from chemical reference definitions.
@@ -66,6 +67,8 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                 ("pdbx_chem_comp_descriptor", "descriptor", "row-wise"),
                 ("pdbx_chem_comp_identifier", "identifier", "row-wise"),
                 ("pdbx_chem_comp_pcm", "pdbx_chem_comp_pcm", "row-wise"),
+                ("pdbx_chem_comp_coordination", "coordination", "row-wise"),
+                ("pdbx_chem_comp_coordination_sphere", "coordination_sphere", "row-wise"),
                 ("pdbx_chem_comp_related", "related", "row-wise"),
                 ("pdbx_chem_comp_atom_related", "atom_related", "row-wise"),
                 ("pdbx_chem_comp_audit", "audit", "row-wise"),
