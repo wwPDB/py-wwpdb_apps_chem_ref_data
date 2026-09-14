@@ -46,7 +46,7 @@ setup(
         "wwpdb.utils.db ~= 0.26",
         "wwpdb.utils.session ~= 0.4",
         "wwpdb.io >= 0.26, < 2.0",
-        "mmcif.utils >= 0.18",
+        "mmcif.utils >= 0.33",
         "wwpdb.utils.oe_util",
         "jellyfish ~= 0.6.1; python_version < '3'",
         "jellyfish ~= 1.0; python_version >= '3'",

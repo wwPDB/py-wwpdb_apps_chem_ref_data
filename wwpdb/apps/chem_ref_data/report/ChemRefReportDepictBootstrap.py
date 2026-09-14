@@ -67,6 +67,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
                 ("pdbx_chem_comp_descriptor", "descriptor", "row-wise"),
                 ("pdbx_chem_comp_identifier", "identifier", "row-wise"),
                 ("pdbx_chem_comp_pcm", "pdbx_chem_comp_pcm", "row-wise"),
+                ("pdbx_chem_comp_feature", "feature", "row-wise"),
                 ("pdbx_chem_comp_atom_coordination", "coordination", "row-wise"),
                 ("pdbx_chem_comp_atom_coordination_sphere", "coordination_sphere", "row-wise"),
                 ("pdbx_chem_comp_related", "related", "row-wise"),
