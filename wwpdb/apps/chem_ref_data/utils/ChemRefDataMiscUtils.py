@@ -216,6 +216,10 @@ class ChemRefDataMiscUtils(object):
         """
         ok1 = ok2 = ok3 = False
         pathList = self.getChemCompPathListMulti(numProc=numProc)
+
+        # Sort the list to make deterministic ordering of file based on CCD
+        pathList.sort(key=lambda x: os.path.basename(x))
+
         idList = []
         for pth in pathList:
             (_dn, fn) = os.path.split(pth)
