@@ -274,7 +274,8 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             )
 
             #             # h5 is ~15px + 20 vert margin
-            if hasExpt:
+            # try to always display experimental coordinates even if pdbx_model_coordinates_missing_flag = Y (e.g. OT1, R1N)
+            if True: #hasExpt:
                 oL.append(
                     '  <div id="%s_jsmol_expt" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px;">'
                     % idCode
