@@ -50,8 +50,8 @@ class ReportUtils(object):
             if "chem_comp" in cD:
                 d = cD["chem_comp"][0]
                 logger.info("d is %r", d.items())
-                if "_chem_comp.pdbx_model_coordinates_missing_flag" in d:
-                    hasExpt = d["_chem_comp.pdbx_model_coordinates_missing_flag"] == "N"
+                # if "_chem_comp.pdbx_model_coordinates_missing_flag" in d:
+                #     hasExpt = d["_chem_comp.pdbx_model_coordinates_missing_flag"] == "N"
                 if "_chem_comp.pdbx_ideal_coordinates_missing_flag" in d:
                     hasIdeal = d["_chem_comp.pdbx_ideal_coordinates_missing_flag"] == "N"
         except:  # noqa: E722 pylint: disable=bare-except
