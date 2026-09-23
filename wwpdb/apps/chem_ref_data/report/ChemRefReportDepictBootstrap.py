@@ -274,7 +274,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
             )
 
             #             # h5 is ~15px + 20 vert margin
-            if hasExpt:
+            if True: #hasExpt:
                 oL.append(
                     '  <div id="%s_jsmol_expt" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px;">'
                     % idCode
