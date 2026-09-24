@@ -266,7 +266,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
 
         # 3D app
         if eD["xyzRelativePath"] is not None:
-            hasExpt = eD["hasExpt"]
+            # hasExpt = eD["hasExpt"]
             hasIdeal = eD["hasIdeal"]
             oL.append(
                 '<div style="overflow:visible;" class="tab-pane tab-flex jsmol-class-expt-%s jsmol-class-ideal-%s" data-payload="%s" id="%s-tabs-%d">'
@@ -275,7 +275,7 @@ class ChemRefReportDepictBootstrap(ChemRefDataDepictBootstrap):
 
             #             # h5 is ~15px + 20 vert margin
             # try to always display experimental coordinates even if pdbx_model_coordinates_missing_flag = Y (e.g. OT1, R1N)
-            if True: #hasExpt:
+            if True:  # pylint: disable=using-constant-test  #  was hasExpt:
                 oL.append(
                     '  <div id="%s_jsmol_expt" style="display:inline-block; float:left; border: 2px solid lightgray; width:645px; height:645px; margin:2px; padding:1px;">'
                     % idCode
