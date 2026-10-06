@@ -43,7 +43,7 @@ setup(
     #
     install_requires=[
         "wwpdb.utils.config >= 0.34",
-        "wwpdb.utils.db ~= 0.26",
+        "wwpdb.utils.db >= 0.26",
         "wwpdb.utils.session >= 0.4",
         "wwpdb.io >= 0.26, < 2.0",
         "mmcif.utils >= 0.33",
